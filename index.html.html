@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARCHNEWS — Architecture Intelligence Feed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a08;
+      --surface: #111110;
+      --border: #1e1e1b;
+      --border-light: #2a2a26;
+      --accent: #c8a96e;
+      --accent-dim: #8a7045;
+      --text-primary: #e8e4d9;
+      --text-secondary: #8a8880;
+      --text-muted: #555450;
+      --tag-bg: #1a1a17;
+      --source-colors: #c8a96e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+    }
+
+    .logo-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .refresh-btn {
+      background: none;
+      border: 1px solid var(--border-light);
+      color: var(--text-secondary);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      padding: 5px 12px;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      transition: all 0.15s;
+    }
+
+    .refresh-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* FILTER BAR */
+    .filter-bar {
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .filter-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .filter-inner::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0 16px;
+      height: 44px;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .filter-btn:hover { color: var(--text-primary); }
+    .filter-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* MAIN LAYOUT */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 0;
+      min-height: calc(100vh - 100px);
+    }
+
+    /* FEED */
+    .feed {
+      border-right: 1px solid var(--border);
+      padding: 0;
+    }
+
+    /* STORY ITEM */
+    .story {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px 20px 0;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 0;
+      transition: background 0.1s;
+      cursor: pointer;
+      animation: fadeIn 0.3s ease forwards;
+      opacity: 0;
+    }
+
+    .story:hover { background: rgba(200, 169, 110, 0.03); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .story-rank {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2px;
+      gap: 8px;
+    }
+
+    .rank-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      width: 24px;
+      text-align: center;
+    }
+
+    .upvote-btn {
+      background: none;
+      border: 1px solid var(--border-light);
+      color: var(--text-muted);
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 10px;
+      transition: all 0.15s;
+    }
+
+    .upvote-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .upvote-btn.voted {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(200, 169, 110, 0.1);
+    }
+
+    .vote-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .story-body { flex: 1; }
+
+    .story-meta-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .source-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border: 1px solid;
+      line-height: 1.6;
+    }
+
+    .story-category {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .story-time {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .story-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 6px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .story-title:hover { color: var(--accent); }
+
+    .story-excerpt {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .story-footer {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .story-link {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .story-link:hover { color: var(--accent); }
+
+    .story-image {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      margin-left: 16px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .story-body-inner {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .story-content { flex: 1; }
+
+    /* LOADING */
+    .loading-state {
+      padding: 60px 24px;
+      text-align: center;
+    }
+
+    .loading-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .skeleton-item {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 24px 20px 0;
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 0;
+    }
+
+    .skeleton-rank { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 4px; }
+    .skeleton-block { background: var(--border); border-radius: 2px; animation: shimmer 1.5s infinite; }
+
+    @keyframes shimmer {
+      0% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+      100% { opacity: 0.4; }
+    }
+
+    /* ERROR */
+    .error-note {
+      background: rgba(200, 169, 110, 0.05);
+      border: 1px solid var(--accent-dim);
+      padding: 12px 16px;
+      margin: 16px 0 0 0;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--accent-dim);
+      line-height: 1.6;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      padding: 24px 0 24px 24px;
+    }
+
+    .sidebar-section {
+      margin-bottom: 32px;
+    }
+
+    .sidebar-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .source-list { display: flex; flex-direction: column; gap: 0; }
+
+    .source-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .source-item:hover .source-name { color: var(--accent); }
+
+    .source-item.active .source-name { color: var(--accent); }
+    .source-item.active .source-dot { background: var(--accent); }
+
+    .source-left { display: flex; align-items: center; gap: 8px; }
+
+    .source-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .source-name {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+    }
+
+    .source-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .stat-box {
+      background: var(--surface);
+      padding: 12px;
+    }
+
+    .stat-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--accent);
+      display: block;
+    }
+
+    .stat-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .about-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .about-text a { color: var(--accent); text-decoration: none; }
+
+    /* EMPTY */
+    .empty-state {
+      padding: 48px 24px 48px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      line-height: 2;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      text-align: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Source color coding */
+    .src-archdaily { color: #e05a5a; border-color: #e05a5a44; }
+    .src-dezeen { color: #5a9ee0; border-color: #5a9ee044; }
+    .src-archinect { color: #5ae05a; border-color: #5ae05a44; }
+    .src-metropolis { color: #a05ae0; border-color: #a05ae044; }
+    .src-archrecord { color: #e0a05a; border-color: #e0a05a44; }
+    .src-designboom { color: #e05ab0; border-color: #e05ab044; }
+    .src-curbed { color: #5ae0d0; border-color: #5ae0d044; }
+    .src-archpaper { color: #e0d05a; border-color: #e0d05a44; }
+    .src-domus { color: #c8a96e; border-color: #c8a96e44; }
+    .src-default { color: #8a8880; border-color: #8a888044; }
+
+    @media (max-width: 768px) {
+      .main { grid-template-columns: 1fr; }
+      .feed { border-right: none; }
+      .sidebar { display: none; }
+      .story { grid-template-columns: 36px 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <span class="logo-mark">ARCHNEWS</span>
+      <span class="logo-sub">Architecture Intelligence</span>
+    </a>
+    <div class="header-actions">
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span>LIVE</span>
+      </div>
+      <button class="refresh-btn" onclick="loadAllFeeds()">↻ REFRESH</button>
+    </div>
+  </div>
+</header>
+
+<div class="filter-bar">
+  <div class="filter-inner">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All Sources</button>
+    <button class="filter-btn" data-filter="archdaily" onclick="setFilter('archdaily', this)">ArchDaily</button>
+    <button class="filter-btn" data-filter="dezeen" onclick="setFilter('dezeen', this)">Dezeen</button>
+    <button class="filter-btn" data-filter="archinect" onclick="setFilter('archinect', this)">Archinect</button>
+    <button class="filter-btn" data-filter="metropolis" onclick="setFilter('metropolis', this)">Metropolis</button>
+    <button class="filter-btn" data-filter="archrecord" onclick="setFilter('archrecord', this)">Arch Record</button>
+    <button class="filter-btn" data-filter="designboom" onclick="setFilter('designboom', this)">Designboom</button>
+    <button class="filter-btn" data-filter="archpaper" onclick="setFilter('archpaper', this)">Arch Paper</button>
+    <button class="filter-btn" data-filter="domus" onclick="setFilter('domus', this)">Domus</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="feed">
+    <div id="feed-container" class="loading-grid">
+      <!-- Skeleton loaders -->
+      <div id="skeleton-items"></div>
+    </div>
+    <div id="error-container"></div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Stats</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <span class="stat-num" id="stat-stories">–</span>
+          <span class="stat-label">Stories</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="stat-sources">8</span>
+          <span class="stat-label">Sources</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="stat-votes">–</span>
+          <span class="stat-label">Votes</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num" id="stat-updated">–</span>
+          <span class="stat-label">Mins Ago</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Sources</div>
+      <div class="source-list" id="source-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">About</div>
+      <p class="about-text">
+        ARCHNEWS aggregates the world's leading architecture publications into one intelligent feed — ranked by recency and community signal.<br><br>
+        Sources: ArchDaily, Dezeen, Archinect, Metropolis, Architectural Record, Designboom, The Architect's Newspaper, Domus.
+      </p>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  ARCHNEWS — Aggregating the world's architecture discourse — Built for architects, by architects
+</footer>
+
+<script>
+// ============================================================
+// CONFIG: RSS FEEDS
+// ============================================================
+const SOURCES = [
+  {
+    id: 'archdaily',
+    name: 'ArchDaily',
+    url: 'https://feeds.feedburner.com/Archdaily',
+    fallback: 'https://www.archdaily.com/feed',
+    dotColor: '#e05a5a',
+  },
+  {
+    id: 'dezeen',
+    name: 'Dezeen',
+    url: 'https://feeds.feedburner.com/dezeen',
+    dotColor: '#5a9ee0',
+  },
+  {
+    id: 'archinect',
+    name: 'Archinect',
+    url: 'https://archinect.com/feed/news',
+    dotColor: '#5ae05a',
+  },
+  {
+    id: 'metropolis',
+    name: 'Metropolis',
+    url: 'https://metropolismag.com/feed/',
+    dotColor: '#a05ae0',
+  },
+  {
+    id: 'archrecord',
+    name: 'Arch Record',
+    url: 'https://www.architecturalrecord.com/rss/articles',
+    dotColor: '#e0a05a',
+  },
+  {
+    id: 'designboom',
+    name: 'Designboom',
+    url: 'https://www.designboom.com/architecture/rss/',
+    dotColor: '#e05ab0',
+  },
+  {
+    id: 'archpaper',
+    name: "Architect's Newspaper",
+    url: 'https://www.archpaper.com/feed/',
+    dotColor: '#e0d05a',
+  },
+  {
+    id: 'domus',
+    name: 'Domus',
+    url: 'https://www.domusweb.it/en/rss.xml',
+    dotColor: '#c8a96e',
+  },
+];
+
+// CORS Proxy options (try each one)
+const CORS_PROXIES = [
+  (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+  (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+];
+
+let allStories = [];
+let votes = {};
+let currentFilter = 'all';
+let loadStart = Date.now();
+
+// ============================================================
+// RSS FETCH & PARSE
+// ============================================================
+async function fetchRSS(source) {
+  for (const proxyFn of CORS_PROXIES) {
+    try {
+      const proxyUrl = proxyFn(source.url);
+      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) continue;
+      const data = await res.json();
+      const xmlStr = data.contents || data;
+      if (!xmlStr || typeof xmlStr !== 'string') continue;
+      const items = parseRSS(xmlStr, source);
+      if (items.length > 0) return items;
+    } catch (e) {
+      continue;
+    }
+  }
+  return [];
+}
+
+function parseRSS(xmlStr, source) {
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xmlStr, 'text/xml');
+    const items = Array.from(doc.querySelectorAll('item, entry'));
+
+    return items.slice(0, 12).map((item, idx) => {
+      const title = getTextContent(item, 'title');
+      const link = getTextContent(item, 'link') ||
+                   item.querySelector('link')?.getAttribute('href') || '#';
+      const description = getTextContent(item, 'description') ||
+                          getTextContent(item, 'summary') ||
+                          getTextContent(item, 'content');
+      const pubDate = getTextContent(item, 'pubDate') ||
+                      getTextContent(item, 'published') ||
+                      getTextContent(item, 'updated');
+      const enclosure = item.querySelector('enclosure');
+      const mediaContent = item.querySelector('content');
+      let imageUrl = enclosure?.getAttribute('url') || 
+                     mediaContent?.getAttribute('url') ||
+                     extractImageFromDescription(description);
+
+      const cleanDesc = stripHTML(description).slice(0, 180);
+      const parsed = pubDate ? new Date(pubDate) : new Date();
+
+      return {
+        id: `${source.id}-${idx}-${Date.now()}`,
+        sourceId: source.id,
+        sourceName: source.name,
+        title: stripHTML(title) || 'Untitled',
+        link: link,
+        excerpt: cleanDesc,
+        image: imageUrl,
+        date: parsed,
+        votes: Math.floor(Math.random() * 80) + 5, // seed votes for demo
+      };
+    }).filter(item => item.title && item.title !== 'Untitled');
+  } catch (e) {
+    return [];
+  }
+}
+
+function getTextContent(el, tag) {
+  const found = el.querySelector(tag);
+  return found ? (found.textContent || found.innerHTML || '').trim() : '';
+}
+
+function stripHTML(html) {
+  if (!html) return '';
+  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function extractImageFromDescription(desc) {
+  if (!desc) return null;
+  const match = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match ? match[1] : null;
+}
+
+// ============================================================
+// TIME FORMATTING
+// ============================================================
+function timeAgo(date) {
+  const now = new Date();
+  const diff = Math.floor((now - date) / 1000);
+  if (diff < 60) return `${diff}s`;
+  if (diff < 3600) return `${Math.floor(diff/60)}m`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h`;
+  return `${Math.floor(diff/86400)}d`;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function getSourceClass(sourceId) {
+  const map = {
+    archdaily: 'src-archdaily',
+    dezeen: 'src-dezeen',
+    archinect: 'src-archinect',
+    metropolis: 'src-metropolis',
+    archrecord: 'src-archrecord',
+    designboom: 'src-designboom',
+    archpaper: 'src-archpaper',
+    domus: 'src-domus',
+  };
+  return map[sourceId] || 'src-default';
+}
+
+function renderStories() {
+  const container = document.getElementById('feed-container');
+  const filtered = currentFilter === 'all'
+    ? allStories
+    : allStories.filter(s => s.sourceId === currentFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state">No stories loaded yet.<br>Fetching from sources...</div>`;
+    return;
+  }
+
+  const sorted = [...filtered].sort((a, b) => b.date - a.date);
+
+  container.innerHTML = sorted.map((story, idx) => {
+    const userVotes = votes[story.id] || 0;
+    const totalVotes = story.votes + userVotes;
+    const voted = userVotes > 0;
+    const delay = idx * 0.03;
+
+    return `
+      <div class="story" style="animation-delay:${delay}s" onclick="openStory('${encodeURIComponent(story.link)}')">
+        <div class="story-rank">
+          <span class="rank-num">${idx + 1}</span>
+          <button class="upvote-btn ${voted ? 'voted' : ''}"
+            onclick="event.stopPropagation(); vote('${story.id}', this)"
+            title="Upvote">▲</button>
+          <span class="vote-count">${totalVotes}</span>
+        </div>
+        <div class="story-body">
+          <div class="story-meta-top">
+            <span class="source-tag ${getSourceClass(story.sourceId)}">${story.sourceName}</span>
+            <span class="story-time">${timeAgo(story.date)}</span>
+          </div>
+          <div class="story-body-inner">
+            <div class="story-content">
+              <a class="story-title" href="${story.link}" target="_blank" rel="noopener"
+                 onclick="event.stopPropagation()">
+                ${story.title}
+              </a>
+              ${story.excerpt ? `<p class="story-excerpt">${story.excerpt}</p>` : ''}
+              <div class="story-footer">
+                <a class="story-link" href="${story.link}" target="_blank" rel="noopener"
+                   onclick="event.stopPropagation()">
+                  ${new URL(story.link.startsWith('http') ? story.link : 'https://x.com').hostname.replace('www.','')} ↗
+                </a>
+              </div>
+            </div>
+            ${story.image ? `<img class="story-image" src="${story.image}" alt="" onerror="this.style.display='none'" loading="lazy">` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Update stats
+  document.getElementById('stat-stories').textContent = filtered.length;
+  const totalVotesCount = Object.values(votes).reduce((a,b) => a+b, 0) +
+                          allStories.reduce((acc, s) => acc + s.votes, 0);
+  document.getElementById('stat-votes').textContent = totalVotesCount;
+  const minsAgo = Math.floor((Date.now() - loadStart) / 60000);
+  document.getElementById('stat-updated').textContent = minsAgo === 0 ? '<1' : minsAgo;
+
+  renderSourceList();
+}
+
+function renderSourceList() {
+  const counts = {};
+  allStories.forEach(s => {
+    counts[s.sourceId] = (counts[s.sourceId] || 0) + 1;
+  });
+
+  const list = document.getElementById('source-list');
+  list.innerHTML = SOURCES.map(src => {
+    const count = counts[src.id] || 0;
+    const active = currentFilter === src.id ? 'active' : '';
+    return `
+      <div class="source-item ${active}" onclick="setFilter('${src.id}', null)">
+        <div class="source-left">
+          <div class="source-dot" style="background:${src.dotColor}"></div>
+          <span class="source-name">${src.name}</span>
+        </div>
+        <span class="source-count">${count}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderSkeletons() {
+  const el = document.getElementById('skeleton-items');
+  el.innerHTML = Array(8).fill(0).map((_, i) => `
+    <div class="skeleton-item" style="animation-delay:${i*0.05}s">
+      <div class="skeleton-rank">
+        <div class="skeleton-block" style="width:20px;height:14px"></div>
+        <div class="skeleton-block" style="width:24px;height:24px"></div>
+      </div>
+      <div style="padding-top:4px">
+        <div class="skeleton-block" style="width:80px;height:14px;margin-bottom:10px"></div>
+        <div class="skeleton-block" style="width:${80 + Math.random()*15}%;height:18px;margin-bottom:8px"></div>
+        <div class="skeleton-block" style="width:${50 + Math.random()*30}%;height:14px;margin-bottom:6px"></div>
+        <div class="skeleton-block" style="width:${30 + Math.random()*20}%;height:14px"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// INTERACTIONS
+// ============================================================
+function vote(storyId, btn) {
+  if (votes[storyId]) return;
+  votes[storyId] = 1;
+  btn.classList.add('voted');
+  const countEl = btn.nextElementSibling;
+  const story = allStories.find(s => s.id === storyId);
+  if (story && countEl) {
+    countEl.textContent = story.votes + 1;
+  }
+  // Save to localStorage
+  try { localStorage.setItem('archnews_votes', JSON.stringify(votes)); } catch(e) {}
+}
+
+function openStory(encodedUrl) {
+  const url = decodeURIComponent(encodedUrl);
+  if (url && url !== '#') window.open(url, '_blank', 'noopener');
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else {
+    // Update both filter bar and source list
+    document.querySelector(`[data-filter="${filter}"]`)?.classList.add('active');
+    if (filter === 'all') {
+      document.querySelector('[data-filter="all"]')?.classList.add('active');
+    }
+  }
+  renderStories();
+  renderSourceList();
+}
+
+// ============================================================
+// LOAD FEEDS
+// ============================================================
+async function loadAllFeeds() {
+  renderSkeletons();
+  document.getElementById('error-container').innerHTML = '';
+  allStories = [];
+  loadStart = Date.now();
+
+  // Load votes from localStorage
+  try {
+    const saved = localStorage.getItem('archnews_votes');
+    if (saved) votes = JSON.parse(saved);
+  } catch(e) {}
+
+  const feedPromises = SOURCES.map(async (source) => {
+    const items = await fetchRSS(source);
+    allStories = [...allStories, ...items];
+    // Re-render as each feed comes in
+    renderStories();
+    return { source: source.id, count: items.length };
+  });
+
+  const results = await Promise.allSettled(feedPromises);
+  const failed = results.filter(r => r.status === 'rejected' ||
+    (r.value && r.value.count === 0)).length;
+
+  if (failed > 0) {
+    document.getElementById('error-container').innerHTML = `
+      <div class="error-note">
+        ⚠ ${failed} source(s) unavailable — RSS feeds may require a backend proxy for production.
+        Consider hosting with a simple Node.js server for full feed access.<br>
+        <a href="https://github.com/nicholasgasior/rss-aggregator" style="color:var(--accent)">See deployment guide →</a>
+      </div>
+    `;
+  }
+
+  renderStories();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  loadAllFeeds();
+  // Auto-refresh every 5 minutes
+  setInterval(loadAllFeeds, 300000);
+});
+</script>
+</body>
+</html>
