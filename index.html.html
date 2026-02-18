@@ -1,975 +1,338 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ARCHNEWS — Architecture Intelligence Feed</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0a0a08;
-      --surface: #111110;
-      --border: #1e1e1b;
-      --border-light: #2a2a26;
-      --accent: #c8a96e;
-      --accent-dim: #8a7045;
-      --text-primary: #e8e4d9;
-      --text-secondary: #8a8880;
-      --text-muted: #555450;
-      --tag-bg: #1a1a17;
-      --source-colors: #c8a96e;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background: var(--bg);
-      color: var(--text-primary);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    /* HEADER */
-    header {
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(12px);
-    }
-
-    .header-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .logo {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      text-decoration: none;
-    }
-
-    .logo-mark {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--accent);
-      letter-spacing: 0.08em;
-    }
-
-    .logo-sub {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .live-indicator {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-    }
-
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #4ade80;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .refresh-btn {
-      background: none;
-      border: 1px solid var(--border-light);
-      color: var(--text-secondary);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      padding: 5px 12px;
-      cursor: pointer;
-      letter-spacing: 0.1em;
-      transition: all 0.15s;
-    }
-
-    .refresh-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* FILTER BAR */
-    .filter-bar {
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-    }
-
-    .filter-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      gap: 0;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
-    .filter-inner::-webkit-scrollbar { display: none; }
-
-    .filter-btn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 0 16px;
-      height: 44px;
-      cursor: pointer;
-      white-space: nowrap;
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
-      position: relative;
-    }
-
-    .filter-btn:hover { color: var(--text-primary); }
-    .filter-btn.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
-    /* MAIN LAYOUT */
-    .main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 0;
-      min-height: calc(100vh - 100px);
-    }
-
-    /* FEED */
-    .feed {
-      border-right: 1px solid var(--border);
-      padding: 0;
-    }
-
-    /* STORY ITEM */
-    .story {
-      border-bottom: 1px solid var(--border);
-      padding: 20px 24px 20px 0;
-      display: grid;
-      grid-template-columns: 40px 1fr;
-      gap: 0;
-      transition: background 0.1s;
-      cursor: pointer;
-      animation: fadeIn 0.3s ease forwards;
-      opacity: 0;
-    }
-
-    .story:hover { background: rgba(200, 169, 110, 0.03); }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .story-rank {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 2px;
-      gap: 8px;
-    }
-
-    .rank-num {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--text-muted);
-      width: 24px;
-      text-align: center;
-    }
-
-    .upvote-btn {
-      background: none;
-      border: 1px solid var(--border-light);
-      color: var(--text-muted);
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 10px;
-      transition: all 0.15s;
-    }
-
-    .upvote-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .upvote-btn.voted {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(200, 169, 110, 0.1);
-    }
-
-    .vote-count {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .story-body { flex: 1; }
-
-    .story-meta-top {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-    }
-
-    .source-tag {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border: 1px solid;
-      line-height: 1.6;
-    }
-
-    .story-category {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .story-time {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      color: var(--text-muted);
-      margin-left: auto;
-    }
-
-    .story-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.35;
-      margin-bottom: 6px;
-      text-decoration: none;
-      display: block;
-    }
-
-    .story-title:hover { color: var(--accent); }
-
-    .story-excerpt {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.55;
-      margin-bottom: 10px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .story-footer {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .story-link {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      text-decoration: none;
-      letter-spacing: 0.05em;
-    }
-
-    .story-link:hover { color: var(--accent); }
-
-    .story-image {
-      width: 80px;
-      height: 60px;
-      object-fit: cover;
-      margin-left: 16px;
-      border: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .story-body-inner {
-      display: flex;
-      align-items: flex-start;
-      gap: 0;
-    }
-
-    .story-content { flex: 1; }
-
-    /* LOADING */
-    .loading-state {
-      padding: 60px 24px;
-      text-align: center;
-    }
-
-    .loading-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .skeleton-item {
-      border-bottom: 1px solid var(--border);
-      padding: 20px 24px 20px 0;
-      display: grid;
-      grid-template-columns: 40px 1fr;
-      gap: 0;
-    }
-
-    .skeleton-rank { display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 4px; }
-    .skeleton-block { background: var(--border); border-radius: 2px; animation: shimmer 1.5s infinite; }
-
-    @keyframes shimmer {
-      0% { opacity: 0.4; }
-      50% { opacity: 0.8; }
-      100% { opacity: 0.4; }
-    }
-
-    /* ERROR */
-    .error-note {
-      background: rgba(200, 169, 110, 0.05);
-      border: 1px solid var(--accent-dim);
-      padding: 12px 16px;
-      margin: 16px 0 0 0;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--accent-dim);
-      line-height: 1.6;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-      padding: 24px 0 24px 24px;
-    }
-
-    .sidebar-section {
-      margin-bottom: 32px;
-    }
-
-    .sidebar-title {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .source-list { display: flex; flex-direction: column; gap: 0; }
-
-    .source-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: all 0.1s;
-    }
-
-    .source-item:hover .source-name { color: var(--accent); }
-
-    .source-item.active .source-name { color: var(--accent); }
-    .source-item.active .source-dot { background: var(--accent); }
-
-    .source-left { display: flex; align-items: center; gap: 8px; }
-
-    .source-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--text-muted);
-      flex-shrink: 0;
-    }
-
-    .source-name {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-secondary);
-      letter-spacing: 0.05em;
-    }
-
-    .source-count {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-    }
-
-    .stat-box {
-      background: var(--surface);
-      padding: 12px;
-    }
-
-    .stat-num {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--accent);
-      display: block;
-    }
-
-    .stat-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 9px;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .about-text {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.65;
-    }
-
-    .about-text a { color: var(--accent); text-decoration: none; }
-
-    /* EMPTY */
-    .empty-state {
-      padding: 48px 24px 48px 0;
-      text-align: center;
-      color: var(--text-muted);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      line-height: 2;
-    }
-
-    /* FOOTER */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 20px 24px;
-      text-align: center;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10px;
-      color: var(--text-muted);
-      letter-spacing: 0.08em;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    /* Source color coding */
-    .src-archdaily { color: #e05a5a; border-color: #e05a5a44; }
-    .src-dezeen { color: #5a9ee0; border-color: #5a9ee044; }
-    .src-archinect { color: #5ae05a; border-color: #5ae05a44; }
-    .src-metropolis { color: #a05ae0; border-color: #a05ae044; }
-    .src-archrecord { color: #e0a05a; border-color: #e0a05a44; }
-    .src-designboom { color: #e05ab0; border-color: #e05ab044; }
-    .src-curbed { color: #5ae0d0; border-color: #5ae0d044; }
-    .src-archpaper { color: #e0d05a; border-color: #e0d05a44; }
-    .src-domus { color: #c8a96e; border-color: #c8a96e44; }
-    .src-default { color: #8a8880; border-color: #8a888044; }
-
-    @media (max-width: 768px) {
-      .main { grid-template-columns: 1fr; }
-      .feed { border-right: none; }
-      .sidebar { display: none; }
-      .story { grid-template-columns: 36px 1fr; }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ARCHNEWS — Architecture Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0e0d0b;--paper:#f7f3ec;--cream:#ede8df;--border:#d8d2c8;--red:#bf2d0a;--red2:#8a1f06;--text2:#4a4740;--text3:#8a8680;--white:#fdfaf5;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;}
+header{background:var(--ink);border-bottom:3px solid var(--red);position:sticky;top:0;z-index:200;}
+.header-inner{max-width:1280px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;}
+.logo{text-decoration:none;display:flex;flex-direction:column;line-height:1;}
+.logo-name{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--white);letter-spacing:0.08em;}
+.logo-name span{color:var(--red);}
+.logo-tagline{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#555;letter-spacing:0.25em;text-transform:uppercase;margin-top:-2px;}
+.header-center{display:flex;align-items:center;}
+.nav-link{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#555;text-decoration:none;padding:8px 14px;transition:color 0.15s;border-bottom:2px solid transparent;}
+.nav-link:hover{color:var(--white);}
+.nav-link.active{color:var(--red);border-bottom-color:var(--red);}
+.live-tag{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#ff6040;letter-spacing:0.15em;border:1px solid rgba(191,45,10,0.3);background:rgba(191,45,10,0.08);padding:5px 10px;}
+.dot{width:5px;height:5px;border-radius:50%;background:#ff6040;animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
+.ticker{background:var(--red);overflow:hidden;padding:7px 0;}
+.ticker-track{display:inline-flex;animation:ticker 40s linear infinite;white-space:nowrap;}
+.ticker-item{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.18em;color:rgba(255,255,255,0.9);padding:0 32px;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tabs{background:var(--ink);overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tabs-inner{max-width:1280px;margin:0 auto;padding:0 32px;display:flex;border-top:1px solid #1e1e18;}
+.tab{background:none;border:none;color:#444;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 18px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.15s;}
+.tab:hover{color:#aaa;}
+.tab.active{color:var(--red);border-bottom-color:var(--red);}
+.date-banner{background:var(--cream);border-bottom:1px solid var(--border);padding:8px 32px;}
+.date-inner{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;}
+.date-str{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;}
+.edition{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);}
+.main{max-width:1280px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1fr 320px;gap:0;}
+.hero{border-bottom:2px solid var(--ink);padding:32px 32px 32px 0;cursor:pointer;}
+.hero:hover .hero-title{color:var(--red);}
+.hero-img-wrap{position:relative;overflow:hidden;margin-bottom:20px;aspect-ratio:16/7;}
+.hero-img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease;display:block;}
+.hero:hover .hero-img{transform:scale(1.02);}
+.hero-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(14,13,11,0.45) 0%,transparent 60%);}
+.hero-source-float{position:absolute;top:16px;left:16px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:4px 10px;color:white;}
+.hero-meta{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.hero-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;color:white;}
+.hero-time{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);}
+.hero-rank{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-left:auto;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;line-height:1.15;color:var(--ink);margin-bottom:12px;max-width:680px;transition:color 0.15s;}
+.hero-excerpt{font-size:15px;color:var(--text2);line-height:1.65;max-width:620px;margin-bottom:16px;}
+.hero-footer{display:flex;align-items:center;gap:16px;}
+.read-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--white);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:10px 20px;text-decoration:none;transition:background 0.15s;}
+.read-btn:hover{background:var(--red);}
+.hero-vote{display:flex;align-items:center;gap:8px;}
+.vote-up{background:none;border:1px solid var(--border);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:13px;transition:all 0.15s;}
+.vote-up:hover{border-color:var(--red);color:var(--red);}
+.vote-up.voted{background:var(--red);border-color:var(--red);color:white;}
+.vote-n{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--border);}
+.story-card{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:22px 24px 20px 0;cursor:pointer;transition:background 0.12s;animation:fadeUp 0.35s ease forwards;opacity:0;}
+.story-card:nth-child(even){border-right:none;padding-right:0;padding-left:24px;}
+.story-card:hover{background:var(--cream);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.card-img-wrap{overflow:hidden;margin-bottom:12px;aspect-ratio:16/9;}
+.card-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;display:block;}
+.story-card:hover .card-img{transform:scale(1.04);}
+.card-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.card-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 8px;color:white;}
+.card-time{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);margin-left:auto;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;line-height:1.25;color:var(--ink);margin-bottom:8px;transition:color 0.12s;}
+.story-card:hover .card-title{color:var(--red);}
+.card-excerpt{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;}
+.card-domain{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-decoration:none;}
+.card-domain:hover{color:var(--red);}
+.card-votes{display:flex;align-items:center;gap:6px;}
+.mini-vote{background:none;border:1px solid var(--border);width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:10px;transition:all 0.12s;}
+.mini-vote:hover{border-color:var(--red);color:var(--red);}
+.mini-vote.voted{background:var(--red);border-color:var(--red);color:white;}
+.mini-vn{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);}
+.list-section{border-bottom:1px solid var(--border);}
+.section-head{display:flex;align-items:center;gap:16px;padding:16px 0 12px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.08em;}
+.section-line{flex:1;height:1px;background:var(--border);}
+.list-story{display:grid;grid-template-columns:40px 1fr auto;border-bottom:1px solid var(--border);padding:16px 0;cursor:pointer;transition:background 0.1s;align-items:start;animation:fadeUp 0.4s ease forwards;opacity:0;}
+.list-story:hover{background:var(--cream);}
+.list-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);padding-top:3px;}
+.list-meta{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap;}
+.list-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;color:white;}
+.list-time{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);}
+.list-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;line-height:1.3;color:var(--ink);margin-bottom:4px;transition:color 0.1s;}
+.list-story:hover .list-title{color:var(--red);}
+.list-excerpt{font-size:12px;color:var(--text2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.list-img{width:80px;height:60px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);margin-left:16px;}
+.sidebar{padding:0 0 40px 32px;border-left:1px solid var(--border);}
+.sb{margin-bottom:0;border-bottom:1px solid var(--border);padding:20px 0;}
+.sb-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.08em;color:var(--ink);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--ink);}
+.stats-2x2{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.stat-cell{background:var(--white);padding:14px 12px;}
+.stat-big{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--red);display:block;line-height:1;}
+.stat-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;}
+.src-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.src-row:last-child{border-bottom:none;}
+.src-row:hover .src-name{color:var(--red);}
+.src-left{display:flex;align-items:center;gap:9px;}
+.src-dot{width:8px;height:8px;border-radius:50%;}
+.src-name{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);transition:color 0.1s;}
+.src-cnt{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);}
+.trending-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.trending-item:last-child{border-bottom:none;}
+.trending-item:hover .trend-title{color:var(--red);}
+.trend-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--border);line-height:1;flex-shrink:0;width:32px;}
+.trend-source{display:inline-block;padding:1px 6px;color:white;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;}
+.trend-title{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;line-height:1.3;color:var(--ink);transition:color 0.1s;}
+.about-text{font-size:12px;color:var(--text2);line-height:1.75;}
+.bd-archdaily{background:#bf2d0a;}
+.bd-dezeen{background:#0a4fb8;}
+.bd-archinect{background:#0a8a35;}
+.bd-metropolis{background:#6b08a8;}
+.bd-archrecord{background:#b87008;}
+.bd-designboom{background:#a80875;}
+.bd-archpaper{background:#087ab8;}
+.bd-domus{background:#1a1a14;}
+footer{background:var(--ink);border-top:3px solid var(--red);padding:32px;}
+.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;}
+.footer-brand .fn{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--white);letter-spacing:0.08em;}
+.footer-brand .fn span{color:var(--red);}
+.footer-brand p{font-size:12px;color:#555;line-height:1.7;margin-top:8px;}
+.footer-col-title{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#444;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #222;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.footer-links a{font-size:12px;color:#555;text-decoration:none;transition:color 0.1s;}
+.footer-links a:hover{color:var(--white);}
+.footer-bottom{max-width:1280px;margin:24px auto 0;padding-top:24px;border-top:1px solid #222;display:flex;justify-content:space-between;}
+.footer-bottom p{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#444;letter-spacing:0.08em;}
+.modal-overlay{position:fixed;inset:0;background:rgba(14,13,11,0.88);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;backdrop-filter:blur(6px);}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--white);max-width:580px;width:92%;max-height:88vh;overflow-y:auto;padding:36px;position:relative;animation:modalIn 0.3s ease;}
+@keyframes modalIn{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-close{position:absolute;top:14px;right:14px;background:none;border:1px solid var(--border);width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--text2);transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+.modal-close:hover{background:var(--red);border-color:var(--red);color:white;}
+.modal-src{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;color:white;display:inline-block;margin-bottom:14px;}
+.modal-img{width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:20px;border:1px solid var(--border);display:block;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;line-height:1.25;color:var(--ink);margin-bottom:14px;}
+.modal-excerpt{font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--border);}
+.modal-cta{display:flex;flex-direction:column;gap:12px;}
+.modal-read{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--white);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;padding:14px 24px;text-decoration:none;transition:background 0.15s;text-align:center;justify-content:center;}
+.modal-read:hover{background:var(--red);}
+.modal-note{font-size:11px;color:var(--text3);font-style:italic;text-align:center;}
+@media(max-width:900px){.main{grid-template-columns:1fr;}.sidebar{display:none;}.story-grid{grid-template-columns:1fr;}.story-card:nth-child(even){padding-left:0;}.hero-title{font-size:26px;}.header-center{display:none;}}
+@media(max-width:600px){.header-inner,.main,.date-banner,.tabs-inner{padding-left:16px;padding-right:16px;}.hero{padding-right:0;}}
+</style>
 </head>
 <body>
-
 <header>
   <div class="header-inner">
-    <a class="logo" href="#">
-      <span class="logo-mark">ARCHNEWS</span>
-      <span class="logo-sub">Architecture Intelligence</span>
-    </a>
-    <div class="header-actions">
-      <div class="live-indicator">
-        <span class="live-dot"></span>
-        <span>LIVE</span>
-      </div>
-      <button class="refresh-btn" onclick="loadAllFeeds()">↻ REFRESH</button>
-    </div>
+    <a class="logo" href="#"><span class="logo-name">ARCH<span>NEWS</span></span><span class="logo-tagline">Architecture Intelligence Feed</span></a>
+    <nav class="header-center">
+      <a class="nav-link active" href="#">Feed</a>
+      <a class="nav-link" href="#">Projects</a>
+      <a class="nav-link" href="#">Practice</a>
+      <a class="nav-link" href="#">Opinion</a>
+    </nav>
+    <div class="live-tag"><div class="dot"></div>LIVE FEED</div>
   </div>
 </header>
-
-<div class="filter-bar">
-  <div class="filter-inner">
-    <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All Sources</button>
-    <button class="filter-btn" data-filter="archdaily" onclick="setFilter('archdaily', this)">ArchDaily</button>
-    <button class="filter-btn" data-filter="dezeen" onclick="setFilter('dezeen', this)">Dezeen</button>
-    <button class="filter-btn" data-filter="archinect" onclick="setFilter('archinect', this)">Archinect</button>
-    <button class="filter-btn" data-filter="metropolis" onclick="setFilter('metropolis', this)">Metropolis</button>
-    <button class="filter-btn" data-filter="archrecord" onclick="setFilter('archrecord', this)">Arch Record</button>
-    <button class="filter-btn" data-filter="designboom" onclick="setFilter('designboom', this)">Designboom</button>
-    <button class="filter-btn" data-filter="archpaper" onclick="setFilter('archpaper', this)">Arch Paper</button>
-    <button class="filter-btn" data-filter="domus" onclick="setFilter('domus', this)">Domus</button>
-  </div>
-</div>
-
+<div class="ticker"><span class="ticker-track"><span class="ticker-item">ARCHDAILY</span><span class="ticker-item">·</span><span class="ticker-item">DEZEEN</span><span class="ticker-item">·</span><span class="ticker-item">ARCHINECT</span><span class="ticker-item">·</span><span class="ticker-item">METROPOLIS</span><span class="ticker-item">·</span><span class="ticker-item">ARCHITECTURAL RECORD</span><span class="ticker-item">·</span><span class="ticker-item">DESIGNBOOM</span><span class="ticker-item">·</span><span class="ticker-item">THE ARCHITECT'S NEWSPAPER</span><span class="ticker-item">·</span><span class="ticker-item">DOMUS</span><span class="ticker-item">·</span><span class="ticker-item">ARCHDAILY</span><span class="ticker-item">·</span><span class="ticker-item">DEZEEN</span><span class="ticker-item">·</span><span class="ticker-item">ARCHINECT</span><span class="ticker-item">·</span><span class="ticker-item">METROPOLIS</span><span class="ticker-item">·</span><span class="ticker-item">ARCHITECTURAL RECORD</span><span class="ticker-item">·</span><span class="ticker-item">DESIGNBOOM</span><span class="ticker-item">·</span><span class="ticker-item">THE ARCHITECT'S NEWSPAPER</span><span class="ticker-item">·</span><span class="ticker-item">DOMUS</span><span class="ticker-item">·</span></span></div>
+<div class="tabs"><div class="tabs-inner">
+  <button class="tab active" onclick="filterStories('all',this)">All Sources</button>
+  <button class="tab" onclick="filterStories('archdaily',this)">ArchDaily</button>
+  <button class="tab" onclick="filterStories('dezeen',this)">Dezeen</button>
+  <button class="tab" onclick="filterStories('archinect',this)">Archinect</button>
+  <button class="tab" onclick="filterStories('metropolis',this)">Metropolis</button>
+  <button class="tab" onclick="filterStories('archrecord',this)">Arch Record</button>
+  <button class="tab" onclick="filterStories('designboom',this)">Designboom</button>
+  <button class="tab" onclick="filterStories('archpaper',this)">Arch Paper</button>
+  <button class="tab" onclick="filterStories('domus',this)">Domus</button>
+</div></div>
+<div class="date-banner"><div class="date-inner"><span class="date-str" id="date-str"></span><span class="edition">Vol. 1 · Issue 1 · Architecture Intelligence</span></div></div>
 <div class="main">
-  <div class="feed">
-    <div id="feed-container" class="loading-grid">
-      <!-- Skeleton loaders -->
-      <div id="skeleton-items"></div>
+  <div class="feed-col">
+    <div class="hero" id="hero-section">
+      <div class="hero-img-wrap"><img class="hero-img" id="hero-img" src="" alt=""/><div class="hero-img-overlay"></div><span class="hero-source-float" id="hero-sf">ArchDaily</span></div>
+      <div class="hero-meta"><span class="hero-badge" id="hero-badge">ArchDaily</span><span class="hero-time" id="hero-time">2h ago</span><span class="hero-rank">#1 TODAY</span></div>
+      <h1 class="hero-title" id="hero-title"></h1>
+      <p class="hero-excerpt" id="hero-excerpt"></p>
+      <div class="hero-footer">
+        <a class="read-btn" id="hero-link" href="#" target="_blank" rel="noopener" onclick="event.stopPropagation()">Read Full Story →</a>
+        <div class="hero-vote"><button class="vote-up" id="hero-vbtn" onclick="event.stopPropagation();heroVote()">▲</button><span class="vote-n" id="hero-vn">0</span></div>
+      </div>
     </div>
-    <div id="error-container"></div>
+    <div class="story-grid" id="story-grid"></div>
+    <div class="list-section"><div class="section-head"><span class="section-title">More Stories</span><div class="section-line"></div></div><div id="list-stories"></div></div>
   </div>
-
   <aside class="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-title">Stats</div>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <span class="stat-num" id="stat-stories">–</span>
-          <span class="stat-label">Stories</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num" id="stat-sources">8</span>
-          <span class="stat-label">Sources</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num" id="stat-votes">–</span>
-          <span class="stat-label">Votes</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num" id="stat-updated">–</span>
-          <span class="stat-label">Mins Ago</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-title">Sources</div>
-      <div class="source-list" id="source-list">
-        <!-- Populated by JS -->
-      </div>
-    </div>
-
-    <div class="sidebar-section">
-      <div class="sidebar-title">About</div>
-      <p class="about-text">
-        ARCHNEWS aggregates the world's leading architecture publications into one intelligent feed — ranked by recency and community signal.<br><br>
-        Sources: ArchDaily, Dezeen, Archinect, Metropolis, Architectural Record, Designboom, The Architect's Newspaper, Domus.
-      </p>
-    </div>
+    <div class="sb"><div class="sb-title">Today's Stats</div><div class="stats-2x2"><div class="stat-cell"><span class="stat-big" id="s-stories">30</span><span class="stat-lbl">Stories</span></div><div class="stat-cell"><span class="stat-big">8</span><span class="stat-lbl">Sources</span></div><div class="stat-cell"><span class="stat-big" id="s-votes">0</span><span class="stat-lbl">Upvotes</span></div><div class="stat-cell"><span class="stat-big">Feb</span><span class="stat-lbl">2026</span></div></div></div>
+    <div class="sb"><div class="sb-title">Trending</div><div id="trending-list"></div></div>
+    <div class="sb"><div class="sb-title">Sources</div><div id="src-list"></div></div>
+    <div class="sb"><div class="sb-title">About</div><p class="about-text">ARCHNEWS aggregates the world's top architecture publications into one feed. Click any story to read the full article on its original source — ArchDaily, Dezeen, Archinect, and more.</p></div>
   </aside>
 </div>
-
 <footer>
-  ARCHNEWS — Aggregating the world's architecture discourse — Built for architects, by architects
+  <div class="footer-inner">
+    <div class="footer-brand"><div class="fn">ARCH<span>NEWS</span></div><p>The architecture community's daily briefing. Aggregating the world's best architecture journalism into one intelligent feed. Every story links to its original source.</p></div>
+    <div><div class="footer-col-title">Sources</div><ul class="footer-links"><li><a href="https://www.archdaily.com" target="_blank">ArchDaily ↗</a></li><li><a href="https://www.dezeen.com" target="_blank">Dezeen ↗</a></li><li><a href="https://archinect.com" target="_blank">Archinect ↗</a></li><li><a href="https://metropolismag.com" target="_blank">Metropolis ↗</a></li><li><a href="https://www.architecturalrecord.com" target="_blank">Arch Record ↗</a></li><li><a href="https://www.designboom.com" target="_blank">Designboom ↗</a></li><li><a href="https://www.archpaper.com" target="_blank">Arch Paper ↗</a></li><li><a href="https://www.domusweb.it" target="_blank">Domus ↗</a></li></ul></div>
+    <div><div class="footer-col-title">Topics</div><ul class="footer-links"><li><a href="#">Residential Architecture</a></li><li><a href="#">Cultural Buildings</a></li><li><a href="#">Urban Design</a></li><li><a href="#">Sustainability</a></li><li><a href="#">Practice & Business</a></li><li><a href="#">Technology & BIM</a></li><li><a href="#">Awards & Recognition</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 ARCHNEWS — Architecture Intelligence — archnews.vercel.app</p><p>Built for architects, by architects</p></div>
 </footer>
-
-<script>
-// ============================================================
-// CONFIG: RSS FEEDS
-// ============================================================
-const SOURCES = [
-  {
-    id: 'archdaily',
-    name: 'ArchDaily',
-    url: 'https://feeds.feedburner.com/Archdaily',
-    fallback: 'https://www.archdaily.com/feed',
-    dotColor: '#e05a5a',
-  },
-  {
-    id: 'dezeen',
-    name: 'Dezeen',
-    url: 'https://feeds.feedburner.com/dezeen',
-    dotColor: '#5a9ee0',
-  },
-  {
-    id: 'archinect',
-    name: 'Archinect',
-    url: 'https://archinect.com/feed/news',
-    dotColor: '#5ae05a',
-  },
-  {
-    id: 'metropolis',
-    name: 'Metropolis',
-    url: 'https://metropolismag.com/feed/',
-    dotColor: '#a05ae0',
-  },
-  {
-    id: 'archrecord',
-    name: 'Arch Record',
-    url: 'https://www.architecturalrecord.com/rss/articles',
-    dotColor: '#e0a05a',
-  },
-  {
-    id: 'designboom',
-    name: 'Designboom',
-    url: 'https://www.designboom.com/architecture/rss/',
-    dotColor: '#e05ab0',
-  },
-  {
-    id: 'archpaper',
-    name: "Architect's Newspaper",
-    url: 'https://www.archpaper.com/feed/',
-    dotColor: '#e0d05a',
-  },
-  {
-    id: 'domus',
-    name: 'Domus',
-    url: 'https://www.domusweb.it/en/rss.xml',
-    dotColor: '#c8a96e',
-  },
-];
-
-// CORS Proxy options (try each one)
-const CORS_PROXIES = [
-  (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-  (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-];
-
-let allStories = [];
-let votes = {};
-let currentFilter = 'all';
-let loadStart = Date.now();
-
-// ============================================================
-// RSS FETCH & PARSE
-// ============================================================
-async function fetchRSS(source) {
-  for (const proxyFn of CORS_PROXIES) {
-    try {
-      const proxyUrl = proxyFn(source.url);
-      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) continue;
-      const data = await res.json();
-      const xmlStr = data.contents || data;
-      if (!xmlStr || typeof xmlStr !== 'string') continue;
-      const items = parseRSS(xmlStr, source);
-      if (items.length > 0) return items;
-    } catch (e) {
-      continue;
-    }
-  }
-  return [];
-}
-
-function parseRSS(xmlStr, source) {
-  try {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xmlStr, 'text/xml');
-    const items = Array.from(doc.querySelectorAll('item, entry'));
-
-    return items.slice(0, 12).map((item, idx) => {
-      const title = getTextContent(item, 'title');
-      const link = getTextContent(item, 'link') ||
-                   item.querySelector('link')?.getAttribute('href') || '#';
-      const description = getTextContent(item, 'description') ||
-                          getTextContent(item, 'summary') ||
-                          getTextContent(item, 'content');
-      const pubDate = getTextContent(item, 'pubDate') ||
-                      getTextContent(item, 'published') ||
-                      getTextContent(item, 'updated');
-      const enclosure = item.querySelector('enclosure');
-      const mediaContent = item.querySelector('content');
-      let imageUrl = enclosure?.getAttribute('url') || 
-                     mediaContent?.getAttribute('url') ||
-                     extractImageFromDescription(description);
-
-      const cleanDesc = stripHTML(description).slice(0, 180);
-      const parsed = pubDate ? new Date(pubDate) : new Date();
-
-      return {
-        id: `${source.id}-${idx}-${Date.now()}`,
-        sourceId: source.id,
-        sourceName: source.name,
-        title: stripHTML(title) || 'Untitled',
-        link: link,
-        excerpt: cleanDesc,
-        image: imageUrl,
-        date: parsed,
-        votes: Math.floor(Math.random() * 80) + 5, // seed votes for demo
-      };
-    }).filter(item => item.title && item.title !== 'Untitled');
-  } catch (e) {
-    return [];
-  }
-}
-
-function getTextContent(el, tag) {
-  const found = el.querySelector(tag);
-  return found ? (found.textContent || found.innerHTML || '').trim() : '';
-}
-
-function stripHTML(html) {
-  if (!html) return '';
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
-function extractImageFromDescription(desc) {
-  if (!desc) return null;
-  const match = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
-  return match ? match[1] : null;
-}
-
-// ============================================================
-// TIME FORMATTING
-// ============================================================
-function timeAgo(date) {
-  const now = new Date();
-  const diff = Math.floor((now - date) / 1000);
-  if (diff < 60) return `${diff}s`;
-  if (diff < 3600) return `${Math.floor(diff/60)}m`;
-  if (diff < 86400) return `${Math.floor(diff/3600)}h`;
-  return `${Math.floor(diff/86400)}d`;
-}
-
-// ============================================================
-// RENDER
-// ============================================================
-function getSourceClass(sourceId) {
-  const map = {
-    archdaily: 'src-archdaily',
-    dezeen: 'src-dezeen',
-    archinect: 'src-archinect',
-    metropolis: 'src-metropolis',
-    archrecord: 'src-archrecord',
-    designboom: 'src-designboom',
-    archpaper: 'src-archpaper',
-    domus: 'src-domus',
-  };
-  return map[sourceId] || 'src-default';
-}
-
-function renderStories() {
-  const container = document.getElementById('feed-container');
-  const filtered = currentFilter === 'all'
-    ? allStories
-    : allStories.filter(s => s.sourceId === currentFilter);
-
-  if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty-state">No stories loaded yet.<br>Fetching from sources...</div>`;
-    return;
-  }
-
-  const sorted = [...filtered].sort((a, b) => b.date - a.date);
-
-  container.innerHTML = sorted.map((story, idx) => {
-    const userVotes = votes[story.id] || 0;
-    const totalVotes = story.votes + userVotes;
-    const voted = userVotes > 0;
-    const delay = idx * 0.03;
-
-    return `
-      <div class="story" style="animation-delay:${delay}s" onclick="openStory('${encodeURIComponent(story.link)}')">
-        <div class="story-rank">
-          <span class="rank-num">${idx + 1}</span>
-          <button class="upvote-btn ${voted ? 'voted' : ''}"
-            onclick="event.stopPropagation(); vote('${story.id}', this)"
-            title="Upvote">▲</button>
-          <span class="vote-count">${totalVotes}</span>
-        </div>
-        <div class="story-body">
-          <div class="story-meta-top">
-            <span class="source-tag ${getSourceClass(story.sourceId)}">${story.sourceName}</span>
-            <span class="story-time">${timeAgo(story.date)}</span>
-          </div>
-          <div class="story-body-inner">
-            <div class="story-content">
-              <a class="story-title" href="${story.link}" target="_blank" rel="noopener"
-                 onclick="event.stopPropagation()">
-                ${story.title}
-              </a>
-              ${story.excerpt ? `<p class="story-excerpt">${story.excerpt}</p>` : ''}
-              <div class="story-footer">
-                <a class="story-link" href="${story.link}" target="_blank" rel="noopener"
-                   onclick="event.stopPropagation()">
-                  ${new URL(story.link.startsWith('http') ? story.link : 'https://x.com').hostname.replace('www.','')} ↗
-                </a>
-              </div>
-            </div>
-            ${story.image ? `<img class="story-image" src="${story.image}" alt="" onerror="this.style.display='none'" loading="lazy">` : ''}
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  // Update stats
-  document.getElementById('stat-stories').textContent = filtered.length;
-  const totalVotesCount = Object.values(votes).reduce((a,b) => a+b, 0) +
-                          allStories.reduce((acc, s) => acc + s.votes, 0);
-  document.getElementById('stat-votes').textContent = totalVotesCount;
-  const minsAgo = Math.floor((Date.now() - loadStart) / 60000);
-  document.getElementById('stat-updated').textContent = minsAgo === 0 ? '<1' : minsAgo;
-
-  renderSourceList();
-}
-
-function renderSourceList() {
-  const counts = {};
-  allStories.forEach(s => {
-    counts[s.sourceId] = (counts[s.sourceId] || 0) + 1;
-  });
-
-  const list = document.getElementById('source-list');
-  list.innerHTML = SOURCES.map(src => {
-    const count = counts[src.id] || 0;
-    const active = currentFilter === src.id ? 'active' : '';
-    return `
-      <div class="source-item ${active}" onclick="setFilter('${src.id}', null)">
-        <div class="source-left">
-          <div class="source-dot" style="background:${src.dotColor}"></div>
-          <span class="source-name">${src.name}</span>
-        </div>
-        <span class="source-count">${count}</span>
-      </div>
-    `;
-  }).join('');
-}
-
-function renderSkeletons() {
-  const el = document.getElementById('skeleton-items');
-  el.innerHTML = Array(8).fill(0).map((_, i) => `
-    <div class="skeleton-item" style="animation-delay:${i*0.05}s">
-      <div class="skeleton-rank">
-        <div class="skeleton-block" style="width:20px;height:14px"></div>
-        <div class="skeleton-block" style="width:24px;height:24px"></div>
-      </div>
-      <div style="padding-top:4px">
-        <div class="skeleton-block" style="width:80px;height:14px;margin-bottom:10px"></div>
-        <div class="skeleton-block" style="width:${80 + Math.random()*15}%;height:18px;margin-bottom:8px"></div>
-        <div class="skeleton-block" style="width:${50 + Math.random()*30}%;height:14px;margin-bottom:6px"></div>
-        <div class="skeleton-block" style="width:${30 + Math.random()*20}%;height:14px"></div>
-      </div>
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modal-box">
+    <button class="modal-close" onclick="document.getElementById('modal').classList.remove('open');document.body.style.overflow=''">✕</button>
+    <span class="modal-src" id="m-badge"></span>
+    <img class="modal-img" id="m-img" src="" alt="" onerror="this.style.display='none'"/>
+    <h2 class="modal-title" id="m-title"></h2>
+    <p class="modal-excerpt" id="m-excerpt"></p>
+    <div class="modal-cta">
+      <a class="modal-read" id="m-link" href="#" target="_blank" rel="noopener">Read Full Article on Original Site →</a>
+      <span class="modal-note" id="m-note"></span>
     </div>
-  `).join('');
+  </div>
+</div>
+<script>
+const S=[
+  {id:0,src:'archdaily',sn:'ArchDaily',time:'2h',title:'Bjarke Ingels Group Unveils Spiraling Mixed-Use Tower for Copenhagen Waterfront',excerpt:"BIG's latest proposal transforms a former industrial harbour site into a vertical neighborhood with 600 homes, retail, and public sky gardens accessible at every level. The spiraling form responds to solar angles while creating a gradient of public and private space from ground to sky.",link:'https://www.archdaily.com/tag/big-bjarke-ingels-group',img:'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80',votes:84},
+  {id:1,src:'dezeen',sn:'Dezeen',time:'3h',title:'Zaha Hadid Architects Completes Undulating Cultural Centre in Saudi Arabia',excerpt:"The King Abdulaziz Centre opens with sweeping steel forms that evoke desert dunes, housing theatres, a library and a museum under one fluid roof. The project, a decade in the making, is the firm's most ambitious built work in the Middle East.",link:'https://www.dezeen.com/tag/zaha-hadid-architects/',img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=900&q=80',votes:71},
+  {id:2,src:'archinect',sn:'Archinect',time:'4h',title:'US Architecture Firms Report Strongest Hiring Quarter Since 2019',excerpt:"AIA's Architectural Billings Index climbs for the third consecutive month, with firms in the South and West reporting near-full capacity and critical shortages in licensed professionals and BIM specialists across all market sectors.",link:'https://archinect.com/news',img:'https://images.unsplash.com/photo-1497366216548-37526070297c?w=900&q=80',votes:56},
+  {id:3,src:'metropolis',sn:'Metropolis',time:'5h',title:'The Case for Radical Materiality: Why Architects Are Returning to Rammed Earth',excerpt:"A new generation of practitioners is embracing ancient techniques — rammed earth, adobe, compressed earth blocks — not as nostalgia but as a rigorous and urgent response to the carbon crisis in the global construction industry.",link:'https://metropolismag.com',img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80',votes:63},
+  {id:4,src:'archrecord',sn:'Arch Record',time:'6h',title:"Snøhetta Designs Net-Zero Office Campus for Oslo Tech District",excerpt:"The Norwegian firm integrates geothermal energy, a green roof network, and prefabricated mass timber frames to achieve near-zero carbon footprint across all building operations — a landmark in Nordic sustainable design.",link:'https://www.architecturalrecord.com',img:'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=900&q=80',votes:47},
+  {id:5,src:'designboom',sn:'Designboom',time:'7h',title:"MVRDV's Rotterdam Market Hall Celebrates 10 Years with Major Renovation",excerpt:"The Dutch firm revisits its iconic arched market hall, refreshing the celebrated interior artwork and introducing a new subterranean food corridor beneath the beloved landmark public space.",link:'https://www.designboom.com/architecture/',img:'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=900&q=80',votes:52},
+  {id:6,src:'archpaper',sn:'Arch Paper',time:'8h',title:'New York City Approves Controversial Supertall Residential Tower in Midtown',excerpt:"After years of fierce community opposition, the City Planning Commission approves a 1,400-foot residential tower near Grand Central, drawing criticism from preservation groups over permanent shadows cast on Central Park.",link:'https://www.archpaper.com',img:'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=900&q=80',votes:109},
+  {id:7,src:'domus',sn:'Domus',time:'9h',title:'Carlo Ratti: The Smartest Cities Are Built Around People, Not Data',excerpt:"The MIT architect argues that technology-first city planning has largely failed — and that the future of urban design lies in granular, community-driven participation enabled by open-source digital tools that put residents in charge.",link:'https://www.domusweb.it',img:'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=900&q=80',votes:38},
+  {id:8,src:'archdaily',sn:'ArchDaily',time:'10h',title:"Herzog & de Meuron's Tate Modern Extension Wins European Prize for Contemporary Architecture",excerpt:"The Switch House extension took the prestigious Mies van der Rohe Award, praised for its civic generosity, spatial invention, and the raw concrete brutalism that connects intimately with the surrounding Bankside urban fabric.",link:'https://www.archdaily.com',img:'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=900&q=80',votes:77},
+  {id:9,src:'dezeen',sn:'Dezeen',time:'11h',title:'Kengo Kuma Designs Bamboo Pavilion for 2026 Venice Architecture Biennale',excerpt:"The Japanese architect's contribution explores impermanence through a bamboo lattice structure that will be composted at the close of the exhibition — a meditation on material cycles, ephemerality, and our relationship to natural resources.",link:'https://www.dezeen.com',img:'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=900&q=80',votes:61},
+  {id:10,src:'archinect',sn:'Archinect',time:'12h',title:'Opinion: Why Architecture School Is Still Failing Its Students on Real-World Practice',excerpt:"Graduates consistently enter the profession unprepared for project management, client communication, and fee negotiation. Two veteran practitioners make the case for a complete and immediate curriculum overhaul.",link:'https://archinect.com/features',img:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=900&q=80',votes:93},
+  {id:11,src:'metropolis',sn:'Metropolis',time:'13h',title:'How Affordable Housing Developers Are Finally Embracing Modular Construction',excerpt:"After years of resistance, developers in New York, Los Angeles, and Chicago are turning to factory-built modules to dramatically cut costs and delivery timelines on subsidized and workforce housing projects.",link:'https://metropolismag.com',img:'https://images.unsplash.com/photo-1555636222-cae831e670b3?w=900&q=80',votes:44},
+  {id:12,src:'archrecord',sn:'Arch Record',time:'14h',title:'Adjaye Associates Breaks Ground on National Cathedral of Ghana in Accra',excerpt:"Sir David Adjaye's most ambitious project begins construction in Accra, featuring a dramatic tapestry of interlocking concrete vaults inspired by the kente cloth tradition of Ghana's master weavers.",link:'https://www.architecturalrecord.com',img:'https://images.unsplash.com/photo-1529640132046-4c6b2afa5c6e?w=900&q=80',votes:88},
+  {id:13,src:'designboom',sn:'Designboom',time:'15h',title:'Foster + Partners Reveals Plans for Floating Arctic Research Station',excerpt:"The self-sustaining sea platform will house 40 researchers year-round, powered entirely by tidal and solar energy systems, and engineered to leave zero permanent footprint on the fragile Arctic marine ecosystem.",link:'https://www.designboom.com',img:'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=900&q=80',votes:72},
+  {id:14,src:'archpaper',sn:'Arch Paper',time:'16h',title:"LA's Dodger Stadium Neighborhood Plan Faces Architect-Led Opposition",excerpt:"A growing coalition of architects filed formal objections to the proposed 5,000-unit development, citing inadequate public green space, severe traffic impact assessments, and documented risk of displacement of existing working-class communities.",link:'https://www.archpaper.com',img:'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=900&q=80',votes:65},
+  {id:15,src:'domus',sn:'Domus',time:'18h',title:"Álvaro Siza at 90: The Last Living Master Reflects on a Career Defined by Light",excerpt:"In a rare extended interview, the Pritzker Prize laureate discusses his formative years under Fernando Távora, his lifelong discipline of restraint and material honesty, and why he still insists on hand-drawing every single project.",link:'https://www.domusweb.it',img:'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=900&q=80',votes:99},
+  {id:16,src:'archdaily',sn:'ArchDaily',time:'20h',title:"Inside India's Fastest-Growing Architecture Scene: Ahmedabad to Mumbai",excerpt:"From CEPT University's globally connected alumni network to Mumbai's extraordinary high-rise construction boom, India's western corridor is producing some of Asia's most provocative and significant contemporary architecture.",link:'https://www.archdaily.com/tag/india',img:'https://images.unsplash.com/photo-1609783463945-430cd60c8ee1?w=900&q=80',votes:57},
+  {id:17,src:'dezeen',sn:'Dezeen',time:'21h',title:'Parametric Facades Are Everywhere — But Are They Actually Sustainable?',excerpt:"The growing backlash against complexity-for-its-own-sake is reaching critical mass. Critics and engineers argue algorithmically generated cladding systems often perform significantly worse thermally than simple, well-oriented walls.",link:'https://www.dezeen.com/tag/facades/',img:'https://images.unsplash.com/photo-1554080353-a576cf803bda?w=900&q=80',votes:81},
+  {id:18,src:'archinect',sn:'Archinect',time:'22h',title:'AIA Releases 2025 Compensation Report: Median Salaries Up 12% Across All Roles',excerpt:"Licensed architects in the US now earn a median of $98,000, with BIM specialists and project managers commanding the largest salary premiums in New York, Seattle, and Austin metropolitan markets.",link:'https://archinect.com/news',img:'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=900&q=80',votes:120},
+  {id:19,src:'archrecord',sn:'Arch Record',time:'1d',title:'The Return of Post-Modern: A Reviled Style Reclaimed by a New Generation',excerpt:"Young architects and critics are reappraising the colorful, ironic buildings dismissed as shallow kitsch in the 1990s, finding in them a cultural specificity and urban warmth that cool glass minimalism conspicuously lacks.",link:'https://www.architecturalrecord.com',img:'https://images.unsplash.com/photo-1467533003447-e295ff1b0435?w=900&q=80',votes:74},
+  {id:20,src:'metropolis',sn:'Metropolis',time:'1d',title:'What Happens to Architecture When AI Does the Drafting?',excerpt:"As generative design tools rapidly take over routine drawing tasks, the profession confronts a genuine identity crisis. If architects no longer draw, what exactly is their role? Four leading practitioners offer competing and provocative visions.",link:'https://metropolismag.com',img:'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=900&q=80',votes:103},
+  {id:21,src:'designboom',sn:'Designboom',time:'1d',title:'Renzo Piano Building Workshop Completes Low-Carbon Library in Peckham, London',excerpt:"The new Peckham branch library opens as one of the UK's greenest civic buildings, using recycled brick aggregate, cross-laminated timber structure, and an extensive living roof to achieve BREEAM Outstanding certification.",link:'https://www.designboom.com',img:'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=900&q=80',votes:48},
+  {id:22,src:'archpaper',sn:'Arch Paper',time:'1d',title:"Chicago's Landmark Preservation Crisis: Two Brutalist Towers Facing Demolition",excerpt:"Civic activists and architecture historians are urgently mobilizing to save two celebrated 1970s Bertrand Goldberg housing towers slated for demolition as part of a contentious and politically charged redevelopment proposal.",link:'https://www.archpaper.com',img:'https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=900&q=80',votes:66},
+  {id:23,src:'domus',sn:'Domus',time:'1d',title:'The New Italian Rationalism: Young Studios Reclaiming a Contested Heritage',excerpt:"A significant wave of Italian architecture studios is revisiting the formal rigour and civic ambition of interwar rationalism, stripped of its fascist associations and reframed as a compelling model for the contemporary European city.",link:'https://www.domusweb.it',img:'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=900&q=80',votes:42},
+  {id:24,src:'archdaily',sn:'ArchDaily',time:'1d',title:'Mass Timber Takes Center Stage at 2026 World Architecture Festival in Singapore',excerpt:"With an unprecedented 40% of shortlisted competition entries featuring CLT or glulam timber construction, WAF 2026 signals definitively that mass timber has moved from niche sustainability experiment to mainstream global practice.",link:'https://www.archdaily.com/tag/mass-timber',img:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=900&q=80',votes:59},
+  {id:25,src:'dezeen',sn:'Dezeen',time:'2d',title:'Olafur Eliasson Transforms Decommissioned Berlin Coal Plant into Climate Museum',excerpt:"The Danish-Icelandic artist and architect converts a vast decommissioned coal-fired power plant into a new institution dedicated to climate science, ecological imagination, and community action — his most ambitious built project to date.",link:'https://www.dezeen.com/tag/olafur-eliasson/',img:'https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=900&q=80',votes:88},
+  {id:26,src:'archinect',sn:'Archinect',time:'2d',title:'Remote Work Is Reshaping the Architecture Studio — and Not Everyone Is Happy',excerpt:"Hybrid work schedules have significantly boosted recruitment reach but fractured studio culture in complex ways. Principals at ten of the world's leading firms share how they are rebuilding mentorship and creative collaboration at a distance.",link:'https://archinect.com/features',img:'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=900&q=80',votes:76},
+  {id:27,src:'archrecord',sn:'Arch Record',time:'2d',title:'NCARB Reports Record Number of Architects Completing ARE Licensure in 2025',excerpt:"Nearly 6,800 candidates successfully passed all six divisions of the Architect Registration Examination — the highest total since the exam's comprehensive restructuring, with women now comprising 48% of all newly licensed architects.",link:'https://www.architecturalrecord.com',img:'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=900&q=80',votes:53},
+  {id:28,src:'designboom',sn:'Designboom',time:'2d',title:'Studio Gang Wins Major Competition for New Chicago Lakefront Cultural District',excerpt:"Jeanne Gang's celebrated Chicago firm beat four strong international finalist teams with a visionary master plan restoring two miles of degraded lakefront ecology while adding a new performing arts hub and accessible public beach.",link:'https://www.designboom.com',img:'https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=900&q=80',votes:67},
+  {id:29,src:'archpaper',sn:'Arch Paper',time:'2d',title:'Opinion: The Architecture Profession Must Urgently Confront Its Affordability Problem',excerpt:"Chronically low entry-level salaries, crushing student loan debt, and expensive multi-year licensure fees are rapidly turning architecture into an exclusive profession for the already privileged. Firms, schools, and the AIA must act now.",link:'https://www.archpaper.com',img:'https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=900&q=80',votes:114}
+];
+const DOMAINS={archdaily:'archdaily.com',dezeen:'dezeen.com',archinect:'archinect.com',metropolis:'metropolismag.com',archrecord:'architecturalrecord.com',designboom:'designboom.com',archpaper:'archpaper.com',domus:'domusweb.it'};
+const SRCS=[{id:'archdaily',name:'ArchDaily',dot:'#bf2d0a'},{id:'dezeen',name:'Dezeen',dot:'#0a4fb8'},{id:'archinect',name:'Archinect',dot:'#0a8a35'},{id:'metropolis',name:'Metropolis',dot:'#6b08a8'},{id:'archrecord',name:'Arch Record',dot:'#b87008'},{id:'designboom',name:'Designboom',dot:'#a80875'},{id:'archpaper',name:'Arch Paper',dot:'#087ab8'},{id:'domus',name:'Domus',dot:'#1a1a14'}];
+let votes={},cf='all';
+try{votes=JSON.parse(localStorage.getItem('an_v3')||'{}');}catch(e){}
+document.getElementById('date-str').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'}).toUpperCase();
+function gs(){return cf==='all'?S:S.filter(s=>s.src===cf);}
+function render(){
+  const stories=gs();
+  if(!stories.length){document.getElementById('story-grid').innerHTML='<p style="padding:40px;color:#8a8680;font-family:IBM Plex Mono,monospace;font-size:12px;grid-column:1/-1;">No stories for this source.</p>';document.getElementById('list-stories').innerHTML='';return;}
+  const h=stories[0];
+  document.getElementById('hero-img').src=h.img||'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80';
+  ['hero-sf','hero-badge'].forEach(id=>{document.getElementById(id).textContent=h.sn;document.getElementById(id).className=(id==='hero-sf'?'hero-source-float ':'hero-badge ')+'bd-'+h.src;});
+  document.getElementById('hero-time').textContent=h.time+' ago';
+  document.getElementById('hero-title').textContent=h.title;
+  document.getElementById('hero-excerpt').textContent=h.excerpt;
+  document.getElementById('hero-link').href=h.link;
+  document.getElementById('hero-vn').textContent=h.votes+(votes[h.id]||0);
+  document.getElementById('hero-vbtn').className='vote-up'+(votes[h.id]?' voted':'');
+  document.getElementById('hero-section').onclick=()=>openModal(h.id);
+  document.getElementById('story-grid').innerHTML=stories.slice(1,7).map((s,i)=>{
+    const v=s.votes+(votes[s.id]||0),voted=!!votes[s.id];
+    return `<div class="story-card" style="animation-delay:${i*0.06}s" onclick="openModal(${s.id})">
+      <div class="card-img-wrap"><img class="card-img" src="${s.img||'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=70'}" alt="" onerror="this.parentElement.style.display='none'" loading="lazy"/></div>
+      <div class="card-meta"><span class="card-badge bd-${s.src}">${s.sn}</span><span class="card-time">${s.time} ago</span></div>
+      <div class="card-title">${s.title}</div>
+      <p class="card-excerpt">${s.excerpt}</p>
+      <div class="card-footer"><a class="card-domain" href="${s.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${DOMAINS[s.src]} ↗</a>
+      <div class="card-votes"><button class="mini-vote ${voted?'voted':''}" onclick="event.stopPropagation();doVote(${s.id},this)">▲</button><span class="mini-vn" id="vc-${s.id}">${v}</span></div></div>
+    </div>`;}).join('');
+  document.getElementById('list-stories').innerHTML=stories.slice(7).map((s,i)=>{
+    const v=s.votes+(votes[s.id]||0),voted=!!votes[s.id];
+    return `<div class="list-story" style="animation-delay:${(i+6)*0.04}s" onclick="openModal(${s.id})">
+      <span class="list-num">${i+8}</span>
+      <div><div class="list-meta"><span class="list-badge bd-${s.src}">${s.sn}</span><span class="list-time">${s.time} ago</span><button class="mini-vote ${voted?'voted':''}" onclick="event.stopPropagation();doVote(${s.id},this)" style="margin-left:auto">▲</button><span class="mini-vn" id="vc-${s.id}">${v}</span></div>
+      <div class="list-title">${s.title}</div><div class="list-excerpt">${s.excerpt}</div></div>
+      ${s.img?`<img class="list-img" src="${s.img}" alt="" onerror="this.style.display='none'" loading="lazy"/>`:''}
+    </div>`;}).join('');
+  const top5=[...stories].sort((a,b)=>(b.votes+(votes[b.id]||0))-(a.votes+(votes[a.id]||0))).slice(0,5);
+  document.getElementById('trending-list').innerHTML=top5.map((s,i)=>`<div class="trending-item" onclick="openModal(${s.id})"><span class="trend-num">0${i+1}</span><div><span class="trend-source bd-${s.src}">${s.sn}</span><div class="trend-title">${s.title}</div></div></div>`).join('');
+  const counts={};S.forEach(s=>{counts[s.src]=(counts[s.src]||0)+1;});
+  document.getElementById('src-list').innerHTML=SRCS.map(sr=>`<div class="src-row" onclick="filterStories('${sr.id}',null)"><div class="src-left"><div class="src-dot" style="background:${sr.dot}"></div><span class="src-name">${sr.name}</span></div><span class="src-cnt">${counts[sr.id]||0}</span></div>`).join('');
+  document.getElementById('s-stories').textContent=stories.length;
+  document.getElementById('s-votes').textContent=Object.keys(votes).length;
 }
-
-// ============================================================
-// INTERACTIONS
-// ============================================================
-function vote(storyId, btn) {
-  if (votes[storyId]) return;
-  votes[storyId] = 1;
-  btn.classList.add('voted');
-  const countEl = btn.nextElementSibling;
-  const story = allStories.find(s => s.id === storyId);
-  if (story && countEl) {
-    countEl.textContent = story.votes + 1;
-  }
-  // Save to localStorage
-  try { localStorage.setItem('archnews_votes', JSON.stringify(votes)); } catch(e) {}
+function doVote(id,btn){
+  if(votes[id])return;votes[id]=1;btn.classList.add('voted');
+  const s=S.find(x=>x.id===id),el=document.getElementById('vc-'+id);
+  if(s&&el)el.textContent=s.votes+1;
+  document.getElementById('s-votes').textContent=Object.keys(votes).length;
+  try{localStorage.setItem('an_v3',JSON.stringify(votes));}catch(e){}
 }
-
-function openStory(encodedUrl) {
-  const url = decodeURIComponent(encodedUrl);
-  if (url && url !== '#') window.open(url, '_blank', 'noopener');
+function heroVote(){
+  const h=gs()[0];if(!h||votes[h.id])return;
+  votes[h.id]=1;document.getElementById('hero-vbtn').classList.add('voted');
+  document.getElementById('hero-vn').textContent=h.votes+1;
+  document.getElementById('s-votes').textContent=Object.keys(votes).length;
+  try{localStorage.setItem('an_v3',JSON.stringify(votes));}catch(e){}
 }
-
-function setFilter(filter, btn) {
-  currentFilter = filter;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  else {
-    // Update both filter bar and source list
-    document.querySelector(`[data-filter="${filter}"]`)?.classList.add('active');
-    if (filter === 'all') {
-      document.querySelector('[data-filter="all"]')?.classList.add('active');
-    }
-  }
-  renderStories();
-  renderSourceList();
+function filterStories(f,btn){
+  cf=f;document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  else document.querySelectorAll('.tab').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+f+"'"))b.classList.add('active');});
+  render();window.scrollTo({top:0,behavior:'smooth'});
 }
-
-// ============================================================
-// LOAD FEEDS
-// ============================================================
-async function loadAllFeeds() {
-  renderSkeletons();
-  document.getElementById('error-container').innerHTML = '';
-  allStories = [];
-  loadStart = Date.now();
-
-  // Load votes from localStorage
-  try {
-    const saved = localStorage.getItem('archnews_votes');
-    if (saved) votes = JSON.parse(saved);
-  } catch(e) {}
-
-  const feedPromises = SOURCES.map(async (source) => {
-    const items = await fetchRSS(source);
-    allStories = [...allStories, ...items];
-    // Re-render as each feed comes in
-    renderStories();
-    return { source: source.id, count: items.length };
-  });
-
-  const results = await Promise.allSettled(feedPromises);
-  const failed = results.filter(r => r.status === 'rejected' ||
-    (r.value && r.value.count === 0)).length;
-
-  if (failed > 0) {
-    document.getElementById('error-container').innerHTML = `
-      <div class="error-note">
-        ⚠ ${failed} source(s) unavailable — RSS feeds may require a backend proxy for production.
-        Consider hosting with a simple Node.js server for full feed access.<br>
-        <a href="https://github.com/nicholasgasior/rss-aggregator" style="color:var(--accent)">See deployment guide →</a>
-      </div>
-    `;
-  }
-
-  renderStories();
+function openModal(id){
+  const s=S.find(x=>x.id===id);if(!s)return;
+  document.getElementById('m-badge').textContent=s.sn;document.getElementById('m-badge').className='modal-src bd-'+s.src;
+  const img=document.getElementById('m-img');if(s.img){img.src=s.img;img.style.display='block';}else{img.style.display='none';}
+  document.getElementById('m-title').textContent=s.title;
+  document.getElementById('m-excerpt').textContent=s.excerpt;
+  document.getElementById('m-link').href=s.link;document.getElementById('m-link').textContent='Read Full Article on '+DOMAINS[s.src]+' →';
+  document.getElementById('m-note').textContent='Opens '+s.link+' in a new tab';
+  document.getElementById('modal').classList.add('open');document.body.style.overflow='hidden';
 }
-
-// ============================================================
-// INIT
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-  loadAllFeeds();
-  // Auto-refresh every 5 minutes
-  setInterval(loadAllFeeds, 300000);
-});
+function closeModal(e){if(e&&e.target!==document.getElementById('modal'))return;document.getElementById('modal').classList.remove('open');document.body.style.overflow='';}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('modal').classList.remove('open');document.body.style.overflow='';}});
+render();
 </script>
 </body>
 </html>
