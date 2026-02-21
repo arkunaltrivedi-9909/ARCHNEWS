@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="description" content="ARCHNEWS — The world's architecture news in one place. ArchDaily, Dezeen, Archinect, Metropolis, Architectural Record, Designboom, and more."/>
+<meta property="og:title" content="ARCHNEWS — Architecture Intelligence"/>
+<meta property="og:description" content="All architecture news. One feed. Updated live."/>
+<title>ARCHNEWS — Architecture Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0c0b09;
+  --paper:#f6f2eb;
+  --cream:#ede8df;
+  --surface:#e8e3d8;
+  --border:#d0c9bc;
+  --red:#c0300a;
+  --red-dark:#8a2006;
+  --text2:#48433c;
+  --text3:#928c84;
+  --white:#fdfaf4;
+  --gold:#a07c10;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+/* ── MASTHEAD ── */
+.masthead{background:var(--ink);border-bottom:4px solid var(--red);}
+.masthead-top{max-width:1340px;margin:0 auto;padding:0 28px;height:70px;display:flex;align-items:center;justify-content:space-between;}
+.logo{text-decoration:none;display:flex;align-items:baseline;gap:14px;}
+.logo-word{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--white);letter-spacing:0.06em;line-height:1;}
+.logo-word em{color:var(--red);font-style:normal;}
+.logo-meta{display:flex;flex-direction:column;gap:2px;}
+.logo-tagline{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#555;letter-spacing:0.25em;text-transform:uppercase;}
+.logo-date{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#444;letter-spacing:0.1em;}
+.masthead-right{display:flex;align-items:center;gap:14px;}
+.live-signal{display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#ff5a35;letter-spacing:0.18em;border:1px solid rgba(192,48,10,0.3);background:rgba(192,48,10,0.07);padding:6px 12px;}
+.signal-dot{width:6px;height:6px;border-radius:50%;background:#ff5a35;animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.25;transform:scale(0.7)}}
+.masthead-nav{display:flex;align-items:center;gap:0;border-top:1px solid #1c1c16;}
+.masthead-nav-inner{max-width:1340px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;}
+.nav-left{display:flex;}
+.nav-btn{background:none;border:none;color:#4a4a40;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 16px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.15s;}
+.nav-btn:hover{color:#aaa;}
+.nav-btn.active{color:var(--red);border-bottom-color:var(--red);}
+.nav-right{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#444;letter-spacing:0.12em;padding:10px 0;}
+#update-time{color:#666;}
+
+/* ── TICKER ── */
+.ticker-wrap{background:var(--red);overflow:hidden;padding:7px 0;border-bottom:2px solid var(--red-dark);}
+.ticker-inner{display:flex;animation:ticker-anim 45s linear infinite;white-space:nowrap;}
+.tick{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;color:rgba(255,255,255,0.88);padding:0 36px;}
+.tick-sep{color:rgba(255,255,255,0.35);padding:0 4px;}
+@keyframes ticker-anim{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── LAYOUT ── */
+.page{max-width:1340px;margin:0 auto;padding:0 28px;}
+.grid-master{display:grid;grid-template-columns:1fr 340px;gap:0;}
+
+/* ── HERO ── */
+.hero-section{border-bottom:2px solid var(--ink);padding:28px 28px 28px 0;}
+.hero-wrap{cursor:pointer;}
+.hero-img-box{position:relative;overflow:hidden;aspect-ratio:21/9;margin-bottom:18px;background:var(--surface);}
+.hero-img{width:100%;height:100%;object-fit:cover;transition:transform 0.7s ease;display:block;}
+.hero-wrap:hover .hero-img{transform:scale(1.03);}
+.hero-img-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(12,11,9,0.55) 0%,transparent 50%,transparent 70%,rgba(12,11,9,0.3) 100%);}
+.hero-float-badge{position:absolute;top:18px;left:18px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;padding:4px 12px;color:white;font-weight:500;}
+.hero-float-rank{position:absolute;bottom:18px;right:18px;font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:0.15em;color:rgba(255,255,255,0.6);}
+.hero-kicker{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.hero-kicker span{color:var(--red);}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:700;line-height:1.1;color:var(--ink);margin-bottom:14px;max-width:700px;transition:color 0.15s;}
+.hero-wrap:hover .hero-title{color:var(--red);}
+.hero-excerpt{font-size:16px;color:var(--text2);line-height:1.65;max-width:660px;margin-bottom:18px;font-family:'Cormorant Garamond',serif;font-style:italic;}
+.hero-footer{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.read-orig{display:inline-flex;align-items:center;gap:9px;background:var(--ink);color:var(--white);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:11px 22px;text-decoration:none;transition:background 0.15s;border:2px solid var(--ink);}
+.read-orig:hover{background:var(--red);border-color:var(--red);}
+.read-orig svg{width:11px;height:11px;fill:currentColor;}
+.vote-row{display:flex;align-items:center;gap:9px;}
+.vote-btn{background:none;border:1px solid var(--border);width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:13px;transition:all 0.15s;}
+.vote-btn:hover{border-color:var(--red);color:var(--red);}
+.vote-btn.voted{background:var(--red);border-color:var(--red);color:white;}
+.vote-count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2);min-width:28px;}
+.hero-time{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-left:auto;}
+
+/* ── SECTION HEADER ── */
+.sec-head{display:flex;align-items:center;gap:14px;padding:18px 0 0;margin-bottom:0;}
+.sec-label{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;color:var(--ink);white-space:nowrap;}
+.sec-rule{flex:1;height:2px;background:var(--ink);}
+.sec-rule-light{flex:1;height:1px;background:var(--border);}
+
+/* ── CARD GRID ── */
+.card-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--border);}
+.card{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 20px 18px 0;cursor:pointer;transition:background 0.12s;animation:fadeUp 0.4s ease forwards;opacity:0;}
+.card:nth-child(3n){border-right:none;}
+.card:hover{background:var(--cream);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card-img-box{overflow:hidden;aspect-ratio:3/2;margin-bottom:12px;background:var(--surface);}
+.card-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;display:block;}
+.card:hover .card-img{transform:scale(1.05);}
+.card-meta{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.card-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 8px;color:white;}
+.card-age{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);margin-left:auto;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;line-height:1.25;color:var(--ink);margin-bottom:8px;transition:color 0.12s;}
+.card:hover .card-title{color:var(--red);}
+.card-excerpt{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.card-foot{display:flex;align-items:center;justify-content:space-between;}
+.card-domain{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);text-decoration:none;}
+.card-domain:hover{color:var(--red);}
+.mini-votes{display:flex;align-items:center;gap:5px;}
+.mini-btn{background:none;border:1px solid var(--border);width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);font-size:9px;transition:all 0.12s;}
+.mini-btn:hover{border-color:var(--red);color:var(--red);}
+.mini-btn.voted{background:var(--red);border-color:var(--red);color:white;}
+.mini-count{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);}
+
+/* ── LIST STORIES ── */
+.list-story{display:grid;grid-template-columns:44px 1fr auto;border-bottom:1px solid var(--border);padding:15px 0;cursor:pointer;transition:background 0.1s;animation:fadeUp 0.4s ease forwards;opacity:0;align-items:start;}
+.list-story:hover{background:var(--cream);margin:0 -8px;padding:15px 8px;}
+.ls-num{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--border);line-height:1;padding-top:2px;}
+.ls-body{}
+.ls-meta{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;}
+.ls-badge{font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 7px;color:white;}
+.ls-age{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);}
+.ls-vote-wrap{display:flex;align-items:center;gap:5px;margin-left:auto;}
+.ls-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;line-height:1.3;color:var(--ink);margin-bottom:3px;transition:color 0.1s;}
+.list-story:hover .ls-title{color:var(--red);}
+.ls-excerpt{font-size:12px;color:var(--text2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ls-img{width:76px;height:56px;object-fit:cover;border:1px solid var(--border);margin-left:14px;flex-shrink:0;}
+
+/* ── SIDEBAR ── */
+.sidebar{border-left:1px solid var(--border);padding:0 0 40px 28px;}
+.sb{padding:20px 0;border-bottom:1px solid var(--border);}
+.sb-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:0.08em;color:var(--ink);padding-bottom:10px;border-bottom:2px solid var(--ink);margin-bottom:14px;}
+
+.stats-box{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);}
+.stat{background:var(--white);padding:14px 12px;}
+.stat-n{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--red);display:block;line-height:1;}
+.stat-l{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;}
+
+.trend-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:all 0.1s;}
+.trend-item:last-child{border-bottom:none;}
+.trend-item:hover .tr-title{color:var(--red);}
+.tr-num{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--border);line-height:1;flex-shrink:0;width:30px;}
+.tr-body{}
+.tr-src{display:inline-block;padding:1px 6px;color:white;font-family:'IBM Plex Mono',monospace;font-size:7px;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:3px;}
+.tr-title{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;line-height:1.3;color:var(--ink);transition:color 0.1s;}
+
+.src-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;}
+.src-item:last-child{border-bottom:none;}
+.src-item:hover .si-name{color:var(--red);}
+.si-left{display:flex;align-items:center;gap:9px;}
+.si-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.si-name{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);transition:color 0.1s;}
+.si-count{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);}
+.si-status{font-family:'IBM Plex Mono',monospace;font-size:8px;color:#4caf50;letter-spacing:0.1em;}
+.si-status.dead{color:#f44336;}
+
+.newsletter-box{background:var(--ink);padding:20px;margin-top:0;}
+.nl-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);letter-spacing:0.08em;margin-bottom:8px;}
+.nl-sub{font-size:12px;color:#777;line-height:1.6;margin-bottom:14px;}
+.nl-input{width:100%;background:#1a1a14;border:1px solid #333;color:var(--white);padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;margin-bottom:8px;outline:none;}
+.nl-input::placeholder{color:#444;}
+.nl-input:focus{border-color:var(--red);}
+.nl-btn{width:100%;background:var(--red);color:white;border:none;padding:11px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:background 0.15s;}
+.nl-btn:hover{background:var(--red-dark);}
+
+.about-p{font-size:12px;color:var(--text2);line-height:1.75;}
+
+/* ── LOADING ── */
+.loading-screen{position:fixed;inset:0;background:var(--ink);z-index:900;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity 0.5s,visibility 0.5s;}
+.loading-screen.hidden{opacity:0;visibility:hidden;}
+.loading-logo{font-family:'Bebas Neue',sans-serif;font-size:56px;color:var(--white);letter-spacing:0.1em;}
+.loading-logo em{color:var(--red);font-style:normal;}
+.loading-bar-wrap{width:300px;height:2px;background:#222;}
+.loading-bar{height:100%;background:var(--red);width:0%;transition:width 0.3s ease;}
+.loading-text{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#444;letter-spacing:0.2em;text-transform:uppercase;}
+
+/* ── ERROR STATE ── */
+.error-banner{background:#fff8e6;border:1px solid #d4a017;border-left:4px solid #d4a017;padding:12px 18px;margin:16px 0;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#7a6010;line-height:1.7;}
+
+/* ── SKELETON ── */
+.skel{background:var(--border);animation:shimmer 1.5s infinite;}
+@keyframes shimmer{0%,100%{opacity:0.5}50%{opacity:1}}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(12,11,9,0.92);z-index:800;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;backdrop-filter:blur(8px);}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal-box{background:var(--white);max-width:600px;width:92%;max-height:88vh;overflow-y:auto;padding:40px;position:relative;animation:modalSlide 0.3s ease;box-shadow:0 40px 120px rgba(0,0,0,0.6);}
+@keyframes modalSlide{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-x{position:absolute;top:16px;right:16px;background:none;border:1px solid var(--border);width:34px;height:34px;cursor:pointer;color:var(--text2);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.modal-x:hover{background:var(--red);border-color:var(--red);color:white;}
+.modal-source-tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;padding:4px 12px;color:white;margin-bottom:16px;}
+.modal-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;margin-bottom:18px;border:1px solid var(--border);}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;line-height:1.2;color:var(--ink);margin-bottom:14px;}
+.modal-excerpt{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--border);font-family:'Cormorant Garamond',serif;font-style:italic;}
+.modal-read-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--ink);color:var(--white);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;padding:15px 28px;text-decoration:none;transition:background 0.15s;margin-bottom:10px;}
+.modal-read-btn:hover{background:var(--red);}
+.modal-domain-note{font-size:11px;color:var(--text3);text-align:center;font-style:italic;}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);border-top:4px solid var(--red);padding:40px 28px 28px;}
+.footer-grid{max-width:1340px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:32px;}
+.f-brand-name{font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--white);letter-spacing:0.06em;}
+.f-brand-name em{color:var(--red);font-style:normal;}
+.f-brand-desc{font-size:12px;color:#555;line-height:1.8;margin-top:10px;}
+.f-col-head{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#444;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #1e1e18;}
+.f-links{list-style:none;display:flex;flex-direction:column;gap:7px;}
+.f-links a{font-size:12px;color:#555;text-decoration:none;transition:color 0.1s;}
+.f-links a:hover{color:var(--white);}
+.footer-bottom{max-width:1340px;margin:0 auto;padding-top:24px;border-top:1px solid #1a1a14;display:flex;justify-content:space-between;align-items:center;}
+.footer-bottom p{font-family:'IBM Plex Mono',monospace;font-size:9px;color:#3a3a34;letter-spacing:0.1em;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.card-grid{grid-template-columns:1fr 1fr;}.card:nth-child(3n){border-right:1px solid var(--border);}.card:nth-child(2n){border-right:none;}}
+@media(max-width:900px){.grid-master{grid-template-columns:1fr;}.sidebar{display:none;}.hero-section{padding-right:0;}.hero-title{font-size:28px;}.hero-excerpt{font-size:14px;}.card-grid{grid-template-columns:1fr 1fr;}.footer-grid{grid-template-columns:1fr 1fr;gap:24px;}}
+@media(max-width:600px){.page{padding:0 16px;}.masthead-top{padding:0 16px;height:60px;}.logo-word{font-size:36px;}.card-grid{grid-template-columns:1fr;}.card:nth-child(n){border-right:none;}.hero-title{font-size:24px;}.footer-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loader">
+  <div class="loading-logo">ARCH<em>NEWS</em></div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="load-bar"></div></div>
+  <div class="loading-text" id="load-text">Fetching live stories...</div>
+</div>
+
+<!-- MASTHEAD -->
+<div class="masthead">
+  <div class="masthead-top">
+    <a class="logo" href="#">
+      <span class="logo-word">ARCH<em>NEWS</em></span>
+      <div class="logo-meta">
+        <span class="logo-tagline">Architecture Intelligence</span>
+        <span class="logo-date" id="hdr-date"></span>
+      </div>
+    </a>
+    <div class="masthead-right">
+      <div class="live-signal"><div class="signal-dot"></div>LIVE FEED</div>
+    </div>
+  </div>
+  <div class="masthead-nav">
+    <div class="masthead-nav-inner">
+      <div class="nav-left">
+        <button class="nav-btn active" onclick="setFilter('all',this)">All Sources</button>
+        <button class="nav-btn" onclick="setFilter('archdaily',this)">ArchDaily</button>
+        <button class="nav-btn" onclick="setFilter('dezeen',this)">Dezeen</button>
+        <button class="nav-btn" onclick="setFilter('archinect',this)">Archinect</button>
+        <button class="nav-btn" onclick="setFilter('metropolis',this)">Metropolis</button>
+        <button class="nav-btn" onclick="setFilter('archrecord',this)">Arch Record</button>
+        <button class="nav-btn" onclick="setFilter('designboom',this)">Designboom</button>
+        <button class="nav-btn" onclick="setFilter('archpaper',this)">Arch Paper</button>
+        <button class="nav-btn" onclick="setFilter('domus',this)">Domus</button>
+      </div>
+      <div class="nav-right">Last updated: <span id="update-time">–</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span class="tick">ARCHDAILY</span><span class="tick-sep">·</span>
+    <span class="tick">DEZEEN</span><span class="tick-sep">·</span>
+    <span class="tick">ARCHINECT</span><span class="tick-sep">·</span>
+    <span class="tick">METROPOLIS</span><span class="tick-sep">·</span>
+    <span class="tick">ARCHITECTURAL RECORD</span><span class="tick-sep">·</span>
+    <span class="tick">DESIGNBOOM</span><span class="tick-sep">·</span>
+    <span class="tick">THE ARCHITECT'S NEWSPAPER</span><span class="tick-sep">·</span>
+    <span class="tick">DOMUS</span><span class="tick-sep">·</span>
+    <span class="tick">ARCHDAILY</span><span class="tick-sep">·</span>
+    <span class="tick">DEZEEN</span><span class="tick-sep">·</span>
+    <span class="tick">ARCHINECT</span><span class="tick-sep">·</span>
+    <span class="tick">METROPOLIS</span><span class="tick-sep">·</span>
+    <span class="tick">ARCHITECTURAL RECORD</span><span class="tick-sep">·</span>
+    <span class="tick">DESIGNBOOM</span><span class="tick-sep">·</span>
+    <span class="tick">THE ARCHITECT'S NEWSPAPER</span><span class="tick-sep">·</span>
+    <span class="tick">DOMUS</span><span class="tick-sep">·</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="page">
+  <div class="grid-master">
+    <!-- FEED COLUMN -->
+    <div>
+      <!-- HERO -->
+      <div class="hero-section">
+        <div class="hero-wrap" id="hero" onclick="">
+          <div class="hero-img-box">
+            <img class="hero-img" id="h-img" src="" alt=""/>
+            <div class="hero-img-overlay"></div>
+            <span class="hero-float-badge" id="h-fbadge"></span>
+            <span class="hero-float-rank">LEAD STORY</span>
+          </div>
+          <div class="hero-kicker"><span id="h-kicker-src"></span> — <span id="h-kicker-time"></span></div>
+          <h1 class="hero-title" id="h-title"></h1>
+          <p class="hero-excerpt" id="h-excerpt"></p>
+          <div class="hero-footer">
+            <a class="read-orig" id="h-link" href="#" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+              Read Full Story on Source
+              <svg viewBox="0 0 12 12"><path d="M7 1h4v4M11 1L5 7M1 4h3M1 7h2M1 10h6" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+            </a>
+            <div class="vote-row">
+              <button class="vote-btn" id="h-vbtn" onclick="event.stopPropagation();heroVote()">▲</button>
+              <span class="vote-count" id="h-vcount">–</span>
+            </div>
+            <span class="hero-time" id="h-time"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD GRID -->
+      <div class="sec-head"><span class="sec-label">Latest Stories</span><div class="sec-rule"></div></div>
+      <div class="card-grid" id="card-grid"></div>
+
+      <!-- LIST -->
+      <div class="sec-head" style="margin-top:4px"><span class="sec-label">More Stories</span><div class="sec-rule"></div></div>
+      <div id="list-area"></div>
+
+      <div id="error-area"></div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sb">
+        <div class="sb-title">Today's Stats</div>
+        <div class="stats-box">
+          <div class="stat"><span class="stat-n" id="s-n">–</span><span class="stat-l">Stories</span></div>
+          <div class="stat"><span class="stat-n" id="s-src">8</span><span class="stat-l">Sources</span></div>
+          <div class="stat"><span class="stat-n" id="s-v">0</span><span class="stat-l">Upvotes</span></div>
+          <div class="stat"><span class="stat-n" id="s-u">–</span><span class="stat-l">Updated</span></div>
+        </div>
+      </div>
+      <div class="sb">
+        <div class="sb-title">Trending Now</div>
+        <div id="trending"></div>
+      </div>
+      <div class="sb">
+        <div class="sb-title">Live Sources</div>
+        <div id="src-panel"></div>
+      </div>
+      <div class="sb newsletter-box">
+        <div class="nl-title">Stay Updated</div>
+        <p class="nl-sub">Get the top 5 architecture stories delivered to your inbox every morning.</p>
+        <input class="nl-input" type="email" placeholder="your@email.com" id="nl-email"/>
+        <button class="nl-btn" onclick="nlSubmit()">Subscribe Free →</button>
+      </div>
+      <div class="sb">
+        <div class="sb-title">About</div>
+        <p class="about-p">ARCHNEWS aggregates the world's leading architecture publications into one live feed — updated continuously. Every story links directly to its original source. No paywalls, no algorithms, just architecture.</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="f-brand-name">ARCH<em>NEWS</em></div>
+      <p class="f-brand-desc">The architecture community's daily briefing. Aggregating the world's best architecture journalism — ArchDaily, Dezeen, Archinect, Metropolis, Architectural Record, Designboom, The Architect's Newspaper, and Domus — into one live, intelligent feed. Every story opens on its original source.</p>
+    </div>
+    <div>
+      <div class="f-col-head">Publications</div>
+      <ul class="f-links">
+        <li><a href="https://www.archdaily.com" target="_blank" rel="noopener">ArchDaily ↗</a></li>
+        <li><a href="https://www.dezeen.com" target="_blank" rel="noopener">Dezeen ↗</a></li>
+        <li><a href="https://archinect.com" target="_blank" rel="noopener">Archinect ↗</a></li>
+        <li><a href="https://metropolismag.com" target="_blank" rel="noopener">Metropolis ↗</a></li>
+        <li><a href="https://www.architecturalrecord.com" target="_blank" rel="noopener">Arch Record ↗</a></li>
+        <li><a href="https://www.designboom.com" target="_blank" rel="noopener">Designboom ↗</a></li>
+        <li><a href="https://www.archpaper.com" target="_blank" rel="noopener">Arch Paper ↗</a></li>
+        <li><a href="https://www.domusweb.it" target="_blank" rel="noopener">Domus ↗</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="f-col-head">Topics</div>
+      <ul class="f-links">
+        <li><a href="#">Cultural Buildings</a></li>
+        <li><a href="#">Urban Design</a></li>
+        <li><a href="#">Sustainability</a></li>
+        <li><a href="#">Practice & Business</a></li>
+        <li><a href="#">Technology & BIM</a></li>
+        <li><a href="#">Residential</a></li>
+        <li><a href="#">Awards</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="f-col-head">Connect</div>
+      <ul class="f-links">
+        <li><a href="#">Submit a Story</a></li>
+        <li><a href="#">Advertise</a></li>
+        <li><a href="#">Newsletter</a></li>
+        <li><a href="#">About</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ARCHNEWS — Architecture Intelligence — archnews.vercel.app</p>
+    <p>Built for architects, by architects</p>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-x" onclick="forceCloseModal()">✕</button>
+    <span class="modal-source-tag" id="m-src-tag"></span>
+    <img class="modal-img" id="m-img" src="" alt="" onerror="this.style.display='none'"/>
+    <h2 class="modal-title" id="m-title"></h2>
+    <p class="modal-excerpt" id="m-excerpt"></p>
+    <a class="modal-read-btn" id="m-link" href="#" target="_blank" rel="noopener">
+      Read Full Article on Original Site ↗
+    </a>
+    <p class="modal-domain-note" id="m-note"></p>
+  </div>
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────
+const SOURCES_META = {
+  archdaily:  { name:'ArchDaily',    color:'#bf2d0a', domain:'archdaily.com' },
+  dezeen:     { name:'Dezeen',       color:'#0a4fb8', domain:'dezeen.com' },
+  archinect:  { name:'Archinect',    color:'#0a8a35', domain:'archinect.com' },
+  metropolis: { name:'Metropolis',   color:'#6b08a8', domain:'metropolismag.com' },
+  archrecord: { name:'Arch Record',  color:'#b87008', domain:'architecturalrecord.com' },
+  designboom: { name:'Designboom',   color:'#a80875', domain:'designboom.com' },
+  archpaper:  { name:'Arch Paper',   color:'#087ab8', domain:'archpaper.com' },
+  domus:      { name:'Domus',        color:'#1a1a14', domain:'domusweb.it' },
+};
+
+// Fallback Unsplash images by source
+const FALLBACK_IMGS = [
+  'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1000&q=75',
+  'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1000&q=75',
+  'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1000&q=75',
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1000&q=75',
+  'https://images.unsplash.com/photo-1554080353-a576cf803bda?w=1000&q=75',
+  'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1000&q=75',
+  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1000&q=75',
+  'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1000&q=75',
+];
+
+let allStories = [];
+let votes = {};
+let currentFilter = 'all';
+let sourceStats = {};
+
+try { votes = JSON.parse(localStorage.getItem('an_votes_live') || '{}'); } catch(e) {}
+
+// ─── INIT ─────────────────────────────────────────
+document.getElementById('hdr-date').textContent = 
+  new Date().toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}).toUpperCase();
+
+// ─── LOAD DATA ────────────────────────────────────
+async function loadFeed() {
+  animateLoader();
+  
+  try {
+    const res = await fetch('/api/feed');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    
+    if (data.stories && data.stories.length > 0) {
+      allStories = data.stories;
+      sourceStats = data.sources || {};
+      
+      const t = new Date(data.updatedAt);
+      document.getElementById('update-time').textContent = 
+        t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+      document.getElementById('s-u').textContent = 'Live';
+      
+      hideLoader();
+      render();
+    } else {
+      throw new Error('No stories returned');
+    }
+  } catch(e) {
+    console.error('Feed fetch error:', e);
+    hideLoader();
+    document.getElementById('error-area').innerHTML = `
+      <div class="error-banner">
+        ⚠ Live feed temporarily unavailable — showing cached stories. The API may be warming up. <a href="javascript:location.reload()" style="color:var(--gold)">Reload to retry →</a>
+      </div>`;
+    // Render empty state — site still works
+    render();
+  }
+}
+
+// ─── LOADING ANIMATION ────────────────────────────
+function animateLoader() {
+  const bar = document.getElementById('load-bar');
+  const txt = document.getElementById('load-text');
+  const msgs = ['Fetching ArchDaily...','Loading Dezeen...','Pulling Archinect...','Getting Metropolis...','Ready.'];
+  let i = 0;
+  const iv = setInterval(() => {
+    bar.style.width = ((i+1)/msgs.length * 100) + '%';
+    txt.textContent = msgs[i] || 'Loading...';
+    i++;
+    if (i >= msgs.length) clearInterval(iv);
+  }, 300);
+}
+
+function hideLoader() {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 1600);
+}
+
+// ─── TIME FORMAT ──────────────────────────────────
+function timeAgo(ts) {
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+  return `${Math.floor(diff/86400)}d ago`;
+}
+
+function getFallbackImg(index) {
+  return FALLBACK_IMGS[index % FALLBACK_IMGS.length];
+}
+
+// ─── RENDER ───────────────────────────────────────
+function render() {
+  const stories = currentFilter === 'all'
+    ? allStories
+    : allStories.filter(s => s.sourceId === currentFilter);
+
+  if (!stories.length) {
+    document.getElementById('card-grid').innerHTML = '';
+    document.getElementById('list-area').innerHTML = 
+      '<p style="padding:48px 0;text-align:center;font-family:IBM Plex Mono,monospace;font-size:12px;color:var(--text3)">No stories loaded for this source yet. Try refreshing.</p>';
+    return;
+  }
+
+  const hero = stories[0];
+  const src = SOURCES_META[hero.sourceId] || { name: hero.sourceName, color: '#555', domain: '' };
+
+  // HERO
+  document.getElementById('h-img').src = hero.image || getFallbackImg(0);
+  document.getElementById('h-img').onerror = function() { this.src = getFallbackImg(0); };
+  document.getElementById('h-fbadge').textContent = src.name;
+  document.getElementById('h-fbadge').style.background = src.color;
+  document.getElementById('h-kicker-src').textContent = src.name.toUpperCase();
+  document.getElementById('h-kicker-time').textContent = timeAgo(hero.timestamp);
+  document.getElementById('h-title').textContent = hero.title;
+  document.getElementById('h-excerpt').textContent = hero.excerpt || '';
+  document.getElementById('h-link').href = hero.link;
+  document.getElementById('h-link').textContent = `Read Full Story on ${src.domain} →`;
+  const hv = (hero.votes || 50) + (votes[hero.id] || 0);
+  document.getElementById('h-vcount').textContent = hv;
+  document.getElementById('h-vbtn').className = 'vote-btn' + (votes[hero.id] ? ' voted' : '');
+  document.getElementById('h-time').textContent = timeAgo(hero.timestamp);
+  document.getElementById('hero').onclick = () => openModal(hero);
+
+  // CARDS (stories 1-9)
+  const cardStories = stories.slice(1, 10);
+  document.getElementById('card-grid').innerHTML = cardStories.map((s, i) => {
+    const sm = SOURCES_META[s.sourceId] || { name: s.sourceName, color: '#555', domain: '' };
+    const v = (s.votes || 30) + (votes[s.id] || 0);
+    const voted = !!votes[s.id];
+    return `
+    <div class="card" style="animation-delay:${i * 0.05}s" onclick="openModal(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+      <div class="card-img-box">
+        <img class="card-img" src="${s.image || getFallbackImg(i+1)}" alt="" 
+             onerror="this.src='${getFallbackImg(i+1)}'" loading="lazy"/>
+      </div>
+      <div class="card-meta">
+        <span class="card-badge" style="background:${sm.color}">${sm.name}</span>
+        <span class="card-age">${timeAgo(s.timestamp)}</span>
+      </div>
+      <div class="card-title">${s.title}</div>
+      <p class="card-excerpt">${s.excerpt || ''}</p>
+      <div class="card-foot">
+        <a class="card-domain" href="${s.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${sm.domain} ↗</a>
+        <div class="mini-votes">
+          <button class="mini-btn ${voted ? 'voted' : ''}" onclick="event.stopPropagation();doVote('${s.id}',this)">▲</button>
+          <span class="mini-count" id="vc-${s.id}">${v}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // LIST (stories 10+)
+  const listStories = stories.slice(10);
+  document.getElementById('list-area').innerHTML = listStories.map((s, i) => {
+    const sm = SOURCES_META[s.sourceId] || { name: s.sourceName, color: '#555', domain: '' };
+    const v = (s.votes || 20) + (votes[s.id] || 0);
+    const voted = !!votes[s.id];
+    return `
+    <div class="list-story" style="animation-delay:${i * 0.03}s" onclick="openModal(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+      <span class="ls-num">${i + 11}</span>
+      <div class="ls-body">
+        <div class="ls-meta">
+          <span class="ls-badge" style="background:${sm.color}">${sm.name}</span>
+          <span class="ls-age">${timeAgo(s.timestamp)}</span>
+          <div class="ls-vote-wrap">
+            <button class="mini-btn ${voted ? 'voted' : ''}" onclick="event.stopPropagation();doVote('${s.id}',this)">▲</button>
+            <span class="mini-count" id="vc-${s.id}">${v}</span>
+          </div>
+        </div>
+        <div class="ls-title">${s.title}</div>
+        <div class="ls-excerpt">${s.excerpt || ''}</div>
+      </div>
+      ${s.image ? `<img class="ls-img" src="${s.image}" alt="" onerror="this.style.display='none'" loading="lazy"/>` : ''}
+    </div>`;
+  }).join('');
+
+  renderSidebar(stories);
+  document.getElementById('s-n').textContent = stories.length;
+  document.getElementById('s-src').textContent = Object.values(sourceStats).filter(v => v > 0).length || 8;
+  document.getElementById('s-v').textContent = Object.keys(votes).length;
+}
+
+function renderSidebar(stories) {
+  // Trending = top 5 by votes
+  const top5 = [...stories]
+    .sort((a,b) => ((b.votes||0) + (votes[b.id]||0)) - ((a.votes||0) + (votes[a.id]||0)))
+    .slice(0, 5);
+  
+  document.getElementById('trending').innerHTML = top5.map((s, i) => {
+    const sm = SOURCES_META[s.sourceId] || { name: s.sourceName, color: '#555' };
+    return `
+    <div class="trend-item" onclick="openModal(${JSON.stringify(s).replace(/"/g,'&quot;')})">
+      <span class="tr-num">0${i+1}</span>
+      <div class="tr-body">
+        <span class="tr-src" style="background:${sm.color}">${sm.name}</span>
+        <div class="tr-title">${s.title}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Sources panel
+  document.getElementById('src-panel').innerHTML = Object.entries(SOURCES_META).map(([id, meta]) => {
+    const count = sourceStats[id] || 0;
+    const alive = count > 0;
+    return `
+    <div class="src-item" onclick="setFilter('${id}',null)">
+      <div class="si-left">
+        <div class="si-dot" style="background:${meta.color}"></div>
+        <span class="si-name">${meta.name}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="si-status ${alive ? '' : 'dead'}">${alive ? '● LIVE' : '○ –'}</span>
+        <span class="si-count">${count}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── INTERACTIONS ─────────────────────────────────
+function doVote(id, btn) {
+  if (votes[id]) return;
+  votes[id] = 1;
+  btn.classList.add('voted');
+  // Update all instances of this story's vote count
+  document.querySelectorAll(`#vc-${id}`).forEach(el => {
+    const story = allStories.find(s => s.id === id);
+    if (story) el.textContent = (story.votes || 20) + 1;
+  });
+  document.getElementById('s-v').textContent = Object.keys(votes).length;
+  try { localStorage.setItem('an_votes_live', JSON.stringify(votes)); } catch(e) {}
+}
+
+function heroVote() {
+  const stories = currentFilter === 'all' ? allStories : allStories.filter(s => s.sourceId === currentFilter);
+  const hero = stories[0];
+  if (!hero || votes[hero.id]) return;
+  votes[hero.id] = 1;
+  document.getElementById('h-vbtn').classList.add('voted');
+  document.getElementById('h-vcount').textContent = (hero.votes || 50) + 1;
+  document.getElementById('s-v').textContent = Object.keys(votes).length;
+  try { localStorage.setItem('an_votes_live', JSON.stringify(votes)); } catch(e) {}
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelectorAll('.nav-btn').forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${f}'`)) 
+      b.classList.add('active');
+  });
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── MODAL ────────────────────────────────────────
+function openModal(story) {
+  if (typeof story === 'string') {
+    try { story = JSON.parse(story); } catch(e) { return; }
+  }
+  const sm = SOURCES_META[story.sourceId] || { name: story.sourceName, color: '#555', domain: story.link };
+  
+  document.getElementById('m-src-tag').textContent = sm.name;
+  document.getElementById('m-src-tag').style.background = sm.color;
+  
+  const img = document.getElementById('m-img');
+  if (story.image) { img.src = story.image; img.style.display = 'block'; }
+  else { img.style.display = 'none'; }
+  
+  document.getElementById('m-title').textContent = story.title;
+  document.getElementById('m-excerpt').textContent = story.excerpt || 'Click to read the full story on the original publication.';
+  document.getElementById('m-link').href = story.link;
+  document.getElementById('m-link').textContent = `Read Full Article on ${sm.domain} ↗`;
+  document.getElementById('m-note').textContent = `Opens ${story.link} in a new tab`;
+  
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal')) return;
+  forceCloseModal();
+}
+
+function forceCloseModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') forceCloseModal(); });
+
+// ─── NEWSLETTER ───────────────────────────────────
+function nlSubmit() {
+  const email = document.getElementById('nl-email').value;
+  if (!email || !email.includes('@')) return alert('Please enter a valid email.');
+  alert(`✓ Thanks! ${email} added to the waitlist. ARCHNEWS Weekly coming soon.`);
+  document.getElementById('nl-email').value = '';
+}
+
+// ─── START ────────────────────────────────────────
+loadFeed();
+
+// Auto-refresh every 15 minutes
+setInterval(loadFeed, 900000);
+</script>
+</body>
+</html>
