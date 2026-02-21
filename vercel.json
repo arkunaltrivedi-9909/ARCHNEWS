@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "functions": {
+    "api/feed.js": {
+      "memory": 512,
+      "maxDuration": 15
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/feed",
+      "dest": "/api/feed.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
