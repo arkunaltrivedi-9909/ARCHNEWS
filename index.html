@@ -588,7 +588,8 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
           <div class="nl-h">Stay Updated</div>
           <p class="nl-p">Top 5 architecture stories in your inbox every morning.</p>
           <input class="nl-in" type="email" placeholder="your@email.com" id="nl-email"/>
-          <button class="nl-btn" onclick="nlSub()">Subscribe Free →</button>
+          <button class="nl-btn" onclick="nlSub()"><span id="nl-btn-txt">Subscribe Free →</span></button>
+          <p style="font-size:10px;color:#444;margin-top:8px;font-family:var(--font-mono);text-align:center">Free · No spam · Unsubscribe anytime</p>
         </div>
       </div>
 
@@ -922,10 +923,18 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 // ═══════ NEWSLETTER ═══════
 function nlSub() {
-  const v = document.getElementById('nl-email').value;
-  if (!v || !v.includes('@')) { alert('Please enter a valid email.'); return; }
-  alert('✓ Added to waitlist! ARCHNEWS Weekly launching soon.');
+  const BEEHIIV = 'https://archnews.beehiiv.com/subscribe';
+  const v = document.getElementById('nl-email').value.trim();
+  if (!v || !v.includes('@')) {
+    document.getElementById('nl-email').style.borderColor = '#c0300a';
+    document.getElementById('nl-email').placeholder = 'Enter a valid email';
+    return;
+  }
+  // Open Beehiiv subscribe page with email pre-filled
+  window.open(BEEHIIV + '?email=' + encodeURIComponent(v), '_blank');
   document.getElementById('nl-email').value = '';
+  document.getElementById('nl-btn-txt').textContent = '✓ Opening Beehiiv...';
+  setTimeout(() => { document.getElementById('nl-btn-txt').textContent = 'Subscribe Free →'; }, 3000);
 }
 
 // ═══════ START ═══════
