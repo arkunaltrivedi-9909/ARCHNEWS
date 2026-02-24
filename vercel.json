@@ -1,19 +1,13 @@
 {
-  "version": 2,
   "functions": {
-    "api/feed.js": {
-      "memory": 512,
-      "maxDuration": 15
-    }
+    "api/feed.js": { "memory": 512, "maxDuration": 15 },
+    "api/subscribe.js": { "memory": 256, "maxDuration": 10 },
+    "api/cron/weekly.js": { "memory": 512, "maxDuration": 30 }
   },
-  "routes": [
+  "crons": [
     {
-      "src": "/api/feed",
-      "dest": "/api/feed.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "path": "/api/cron/weekly",
+      "schedule": "30 2 * * 1"
     }
   ]
 }
