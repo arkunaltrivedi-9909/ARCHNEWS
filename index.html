@@ -922,19 +922,37 @@ function closeModal() { document.getElementById('modal').classList.remove('open'
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 // ═══════ NEWSLETTER ═══════
-function nlSub() {
-  const BEEHIIV = 'https://archnews.beehiiv.com/subscribe';
-  const v = document.getElementById('nl-email').value.trim();
+async function nlSub() {
+  const el = document.getElementById('nl-email');
+  const btn = document.getElementById('nl-btn-txt');
+  const v = el.value.trim();
   if (!v || !v.includes('@')) {
-    document.getElementById('nl-email').style.borderColor = '#c0300a';
-    document.getElementById('nl-email').placeholder = 'Enter a valid email';
+    el.style.borderColor = '#c0300a';
+    el.placeholder = 'Enter a valid email';
     return;
   }
-  // Open Beehiiv subscribe page with email pre-filled
-  window.open(BEEHIIV + '?email=' + encodeURIComponent(v), '_blank');
-  document.getElementById('nl-email').value = '';
-  document.getElementById('nl-btn-txt').textContent = '✓ Opening Beehiiv...';
-  setTimeout(() => { document.getElementById('nl-btn-txt').textContent = 'Subscribe Free →'; }, 3000);
+  btn.textContent = 'Subscribing...';
+  try {
+    const r = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: v })
+    });
+    const d = await r.json();
+    if (d.success) {
+      el.value = '';
+      el.placeholder = 'your@email.com';
+      el.style.borderColor = '#4caf50';
+      btn.textContent = '✓ Check your inbox!';
+      setTimeout(() => { btn.textContent = 'Subscribe Free →'; el.style.borderColor = ''; }, 4000);
+    } else {
+      btn.textContent = 'Try again';
+      setTimeout(() => { btn.textContent = 'Subscribe Free →'; }, 2000);
+    }
+  } catch(e) {
+    btn.textContent = 'Try again';
+    setTimeout(() => { btn.textContent = 'Subscribe Free →'; }, 2000);
+  }
 }
 
 // ═══════ START ═══════
