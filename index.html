@@ -531,7 +531,7 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
     <!-- CONTENT -->
     <div>
       <!-- HERO -->
-      <div class="hero-wrap" id="hero" onclick="">
+      <div class="hero-wrap" id="hero">
         <div class="hero-img-box">
           <img class="hero-img" id="h-img" src="" alt=""/>
           <div class="hero-overlay"></div>
@@ -595,19 +595,80 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
 
       <div class="sb-block" style="margin-top:20px">
         <div class="sb-head">About</div>
-        <p class="about-txt">ARCHNEWS aggregates the world's leading architecture publications into one live feed — updated continuously. Every story links directly to its original source.</p>
+        <p class="about-txt">Architecture moves fast. Staying informed shouldn't be hard. ARCHNEWS puts every major publication in one live feed — updated all day, every day. Built by a licensed architect, for architects.</p>
       </div>
     </aside>
   </div>
 </main>
 
 <!-- FOOTER -->
+<!-- ABOUT MODAL -->
+<div class="modal-bg" id="about-modal" onclick="if(event.target===this)closeAbout()">
+  <div class="modal" style="max-width:640px">
+    <button class="modal-x" onclick="closeAbout()">✕</button>
+    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;color:var(--text3);margin-bottom:16px;text-transform:uppercase;">About ARCHNEWS</div>
+    <h2 style="font-family:var(--font-serif);font-size:28px;font-weight:700;line-height:1.2;margin-bottom:16px;color:var(--ink)">Architecture moves fast.<br>Staying informed shouldn't be hard.</h2>
+    <p style="font-family:var(--font-serif);font-style:italic;font-size:16px;color:var(--text2);line-height:1.8;margin-bottom:20px;border-left:3px solid var(--red);padding-left:16px;">Architects are problem solvers. But keeping up with 8 different publications, hundreds of weekly stories, and constant industry shifts — that's a problem nobody needed to add to their day.</p>
+    <p style="font-size:14px;color:var(--text2);line-height:1.9;margin-bottom:16px;">ARCHNEWS was built to solve that. One live feed. Eight leading publications. Every story updated automatically, all day, every day. You see what matters — without opening eight tabs.</p>
+    <p style="font-size:14px;color:var(--text2);line-height:1.9;margin-bottom:16px;">Every story links directly to its original source. No paywalls introduced. No content stolen. Just the fastest way to know what's happening in architecture right now.</p>
+    <p style="font-size:14px;color:var(--text2);line-height:1.9;margin-bottom:24px;">ARCHNEWS Weekly — the Monday morning newsletter — distills the week's five most important stories into a single, curated briefing. Written by a licensed architect. Not an algorithm.</p>
+    <div style="border-top:1px solid var(--border);padding-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:8px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:3px;">Built by</div>
+        <div style="font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--ink)">Kunal Trivedi</div>
+        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Licensed Architect · India COA + NCARB · M.Arch SUNY Buffalo</div>
+      </div>
+      <a href="https://archnews.beehiiv.com/subscribe" target="_blank" class="btn-read" style="margin-left:auto">Subscribe Weekly →</a>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-bg" id="submit-modal" onclick="if(event.target===this)closeSubmit()">
+  <div class="modal" style="max-width:560px">
+    <button class="modal-x" onclick="closeSubmit()">✕</button>
+    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;color:var(--text3);margin-bottom:16px;text-transform:uppercase;">Submit a Story</div>
+    <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:700;margin-bottom:12px;">Got a story worth sharing?</h2>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:20px;">If you're working on a project, writing about architecture, or know of a story that deserves more attention — send it our way. We review every submission.</p>
+    <div style="margin-bottom:12px;">
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;margin-bottom:6px;text-transform:uppercase;">Story URL or Description</div>
+      <input id="sub-story" style="width:100%;background:var(--surface);border:1px solid var(--border);padding:10px 12px;font-family:var(--font-sans);font-size:13px;outline:none;color:var(--ink)" placeholder="https://... or describe the story"/>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;margin-bottom:6px;text-transform:uppercase;">Your Email (optional)</div>
+      <input id="sub-email" style="width:100%;background:var(--surface);border:1px solid var(--border);padding:10px 12px;font-family:var(--font-sans);font-size:13px;outline:none;color:var(--ink)" placeholder="your@email.com"/>
+    </div>
+    <button onclick="submitStory()" style="width:100%;background:var(--ink);color:var(--white);border:none;padding:12px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#c0300a'" onmouseout="this.style.background='var(--ink)'">Submit Story →</button>
+  </div>
+</div>
+
+<!-- ADVERTISE MODAL -->
+<div class="modal-bg" id="ad-modal" onclick="if(event.target===this)closeAd()">
+  <div class="modal" style="max-width:560px">
+    <button class="modal-x" onclick="closeAd()">✕</button>
+    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;color:var(--text3);margin-bottom:16px;text-transform:uppercase;">Advertise with ARCHNEWS</div>
+    <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:700;margin-bottom:12px;">Reach architects who are paying attention.</h2>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:16px;">ARCHNEWS readers are practicing architects, designers, developers, and students who actively seek out industry news. They're decision-makers. They specify materials, hire consultants, and recommend software.</p>
+    <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:20px;">If your product or service serves the architecture and construction industry — this is your audience.</p>
+    <div style="background:var(--cream);border:1px solid var(--border);padding:18px;margin-bottom:18px;">
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px;">Current Opportunities</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.9">
+        Newsletter Sponsor — from $100/issue<br>
+        Website Banner — from $200/month<br>
+        Job Board Listing — from $200/post<br>
+        Custom Partnership — let's talk
+      </div>
+    </div>
+    <a href="/cdn-cgi/l/email-protection#5b3a293833322f3e382f34352c342930281b3c363a32377538343664282e39313e382f661a091813151e0c087b1a3f2d3e292f322832353c7b12352a2e322922" class="btn-read" style="display:flex;align-items:center;justify-content:center;gap:8px">Email Us to Discuss →</a>
+  </div>
+</div>
+
 <footer>
   <div class="footer-inner">
     <div class="footer-grid">
       <div>
         <div class="f-name">ARCH<em>NEWS</em></div>
-        <p class="f-desc">The architecture community's daily intelligence briefing. Aggregating ArchDaily, Dezeen, Archinect, Metropolis, Architectural Record, Designboom, The Architect's Newspaper, and Domus into one live, auto-updating feed. Every story opens on its original source.</p>
+        <p class="f-desc">Architecture moves fast. Staying informed shouldn't be hard. One live feed. Eight leading publications. Every story updated automatically — all day, every day. Built for architects, by an architect.</p>
       </div>
       <div>
         <div class="f-head">Publications</div>
@@ -625,21 +686,21 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
       <div>
         <div class="f-head">Topics</div>
         <ul class="f-links">
-          <li><a href="#">Cultural Buildings</a></li>
-          <li><a href="#">Urban Design</a></li>
-          <li><a href="#">Sustainability</a></li>
-          <li><a href="#">Technology + BIM</a></li>
-          <li><a href="#">Practice</a></li>
-          <li><a href="#">Awards</a></li>
+          <li><a href="#" onclick="footerSearch('cultural buildings');return false;">Cultural Buildings</a></li>
+          <li><a href="#" onclick="footerSearch('urban design');return false;">Urban Design</a></li>
+          <li><a href="#" onclick="footerSearch('sustainability');return false;">Sustainability</a></li>
+          <li><a href="#" onclick="footerSearch('technology BIM');return false;">Technology + BIM</a></li>
+          <li><a href="#" onclick="footerSearch('practice');return false;">Practice</a></li>
+          <li><a href="#" onclick="footerSearch('awards');return false;">Awards</a></li>
         </ul>
       </div>
       <div>
         <div class="f-head">Connect</div>
         <ul class="f-links">
-          <li><a href="#">Newsletter</a></li>
-          <li><a href="#">Submit a Story</a></li>
-          <li><a href="#">Advertise</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="https://archnews.beehiiv.com/subscribe" target="_blank" rel="noopener">Newsletter ↗</a></li>
+          <li><a href="#" onclick="openSubmit();return false;">Submit a Story</a></li>
+          <li><a href="#" onclick="openAd();return false;">Advertise</a></li>
+          <li><a href="#" onclick="openAbout();return false;">About ARCHNEWS</a></li>
         </ul>
       </div>
     </div>
@@ -663,7 +724,7 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══════ CONFIG ═══════
 const SRC = {
   archdaily:  { name:'ArchDaily',   color:'#bf2d0a', domain:'archdaily.com' },
@@ -919,7 +980,7 @@ function openModal(story) {
 }
 function bgClose(e) { if (e.target === document.getElementById('modal')) closeModal(); }
 function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeAbout(); closeSubmit(); closeAd(); } });
 
 // ═══════ NEWSLETTER ═══════
 function nlSub() {
@@ -939,9 +1000,43 @@ function nlSub() {
   setTimeout(() => { btn.textContent = 'Subscribe Free →'; el.style.borderColor = ''; }, 3000);
 }
 
-// ═══════ START ═══════
-loadFeed();
-setInterval(loadFeed, 900000); // refresh every 15 min
-</script>
-</body>
-</html>
+// ═══════ FOOTER MODALS ═══════
+function openAbout()  { document.getElementById('about-modal').classList.add('open');  document.body.style.overflow='hidden'; }
+function closeAbout() { document.getElementById('about-modal').classList.remove('open'); document.body.style.overflow=''; }
+function openSubmit()  { document.getElementById('submit-modal').classList.add('open');  document.body.style.overflow='hidden'; }
+function closeSubmit() { document.getElementById('submit-modal').classList.remove('open'); document.body.style.overflow=''; }
+function openAd()  { document.getElementById('ad-modal').classList.add('open');  document.body.style.overflow='hidden'; }
+function closeAd() { document.getElementById('ad-modal').classList.remove('open'); document.body.style.overflow=''; }
+
+function submitStory() {
+  const story = document.getElementById('sub-story').value.trim();
+  const email = document.getElementById('sub-email').value.trim();
+  if (!story) { document.getElementById('sub-story').style.borderColor='#c0300a'; return; }
+  // Send to email
+  window.location.href = 'mailto:architectonworks@gmail.com?subject=ARCHNEWS Story Submission&body=Story: ' + encodeURIComponent(story) + '%0D%0AFrom: ' + encodeURIComponent(email || 'Anonymous');
+  closeSubmit();
+}
+
+function footerSearch(keyword) {
+  // Filter stories by keyword in title/excerpt
+  const filtered = stories.filter(s =>
+    (s.title + ' ' + s.excerpt).toLowerCase().includes(keyword.toLowerCase())
+  );
+  if (filtered.length) {
+    const origStories = stories;
+    stories = filtered;
+    render();
+    stories = origStories;
+    // Show banner
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:130px;left:50%;transform:translateX(-50%);background:#0c0b09;color:#f5f1ea;font-family:monospace;font-size:10px;letter-spacing:0.15em;padding:10px 20px;z-index:600;border-bottom:2px solid #c0300a';
+    banner.innerHTML = 'TOPIC: ' + keyword.toUpperCase() + ' &nbsp;·&nbsp; <span onclick="resetTopic()" style="color:#c0300a;cursor:pointer;text-transform:uppercase">Clear ✕</span>';
+    banner.id = 'topic-banner';
+    document.body.appendChild(banner);
+  }
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function resetTopic() {
+  render();
+  const b = document.getEleme
