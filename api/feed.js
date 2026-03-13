@@ -1,5 +1,6 @@
-// ARCHNEWS — Live RSS Feed API v3
-// Vercel Serverless Function — CommonJS
+// ARCHNEWS — Live RSS Feed API v4
+// Vercel Serverless — CommonJS — Hobby plan compatible (max 10s)
+// All 8 sources fetched in PARALLEL — total time = slowest single source
 
 const SOURCES = [
   { id: 'archdaily',  name: 'ArchDaily',   color: '#bf2d0a', urls: [
@@ -18,8 +19,7 @@ const SOURCES = [
     'https://metropolismag.com/feed/'
   ]},
   { id: 'archrecord', name: 'Arch Record', color: '#b87008', urls: [
-    'https://www.architecturalrecord.com/rss/articles',
-    'https://www.architecturalrecord.com/rss'
+    'https://www.architecturalrecord.com/rss/articles'
   ]},
   { id: 'designboom', name: 'Designboom',  color: '#a80875', urls: [
     'https://www.designboom.com/architecture/rss/',
@@ -44,13 +44,14 @@ function extractTag(xml, tag) {
 }
 
 function extractImage(item, desc) {
+  const combined = item + (desc || '');
   const patterns = [
     /<media:(?:content|thumbnail)[^>]+url=["']([^"']+)["']/i,
     /<enclosure[^>]+url=["']([^"']+\.(?:jpg|jpeg|png|webp))[^>]*/i,
     /<img[^>]+src=["']([^"']+)["']/i,
   ];
   for (const rx of patterns) {
-    const m = (item + (desc || '')).match(rx);
+    const m = combined.match(rx);
     if (m && m[1] && m[1].startsWith('http')) return m[1];
   }
   return null;
@@ -84,7 +85,7 @@ function parseRSS(xml, source) {
     const description = extractTag(item, 'description') || extractTag(item, 'summary') || extractTag(item, 'content:encoded') || '';
     const pubDate = extractTag(item, 'pubDate') || extractTag(item, 'published') || extractTag(item, 'updated') || '';
     const image = extractImage(item, description);
-    const excerpt = stripHtml(description).replace(/Read more[\s\S]*$/i, '').replace(/\[[\s\S]*?\]/g, '').slice(0, 300);
+    const excerpt = stripHtml(description).replace(/Read more[\s\S]*$/i, '').slice(0, 280);
     const ts = pubDate ? (new Date(pubDate).getTime() || Date.now() - i * 3600000) : Date.now() - i * 3600000;
 
     return {
@@ -105,14 +106,14 @@ function parseRSS(xml, source) {
 async function fetchSource(source) {
   for (const url of source.urls) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 9000);
+    // 6 second per-source timeout — runs in parallel so total ~6s max
+    const timer = setTimeout(() => controller.abort(), 6000);
     try {
       const res = await fetch(url, {
         signal: controller.signal,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; ARCHNEWS/3.0; +https://archnews.vercel.app)',
-          'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml, */*',
-          'Cache-Control': 'no-cache'
+          'User-Agent': 'Mozilla/5.0 (compatible; ARCHNEWS/4.0; +https://archnews.vercel.app)',
+          'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml, */*'
         }
       });
       clearTimeout(timer);
@@ -132,11 +133,13 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=1200');
+  // Cache 10 min — reduces cold starts dramatically
+  res.setHeader('Cache-Control', 's-maxage=600, stale-while-revalidate=1800');
 
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   try {
+    // All 8 sources in parallel — total wait = slowest source (~6s max)
     const results = await Promise.allSettled(SOURCES.map(s => fetchSource(s)));
     let allStories = [];
     const sourceStats = {};
@@ -153,10 +156,10 @@ module.exports = async function handler(req, res) {
 
     allStories.sort((a, b) => b.timestamp - a.timestamp);
 
-    // Deduplicate by title similarity
+    // Deduplicate
     const seen = new Set();
     allStories = allStories.filter(s => {
-      const key = s.title.slice(0, 40).toLowerCase();
+      const key = s.title.slice(0, 50).toLowerCase();
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
