@@ -5,31 +5,42 @@
 const SOURCES = [
   { id: 'archdaily',  name: 'ArchDaily',   color: '#bf2d0a', urls: [
     'https://www.archdaily.com/feed',
-    'https://feeds.feedburner.com/Archdaily'
+    'https://feeds.feedburner.com/Archdaily',
+    'https://www.archdaily.com/feed/ad'
   ]},
   { id: 'dezeen',     name: 'Dezeen',      color: '#0a4fb8', urls: [
     'https://www.dezeen.com/feed/',
-    'https://feeds.feedburner.com/dezeen'
+    'https://feeds.feedburner.com/dezeen',
+    'https://dezeen.com/feed/'
   ]},
   { id: 'archinect',  name: 'Archinect',   color: '#0a8a35', urls: [
     'https://archinect.com/feed/news',
     'https://archinect.com/feed'
   ]},
   { id: 'metropolis', name: 'Metropolis',  color: '#6b08a8', urls: [
-    'https://metropolismag.com/feed/'
+    'https://metropolismag.com/feed/',
+    'https://www.metropolismag.com/feed/',
+    'https://metropolismag.com/feed'
   ]},
   { id: 'archrecord', name: 'Arch Record', color: '#b87008', urls: [
-    'https://www.architecturalrecord.com/rss/articles'
+    'https://www.architecturalrecord.com/rss/articles',
+    'https://www.architecturalrecord.com/rss',
+    'https://www.architecturalrecord.com/feed'
   ]},
   { id: 'designboom', name: 'Designboom',  color: '#a80875', urls: [
     'https://www.designboom.com/architecture/rss/',
-    'https://www.designboom.com/rss/'
+    'https://www.designboom.com/rss/',
+    'https://designboom.com/architecture/rss/'
   ]},
   { id: 'archpaper',  name: 'Arch Paper',  color: '#087ab8', urls: [
-    'https://www.archpaper.com/feed/'
+    'https://www.archpaper.com/feed/',
+    'https://archpaper.com/feed/',
+    'https://www.archpaper.com/feed'
   ]},
   { id: 'domus',      name: 'Domus',       color: '#333322', urls: [
-    'https://www.domusweb.it/en/rss.xml'
+    'https://www.domusweb.it/en/rss.xml',
+    'https://www.domusweb.it/rss.xml',
+    'https://domusweb.it/en/rss.xml'
   ]}
 ];
 
@@ -112,8 +123,11 @@ async function fetchSource(source) {
       const res = await fetch(url, {
         signal: controller.signal,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; ARCHNEWS/4.0; +https://archnews.vercel.app)',
-          'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml, */*'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
         }
       });
       clearTimeout(timer);
