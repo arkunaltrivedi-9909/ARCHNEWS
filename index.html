@@ -54,9 +54,9 @@ button { cursor: pointer; font-family: inherit; }
 .loader {
   position: fixed; inset: 0; background: var(--ink); z-index: 9999;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
 }
-.loader.out { opacity: 0; visibility: hidden; pointer-events: none; }
+.loader.out { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.4s ease, visibility 0.4s ease; }
 .loader-logo { font-family: var(--font-display); font-size: 52px; color: var(--white); letter-spacing: 0.06em; }
 .loader-logo em { color: var(--red); font-style: normal; }
 .loader-track { width: 260px; height: 2px; background: #222; }
@@ -756,55 +756,175 @@ document.getElementById('hdr-date').textContent =
   new Date().toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}).toUpperCase();
 
 // ═══════ LOADER ═══════
-let lStep = 0;
-const LMSGS = ['Connecting to feeds...','Fetching latest stories...','Almost ready...'];
 const lbar = document.getElementById('lbar');
 const ltxt = document.getElementById('ltxt');
+let lPct = 0;
 const lTimer = setInterval(() => {
-  lStep = Math.min(lStep + 1, LMSGS.length - 1);
-  lbar.style.width = ((lStep + 1) / LMSGS.length * 80) + '%';
-  ltxt.textContent = LMSGS[lStep];
-}, 1200);
-
-// HARD TIMEOUT — loader always hides after 12 seconds no matter what
-const loaderKill = setTimeout(() => {
-  hideLoader();
-  document.getElementById('err-area').innerHTML =
-    '<div class="err-banner">⚠ Feed taking longer than usual. <a href="javascript:location.reload()">Tap here to reload →</a></div>';
-  render();
-}, 12000);
+  lPct = Math.min(lPct + 12, 85);
+  lbar.style.width = lPct + '%';
+}, 400);
 
 function hideLoader() {
   clearInterval(lTimer);
-  clearTimeout(loaderKill);
+  clearTimeout(window._loaderKill);
   lbar.style.width = '100%';
-  setTimeout(() => document.getElementById('loader').classList.add('out'), 600);
+  setTimeout(() => {
+    const el = document.getElementById('loader');
+    if (el) el.classList.add('out');
+  }, 300);
+}
+
+// NUCLEAR FALLBACK — site always shows in 8s no matter what
+window._loaderKill = setTimeout(() => {
+  hideLoader();
+  if (!stories.length) {
+    document.getElementById('err-area').innerHTML =
+      '<div class="err-banner" id="feed-err">Fetching latest stories — <a href="javascript:location.reload()">reload if this persists →</a></div>';
+    render();
+  }
+}, 8000);
+
+// ═══════ CLIENT-SIDE RSS PROXY FALLBACK ═══════
+// Uses allorigins.win — free, no API key, no rate limit
+const RSS_SOURCES = [
+  { id:'archdaily',  name:'ArchDaily',   color:'#bf2d0a', url:'https://www.archdaily.com/feed' },
+  { id:'dezeen',     name:'Dezeen',      color:'#0a4fb8', url:'https://www.dezeen.com/feed/' },
+  { id:'archpaper',  name:'Arch Paper',  color:'#087ab8', url:'https://www.archpaper.com/feed/' },
+  { id:'designboom', name:'Designboom',  color:'#a80875', url:'https://www.designboom.com/architecture/rss/' },
+  { id:'archinect',  name:'Archinect',   color:'#0a8a35', url:'https://archinect.com/feed/news' }
+];
+
+function parseRSSText(xml, src) {
+  const items = [];
+  const itemRx = /<item[\s>]([\s\S]*?)<\/item>/gi;
+  const entryRx = /<entry[\s>]([\s\S]*?)<\/entry>/gi;
+  let m;
+  while ((m = itemRx.exec(xml)) !== null) items.push(m[1]);
+  while ((m = entryRx.exec(xml)) !== null) items.push(m[1]);
+
+  function getTag(chunk, tag) {
+    const cd = chunk.match(new RegExp('<'+tag+'[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/'+tag+'>', 'i'));
+    if (cd) return cd[1].trim();
+    const pl = chunk.match(new RegExp('<'+tag+'[^>]*>([\s\S]*?)<\/'+tag+'>', 'i'));
+    return pl ? pl[1].replace(/<[^>]+>/g,'').trim() : '';
+  }
+  function clean(s) {
+    return (s||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'').replace(/\s+/g,' ').trim();
+  }
+  function getImg(chunk) {
+    const px = [/<media:(?:content|thumbnail)[^>]+url=["']([^"']+)["']/i,/<enclosure[^>]+url=["']([^"']+\.(?:jpg|jpeg|png|webp))["']/i,/<img[^>]+src=["']([^"']+)["']/i];
+    for (const rx of px) { const mm = chunk.match(rx); if (mm && mm[1].startsWith('http')) return mm[1]; }
+    return null;
+  }
+
+  return items.slice(0, 10).map((item, i) => {
+    const title = clean(getTag(item,'title'));
+    let link = clean(getTag(item,'link'));
+    if (!link) { const lm = item.match(/<link[^>]+href=["']([^"']+)["']/i); if(lm) link=lm[1]; }
+    link = link.replace(/&amp;/g,'&');
+    const desc = getTag(item,'description') || getTag(item,'summary') || '';
+    const pub = getTag(item,'pubDate') || getTag(item,'published') || '';
+    const ts = pub ? (new Date(pub).getTime() || Date.now()-i*3600000) : Date.now()-i*3600000;
+    return {
+      id: src.id+'-'+i+'-'+ts, sourceId:src.id, sourceName:src.name, sourceColor:src.color,
+      title, link, excerpt:clean(desc).slice(0,280), image:getImg(item),
+      pubDate: pub || new Date().toISOString(), timestamp:ts
+    };
+  }).filter(s => s.title && s.link && s.link.startsWith('http'));
+}
+
+async function fetchViaProxy(src) {
+  // allorigins.win — CORS proxy, completely free
+  const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(src.url);
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 8000);
+  try {
+    const r = await fetch(proxyUrl, { signal: controller.signal });
+    clearTimeout(t);
+    if (!r.ok) return [];
+    const d = await r.json();
+    const xml = d.contents || '';
+    if (!xml.includes('<item') && !xml.includes('<entry')) return [];
+    return parseRSSText(xml, src);
+  } catch(e) {
+    clearTimeout(t);
+    return [];
+  }
 }
 
 // ═══════ FETCH ═══════
 async function loadFeed() {
+  // Try 1: our own /api/feed first (fast if cached)
   try {
-    // 10 second timeout on fetch
     const controller = new AbortController();
-    const fetchTimeout = setTimeout(() => controller.abort(), 10000);
+    const fetchTimeout = setTimeout(() => controller.abort(), 7000);
     const r = await fetch('/api/feed', { signal: controller.signal });
     clearTimeout(fetchTimeout);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const d = await r.json();
-    if (!d.stories || !d.stories.length) throw new Error('No stories');
-    stories = d.stories;
-    srcStats = d.sources || {};
-    const t = new Date(d.updatedAt);
-    document.getElementById('upd-time').textContent = t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-    document.getElementById('s-status').textContent = 'Live';
-    hideLoader();
-    render();
-  } catch(e) {
-    hideLoader();
-    document.getElementById('err-area').innerHTML =
-      '<div class="err-banner">⚠ Feed temporarily unavailable. <a href="javascript:location.reload()">Tap to reload →</a></div>';
-    render();
-  }
+    if (r.ok) {
+      const d = await r.json();
+      if (d.stories && d.stories.length > 0) {
+        stories = d.stories;
+        srcStats = d.sources || {};
+        const t = new Date(d.updatedAt);
+        document.getElementById('upd-time').textContent =
+          t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+        document.getElementById('s-status').textContent = 'Live';
+        hideLoader();
+        render();
+        return;
+      }
+    }
+  } catch(e) {}
+
+  // Try 2: client-side RSS2JSON proxy fallback
+  ltxt.textContent = 'Trying backup feeds...';
+  try {
+    const results = await Promise.allSettled(RSS_SOURCES.map(s => fetchViaProxy(s)));
+    let fallbackStories = [];
+    results.forEach(r => {
+      if (r.status === 'fulfilled') fallbackStories = fallbackStories.concat(r.value);
+    });
+    fallbackStories.sort((a,b) => b.timestamp - a.timestamp);
+    // dedupe
+    const seen = new Set();
+    fallbackStories = fallbackStories.filter(s => {
+      const k = s.title.slice(0,40).toLowerCase();
+      if(seen.has(k)) return false;
+      seen.add(k); return true;
+    });
+    if (fallbackStories.length > 0) {
+      stories = fallbackStories;
+      document.getElementById('s-status').textContent = 'Live';
+      document.getElementById('upd-time').textContent =
+        new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+      hideLoader();
+      render();
+      return;
+    }
+  } catch(e) {}
+
+  // Try 3: nothing worked — show site, silent retry in 15s
+  hideLoader();
+  document.getElementById('err-area').innerHTML =
+    '<div class="err-banner" id="feed-err">Fetching latest stories — <a href="javascript:location.reload()">reload if this persists →</a></div>';
+  render();
+  // Auto-retry once after 15s silently
+  setTimeout(async () => {
+    try {
+      const r2 = await fetch('/api/feed');
+      if (r2.ok) {
+        const d2 = await r2.json();
+        if (d2.stories && d2.stories.length > 0) {
+          stories = d2.stories;
+          srcStats = d2.sources || {};
+          document.getElementById('s-status').textContent = 'Live';
+          const eb = document.getElementById('feed-err');
+          if (eb) eb.remove();
+          render();
+        }
+      }
+    } catch(e) {}
+  }, 15000);
 }
 
 // ═══════ TIME ═══════
@@ -1052,4 +1172,14 @@ function footerSearch(keyword) {
 
 function resetTopic() {
   render();
-  const b = document.getEleme
+  const b = document.getElementById('topic-banner');
+  if (b) b.remove();
+}
+
+// ═══════ START ═══════
+loadFeed();
+setInterval(loadFeed, 900000); // refresh every 15 min
+
+</script>
+</body>
+</html>
