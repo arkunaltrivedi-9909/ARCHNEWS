@@ -757,25 +757,38 @@ document.getElementById('hdr-date').textContent =
 
 // ═══════ LOADER ═══════
 let lStep = 0;
-const LMSGS = ['Connecting to ArchDaily...','Fetching Dezeen...','Loading Archinect...','Pulling Metropolis...','Almost ready...',''];
+const LMSGS = ['Connecting to feeds...','Fetching latest stories...','Almost ready...'];
 const lbar = document.getElementById('lbar');
 const ltxt = document.getElementById('ltxt');
 const lTimer = setInterval(() => {
   lStep = Math.min(lStep + 1, LMSGS.length - 1);
-  lbar.style.width = ((lStep + 1) / LMSGS.length * 100) + '%';
-  ltxt.textContent = LMSGS[lStep] || 'Ready.';
-}, 320);
+  lbar.style.width = ((lStep + 1) / LMSGS.length * 80) + '%';
+  ltxt.textContent = LMSGS[lStep];
+}, 1200);
+
+// HARD TIMEOUT — loader always hides after 12 seconds no matter what
+const loaderKill = setTimeout(() => {
+  hideLoader();
+  document.getElementById('err-area').innerHTML =
+    '<div class="err-banner">⚠ Feed taking longer than usual. <a href="javascript:location.reload()">Tap here to reload →</a></div>';
+  render();
+}, 12000);
 
 function hideLoader() {
   clearInterval(lTimer);
+  clearTimeout(loaderKill);
   lbar.style.width = '100%';
-  setTimeout(() => document.getElementById('loader').classList.add('out'), 800);
+  setTimeout(() => document.getElementById('loader').classList.add('out'), 600);
 }
 
 // ═══════ FETCH ═══════
 async function loadFeed() {
   try {
-    const r = await fetch('/api/feed');
+    // 10 second timeout on fetch
+    const controller = new AbortController();
+    const fetchTimeout = setTimeout(() => controller.abort(), 10000);
+    const r = await fetch('/api/feed', { signal: controller.signal });
+    clearTimeout(fetchTimeout);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const d = await r.json();
     if (!d.stories || !d.stories.length) throw new Error('No stories');
@@ -789,7 +802,7 @@ async function loadFeed() {
   } catch(e) {
     hideLoader();
     document.getElementById('err-area').innerHTML =
-      '<div class="err-banner">⚠ Live feed temporarily unavailable — API may be warming up (first load takes ~5s on free tier). <a href="javascript:location.reload()">Reload to retry →</a></div>';
+      '<div class="err-banner">⚠ Feed temporarily unavailable. <a href="javascript:location.reload()">Tap to reload →</a></div>';
     render();
   }
 }
