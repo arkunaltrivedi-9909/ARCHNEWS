@@ -795,14 +795,24 @@ window._loaderKill = setTimeout(() => {
   }
 }, 8000);
 
-// ═══════ CLIENT-SIDE RSS PROXY FALLBACK ═══════
-// Uses allorigins.win — free, no API key, no rate limit
+// ═══════ CLIENT-SIDE FALLBACK — Google News RSS (no CORS issues) ═══════
 const RSS_SOURCES = [
-  { id:'archdaily',  name:'ArchDaily',   color:'#bf2d0a', url:'https://www.archdaily.com/feed' },
-  { id:'dezeen',     name:'Dezeen',      color:'#0a4fb8', url:'https://www.dezeen.com/feed/' },
-  { id:'archpaper',  name:'Arch Paper',  color:'#087ab8', url:'https://www.archpaper.com/feed/' },
-  { id:'designboom', name:'Designboom',  color:'#a80875', url:'https://www.designboom.com/architecture/rss/' },
-  { id:'archinect',  name:'Archinect',   color:'#0a8a35', url:'https://archinect.com/feed/news' }
+  { id:'archdaily',  name:'ArchDaily',   color:'#bf2d0a',
+    url:'https://news.google.com/rss/search?q=site:archdaily.com+architecture&hl=en-US&gl=US&ceid=US:en' },
+  { id:'dezeen',     name:'Dezeen',      color:'#0a4fb8',
+    url:'https://news.google.com/rss/search?q=site:dezeen.com+architecture&hl=en-US&gl=US&ceid=US:en' },
+  { id:'archinect',  name:'Archinect',   color:'#0a8a35',
+    url:'https://news.google.com/rss/search?q=site:archinect.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'metropolis', name:'Metropolis',  color:'#6b08a8',
+    url:'https://news.google.com/rss/search?q=site:metropolismag.com+architecture&hl=en-US&gl=US&ceid=US:en' },
+  { id:'archrecord', name:'Arch Record', color:'#b87008',
+    url:'https://news.google.com/rss/search?q=site:architecturalrecord.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'designboom', name:'Designboom',  color:'#a80875',
+    url:'https://news.google.com/rss/search?q=site:designboom.com+architecture&hl=en-US&gl=US&ceid=US:en' },
+  { id:'archpaper',  name:'Arch Paper',  color:'#087ab8',
+    url:'https://news.google.com/rss/search?q=site:archpaper.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'domus',      name:'Domus',       color:'#5a5a3a',
+    url:'https://news.google.com/rss/search?q=site:domusweb.it+architecture&hl=en-US&gl=US&ceid=US:en' }
 ];
 
 function parseRSSText(xml, src) {
@@ -844,39 +854,31 @@ function parseRSSText(xml, src) {
   }).filter(s => s.title && s.link && s.link.startsWith('http'));
 }
 
-// 3 CORS proxy services — tries each until one works
-const CORS_PROXIES = [
-  url => 'https://api.allorigins.win/get?url=' + encodeURIComponent(url),
-  url => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
-  url => 'https://corsproxy.io/?' + encodeURIComponent(url),
-];
-
+// Google News RSS feeds — no CORS, no proxy needed, works for all sources
 async function fetchViaProxy(src) {
-  for (const makeProxy of CORS_PROXIES) {
-    const proxyUrl = makeProxy(src.url);
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), 7000);
+  // Google News is CORS-friendly — fetch directly, no proxy needed
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 8000);
+  try {
+    const r = await fetch(src.url, { signal: controller.signal });
+    clearTimeout(t);
+    if (!r.ok) return [];
+    const xml = await r.text();
+    if (!xml.includes('<item') && !xml.includes('<entry')) return [];
+    return parseRSSText(xml, src);
+  } catch(e) {
+    clearTimeout(t);
+    // If Google News direct fails, try via allorigins
     try {
-      const r = await fetch(proxyUrl, { signal: controller.signal });
-      clearTimeout(t);
-      if (!r.ok) continue;
-      // allorigins wraps in JSON, others return raw XML
-      let xml = '';
-      const ct = r.headers.get('content-type') || '';
-      if (ct.includes('json')) {
-        const d = await r.json();
-        xml = d.contents || d.data || '';
-      } else {
-        xml = await r.text();
-      }
-      if (!xml || (!xml.includes('<item') && !xml.includes('<entry'))) continue;
-      const items = parseRSSText(xml, src);
-      if (items.length > 0) return items;
-    } catch(e) {
-      clearTimeout(t);
-    }
+      const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(src.url);
+      const r2 = await fetch(proxy);
+      if (!r2.ok) return [];
+      const d = await r2.json();
+      const xml2 = d.contents || '';
+      if (!xml2.includes('<item') && !xml2.includes('<entry')) return [];
+      return parseRSSText(xml2, src);
+    } catch(e2) { return []; }
   }
-  return [];
 }
 
 // ═══════ FETCH ═══════
