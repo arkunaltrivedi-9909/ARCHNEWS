@@ -333,9 +333,20 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
 .f-name em { color: var(--red); font-style: normal; }
 .f-desc { font-size: 12px; color: #555; line-height: 1.8; }
 .f-head { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: #3a3a34; border-bottom: 1px solid #1e1e18; padding-bottom: 8px; margin-bottom: 13px; }
-.f-links { list-style: none; display: flex; flex-direction: column; gap: 7px; }
-.f-links a { font-size: 12px; color: #555; transition: color 0.1s; }
-.f-links a:hover { color: var(--white); }
+.f-links { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.f-links a {
+  font-size: 13px; color: #666; text-decoration: none;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; margin: 0 -12px; border-radius: 4px;
+  transition: background 0.18s ease, color 0.18s ease;
+  cursor: pointer; position: relative;
+}
+.f-links a:hover { color: var(--white); background: rgba(255,255,255,0.06); }
+.f-links a.f-action { color: #666; }
+.f-links a.f-action:hover { color: var(--red); background: rgba(192,48,10,0.1); }
+.f-links a .f-arr { font-size: 10px; opacity: 0; transform: translateX(-6px); transition: opacity 0.18s, transform 0.18s; color: var(--red); }
+.f-links a:hover .f-arr { opacity: 1; transform: translateX(0); }
+.f-desc { font-size: 12px; color: #444; line-height: 1.9; }
 .footer-bottom { border-top: 1px solid #1a1a14; padding-top: 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
 .footer-bottom p { font-family: var(--font-mono); font-size: 8px; color: #333; letter-spacing: 0.1em; }
 
@@ -686,21 +697,21 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
       <div>
         <div class="f-head">Topics</div>
         <ul class="f-links">
-          <li><a href="#" onclick="footerSearch('cultural buildings');return false;">Cultural Buildings</a></li>
-          <li><a href="#" onclick="footerSearch('urban design');return false;">Urban Design</a></li>
-          <li><a href="#" onclick="footerSearch('sustainability');return false;">Sustainability</a></li>
-          <li><a href="#" onclick="footerSearch('technology BIM');return false;">Technology + BIM</a></li>
-          <li><a href="#" onclick="footerSearch('practice');return false;">Practice</a></li>
-          <li><a href="#" onclick="footerSearch('awards');return false;">Awards</a></li>
+          <li><a href="#" class="f-action" onclick="footerSearch('cultural buildings');return false;">Cultural Buildings<span class="f-arr">→</span></a></li>
+          <li><a href="#" class="f-action" onclick="footerSearch('urban design');return false;">Urban Design<span class="f-arr">→</span></a></li>
+          <li><a href="#" class="f-action" onclick="footerSearch('sustainability');return false;">Sustainability<span class="f-arr">→</span></a></li>
+          <li><a href="#" class="f-action" onclick="footerSearch('technology BIM');return false;">Technology + BIM<span class="f-arr">→</span></a></li>
+          <li><a href="#" class="f-action" onclick="footerSearch('practice');return false;">Practice<span class="f-arr">→</span></a></li>
+          <li><a href="#" class="f-action" onclick="footerSearch('awards');return false;">Awards<span class="f-arr">→</span></a></li>
         </ul>
       </div>
       <div>
         <div class="f-head">Connect</div>
         <ul class="f-links">
-          <li><a href="https://archnews.beehiiv.com/subscribe" target="_blank" rel="noopener">Newsletter ↗</a></li>
-          <li><a href="#" onclick="openSubmit();return false;">Submit a Story</a></li>
-          <li><a href="#" onclick="openAd();return false;">Advertise</a></li>
-          <li><a href="#" onclick="openAbout();return false;">About ARCHNEWS</a></li>
+          <li><a href="https://archnews.beehiiv.com/subscribe" target="_blank" rel="noopener" class="f-action">Newsletter<span class="f-arr">↗</span></a></li>
+          <li><a href="#" class="f-action" onclick="openSubmit();return false;">Submit a Story<span class="f-arr">→</span></a></li>
+          <li><a href="#" class="f-action" onclick="openAd();return false;">Advertise<span class="f-arr">→</span></a></li>
+          <li><a href="#" class="f-action" onclick="openAbout();return false;">About ARCHNEWS<span class="f-arr">→</span></a></li>
         </ul>
       </div>
     </div>
@@ -833,23 +844,39 @@ function parseRSSText(xml, src) {
   }).filter(s => s.title && s.link && s.link.startsWith('http'));
 }
 
+// 3 CORS proxy services — tries each until one works
+const CORS_PROXIES = [
+  url => 'https://api.allorigins.win/get?url=' + encodeURIComponent(url),
+  url => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
+  url => 'https://corsproxy.io/?' + encodeURIComponent(url),
+];
+
 async function fetchViaProxy(src) {
-  // allorigins.win — CORS proxy, completely free
-  const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(src.url);
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), 8000);
-  try {
-    const r = await fetch(proxyUrl, { signal: controller.signal });
-    clearTimeout(t);
-    if (!r.ok) return [];
-    const d = await r.json();
-    const xml = d.contents || '';
-    if (!xml.includes('<item') && !xml.includes('<entry')) return [];
-    return parseRSSText(xml, src);
-  } catch(e) {
-    clearTimeout(t);
-    return [];
+  for (const makeProxy of CORS_PROXIES) {
+    const proxyUrl = makeProxy(src.url);
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 7000);
+    try {
+      const r = await fetch(proxyUrl, { signal: controller.signal });
+      clearTimeout(t);
+      if (!r.ok) continue;
+      // allorigins wraps in JSON, others return raw XML
+      let xml = '';
+      const ct = r.headers.get('content-type') || '';
+      if (ct.includes('json')) {
+        const d = await r.json();
+        xml = d.contents || d.data || '';
+      } else {
+        xml = await r.text();
+      }
+      if (!xml || (!xml.includes('<item') && !xml.includes('<entry'))) continue;
+      const items = parseRSSText(xml, src);
+      if (items.length > 0) return items;
+    } catch(e) {
+      clearTimeout(t);
+    }
   }
+  return [];
 }
 
 // ═══════ FETCH ═══════
