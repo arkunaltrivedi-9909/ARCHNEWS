@@ -2,538 +2,483 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
-<meta name="description" content="ARCHNEWS — Architecture Intelligence. Live news from ArchDaily, Dezeen, Archinect, Metropolis, Architectural Record, Designboom and more."/>
-<meta property="og:title" content="ARCHNEWS — Architecture Intelligence"/>
-<meta property="og:description" content="All architecture news. One feed. Updated live."/>
-<meta property="og:url" content="https://archnews.vercel.app"/>
-<meta name="theme-color" content="#0c0b09"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ARCHNEWS — Architecture Intelligence</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-/* ═══════════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════════ */
-:root {
-  --ink:      #0c0b09;
-  --paper:    #f5f1ea;
-  --cream:    #ede8df;
-  --surface:  #e6e0d5;
-  --border:   #cec8bb;
-  --red:      #c0300a;
-  --red-dark: #8a2006;
-  --text1:    #0c0b09;
-  --text2:    #46413b;
-  --text3:    #908a82;
-  --white:    #fdfaf4;
-  --gold:     #a07c10;
-  
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-serif:   'Cormorant Garamond', serif;
-  --font-mono:    'IBM Plex Mono', monospace;
-  --font-sans:    'DM Sans', sans-serif;
-  
-  --nav-h: 56px;
-  --header-h: 64px;
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+ul{list-style:none}
+
+/* ── TOKENS ── */
+:root{
+  --ink:#0c0b09;
+  --red:#c0300a;
+  --white:#ffffff;
+  --cream:#f5f1ea;
+  --surface:#ede8df;
+  --border:#cec8bb;
+  --text2:#4a4540;
+  --text3:#8a8278;
+  --display:'Bebas Neue',sans-serif;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --mono:'IBM Plex Mono',monospace;
+  --sans:'DM Sans',sans-serif;
+}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+/* ── LOADER ── */
+#loader{
+  position:fixed;inset:0;background:var(--ink);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+  transition:opacity 0.4s ease,visibility 0.4s ease;
+}
+#loader.out{opacity:0;visibility:hidden;pointer-events:none}
+.ld-logo{font-family:var(--display);font-size:56px;letter-spacing:0.06em;color:var(--white)}
+.ld-logo em{color:var(--red);font-style:normal}
+.ld-track{width:280px;height:2px;background:#1e1e18}
+.ld-bar{height:100%;background:var(--red);width:0;transition:width 0.5s ease}
+.ld-txt{font-family:var(--mono);font-size:9px;color:#444;letter-spacing:0.2em;text-transform:uppercase}
+
+/* ── HEADER ── */
+header{
+  background:var(--ink);border-bottom:3px solid var(--red);
+  position:sticky;top:0;z-index:200;
+}
+.hdr-top{
+  max-width:1440px;margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:20px;height:60px;
+}
+.logo{font-family:var(--display);font-size:34px;letter-spacing:0.05em;color:var(--white);flex-shrink:0}
+.logo em{color:var(--red);font-style:normal}
+.logo-sub{display:flex;flex-direction:column;justify-content:center;gap:1px;flex:1}
+.logo-tagline{font-family:var(--mono);font-size:8px;color:#555;letter-spacing:0.18em;text-transform:uppercase}
+.logo-date{font-family:var(--mono);font-size:8px;color:#333;letter-spacing:0.12em}
+.live-pill{
+  margin-left:auto;display:flex;align-items:center;gap:7px;
+  font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;
+  color:#888;border:1px solid #222;padding:5px 12px;flex-shrink:0;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* ── NAV TABS ── */
+.hdr-nav{
+  max-width:1440px;margin:0 auto;padding:0 24px;
+  display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;
+}
+.hdr-nav::-webkit-scrollbar{display:none}
+.nav-tab{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  padding:10px 16px;color:#555;border-bottom:2px solid transparent;
+  transition:color 0.15s,border-color 0.15s;white-space:nowrap;background:none;
+}
+.nav-tab:hover{color:#888}
+.nav-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.nav-upd{font-family:var(--mono);font-size:8px;color:#333;margin-left:auto;padding:10px 0;white-space:nowrap}
+
+/* ── TICKER ── */
+.ticker{background:var(--red);padding:8px 0;overflow:hidden;position:relative}
+.ticker-track{
+  display:flex;gap:0;white-space:nowrap;
+  animation:ticker 35s linear infinite;
+}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--white);padding:0 40px;
+}
+.tick-sep{color:rgba(255,255,255,0.4)}
+
+/* ── MOBILE BURGER ── */
+.burger{
+  display:none;flex-direction:column;gap:5px;padding:8px;margin-left:auto;
+}
+.burger span{width:22px;height:2px;background:#888;transition:all 0.2s;display:block}
+.mob-drawer{
+  display:none;position:fixed;inset:0;background:var(--ink);z-index:190;
+  padding:80px 24px 24px;overflow-y:auto;flex-direction:column;gap:4px;
+}
+.mob-drawer.open{display:flex}
+.mob-tab{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+  color:#666;padding:14px 16px;border-bottom:1px solid #1a1a14;text-align:left;
+  transition:color 0.1s;
+}
+.mob-tab.active{color:var(--red)}
+.mob-close{
+  position:absolute;top:20px;right:24px;font-family:var(--mono);font-size:11px;
+  color:#555;letter-spacing:0.1em;padding:8px;
 }
 
-/* ═══════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-body { background: var(--paper); color: var(--ink); font-family: var(--font-sans); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
-img { display: block; max-width: 100%; }
-a { color: inherit; text-decoration: none; }
-button { cursor: pointer; font-family: inherit; }
-
-/* ═══════════════════════════════════════
-   LOADING SCREEN
-═══════════════════════════════════════ */
-.loader {
-  position: fixed; inset: 0; background: var(--ink); z-index: 9999;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+/* ── PAGE ── */
+.page{max-width:1440px;margin:0 auto;padding:0 24px}
+.err-banner{
+  background:#fdf6e3;border:1px solid #e8d5a0;border-left:3px solid var(--red);
+  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:#666;
+  padding:12px 16px;margin:16px 0;
 }
-.loader.out { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.4s ease, visibility 0.4s ease; }
-.loader-logo { font-family: var(--font-display); font-size: 52px; color: var(--white); letter-spacing: 0.06em; }
-.loader-logo em { color: var(--red); font-style: normal; }
-.loader-track { width: 260px; height: 2px; background: #222; }
-.loader-bar { height: 100%; background: var(--red); width: 0; transition: width 0.4s ease; }
-.loader-txt { font-family: var(--font-mono); font-size: 10px; color: #555; letter-spacing: 0.2em; text-transform: uppercase; }
+.err-banner a{color:var(--red)}
 
-/* ═══════════════════════════════════════
-   HEADER / MASTHEAD
-═══════════════════════════════════════ */
-.masthead { background: var(--ink); position: sticky; top: 0; z-index: 500; }
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:1fr 300px;gap:0;align-items:start;padding-top:8px}
 
-/* Top bar */
-.mast-top {
-  height: var(--header-h); display: flex; align-items: center;
-  justify-content: space-between; padding: 0 24px; border-bottom: 3px solid var(--red);
-  max-width: 1400px; margin: 0 auto;
+/* ── SECTION HEADS ── */
+.sec-head{display:flex;align-items:center;gap:14px;padding:28px 0 12px}
+.sec-label{font-family:var(--display);font-size:20px;letter-spacing:0.08em;color:var(--ink);white-space:nowrap}
+.sec-rule{flex:1;height:2px;background:var(--ink)}
+
+/* ── HERO ── */
+.hero{
+  padding:8px 28px 28px 0;border-bottom:2px solid var(--ink);cursor:pointer;
+  transition:opacity 0.15s;
 }
-.logo { display: flex; align-items: baseline; gap: 12px; }
-.logo-name { font-family: var(--font-display); font-size: 42px; color: var(--white); letter-spacing: 0.06em; line-height: 1; }
-.logo-name em { color: var(--red); font-style: normal; }
-.logo-sub { display: flex; flex-direction: column; gap: 1px; }
-.logo-tag { font-family: var(--font-mono); font-size: 7px; color: #555; letter-spacing: 0.22em; text-transform: uppercase; }
-.logo-dt  { font-family: var(--font-mono); font-size: 7px; color: #444; letter-spacing: 0.1em; }
-
-.mast-right { display: flex; align-items: center; gap: 12px; }
-.live-pill {
-  display: flex; align-items: center; gap: 7px;
-  font-family: var(--font-mono); font-size: 9px; color: #ff5535; letter-spacing: 0.18em;
-  border: 1px solid rgba(192,48,10,0.4); padding: 5px 11px;
+.hero:hover{opacity:0.96}
+.hero-img-wrap{
+  position:relative;overflow:hidden;aspect-ratio:21/9;margin-bottom:20px;
+  background:var(--surface);
 }
-.live-dot { width: 6px; height: 6px; border-radius: 50%; background: #ff5535; animation: pulse 1.8s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.2;transform:scale(0.6)} }
-
-/* Hamburger — mobile only */
-.burger { display: none; flex-direction: column; gap: 5px; background: none; border: none; padding: 6px; }
-.burger span { display: block; width: 22px; height: 2px; background: #888; transition: all 0.25s; }
-.burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.burger.open span:nth-child(2) { opacity: 0; }
-.burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-/* Nav bar */
-.mast-nav { border-top: 1px solid #1c1c16; background: var(--ink); }
-.mast-nav-inner {
-  max-width: 1400px; margin: 0 auto; padding: 0 24px;
-  display: flex; align-items: center; justify-content: space-between;
-  overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+.hero-img{width:100%;height:100%;object-fit:cover;transition:transform 0.7s ease}
+.hero:hover .hero-img{transform:scale(1.03)}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,rgba(12,11,9,.55) 0%,transparent 40%,transparent 65%,rgba(12,11,9,.2) 100%)
 }
-.mast-nav-inner::-webkit-scrollbar { display: none; }
-.nav-tabs { display: flex; flex-shrink: 0; }
-.nav-tab {
-  background: none; border: none; color: #4a4a3f; border-bottom: 2px solid transparent;
-  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 10px 14px; white-space: nowrap; transition: all 0.15s;
+.hero-badge{
+  position:absolute;top:16px;left:16px;font-family:var(--mono);font-size:8px;
+  letter-spacing:0.15em;text-transform:uppercase;padding:4px 10px;color:#fff
 }
-.nav-tab:hover { color: #aaa; }
-.nav-tab.active { color: var(--red); border-bottom-color: var(--red); }
-.nav-updated { font-family: var(--font-mono); font-size: 8px; color: #3a3a34; letter-spacing: 0.1em; flex-shrink: 0; padding: 0 0 0 16px; }
-
-/* Mobile nav drawer */
-.mobile-drawer {
-  display: none; flex-direction: column; background: #111; border-top: 1px solid #222;
-  max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
+.hero-kicker{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.hero-kicker b{color:var(--red);font-weight:500}
+.hero-title{
+  font-family:var(--serif);font-size:40px;font-weight:700;line-height:1.1;
+  color:var(--ink);margin-bottom:14px;max-width:680px;transition:color 0.15s
 }
-.mobile-drawer.open { max-height: 400px; }
-.mob-tab {
-  background: none; border: none; border-bottom: 1px solid #1a1a14; color: #666;
-  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-  padding: 14px 24px; text-align: left; transition: all 0.1s;
+.hero:hover .hero-title{color:var(--red)}
+.hero-excerpt{
+  font-family:var(--serif);font-style:italic;font-size:17px;color:var(--text2);
+  line-height:1.7;max-width:640px;margin-bottom:20px
 }
-.mob-tab:hover, .mob-tab.active { color: var(--red); background: #0c0c09; }
-
-/* ═══════════════════════════════════════
-   TICKER
-═══════════════════════════════════════ */
-.ticker { background: var(--red); overflow: hidden; height: 30px; display: flex; align-items: center; }
-.ticker-track { display: flex; animation: tick 50s linear infinite; white-space: nowrap; }
-.ticker-track:hover { animation-play-state: paused; }
-.tick-item { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.2em; color: rgba(255,255,255,0.8); padding: 0 28px; }
-.tick-sep { color: rgba(255,255,255,0.3); }
-@keyframes tick { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-/* ═══════════════════════════════════════
-   PAGE LAYOUT
-═══════════════════════════════════════ */
-.page { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
-
-/* Desktop: content + sidebar */
-.layout { display: grid; grid-template-columns: 1fr 320px; gap: 0; align-items: start; }
-
-/* ═══════════════════════════════════════
-   SECTION LABELS
-═══════════════════════════════════════ */
-.sec-head { display: flex; align-items: center; gap: 14px; padding: 20px 0 0; margin-bottom: 0; }
-.sec-label { font-family: var(--font-display); font-size: 18px; letter-spacing: 0.08em; color: var(--ink); white-space: nowrap; }
-.sec-rule { flex: 1; height: 2px; background: var(--ink); }
-
-/* ═══════════════════════════════════════
-   HERO STORY
-═══════════════════════════════════════ */
-.hero-wrap { padding: 24px 28px 24px 0; border-bottom: 2px solid var(--ink); cursor: pointer; }
-.hero-img-box {
-  position: relative; overflow: hidden; aspect-ratio: 21/9; margin-bottom: 18px;
-  background: var(--surface);
+.hero-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn-read{
+  display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--white);
+  font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;
+  padding:11px 22px;border:2px solid var(--ink);transition:all 0.15s;flex-shrink:0
 }
-.hero-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s ease; }
-.hero-wrap:hover .hero-img { transform: scale(1.03); }
-.hero-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(12,11,9,0.5) 0%, transparent 45%, transparent 65%, rgba(12,11,9,0.25) 100%);
+.btn-read:hover{background:var(--red);border-color:var(--red)}
+.vote-row{display:flex;align-items:center;gap:8px}
+.vote-btn{
+  width:32px;height:32px;background:none;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;color:var(--text3);
+  font-size:12px;transition:all 0.15s;
 }
-.hero-badge {
-  position: absolute; top: 16px; left: 16px;
-  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
-  padding: 4px 11px; color: #fff;
+.vote-btn:hover,.vote-btn.on{background:var(--red);border-color:var(--red);color:#fff}
+.vote-n{font-family:var(--mono);font-size:12px;color:var(--text2);min-width:24px}
+.hero-age{font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto}
+
+/* ── CARDS GRID ── */
+.cards{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-bottom:1px solid var(--border);
 }
-.hero-kicker { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
-.hero-kicker b { color: var(--red); font-weight: 500; }
-.hero-title {
-  font-family: var(--font-serif); font-size: 38px; font-weight: 700; line-height: 1.1;
-  color: var(--ink); margin-bottom: 13px; max-width: 700px; transition: color 0.15s;
+.card{
+  border-right:1px solid var(--border);
+  padding:16px 18px 16px 0;cursor:pointer;
+  transition:background 0.12s;animation:fadeup 0.4s ease both;
 }
-.hero-wrap:hover .hero-title { color: var(--red); }
-.hero-excerpt { font-family: var(--font-serif); font-style: italic; font-size: 17px; color: var(--text2); line-height: 1.65; max-width: 660px; margin-bottom: 18px; }
-.hero-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.btn-read {
-  display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--white);
-  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
-  padding: 10px 20px; border: 2px solid var(--ink); transition: all 0.15s;
+.card:nth-child(3n){border-right:none;padding-right:0}
+.card:hover{background:var(--surface)}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card-img-wrap{overflow:hidden;aspect-ratio:3/2;margin-bottom:12px;background:var(--surface)}
+.card-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease}
+.card:hover .card-img{transform:scale(1.04)}
+.badge{
+  font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;
+  padding:3px 8px;color:#fff;flex-shrink:0;display:inline-block
 }
-.btn-read:hover { background: var(--red); border-color: var(--red); }
-.vote-row { display: flex; align-items: center; gap: 8px; }
-.vote-btn {
-  width: 32px; height: 32px; background: none; border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center; color: var(--text3);
-  font-size: 12px; transition: all 0.15s;
+.card-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.card-age{font-family:var(--mono);font-size:8px;color:var(--text3);margin-left:auto}
+.card-title{
+  font-family:var(--serif);font-size:17px;font-weight:700;line-height:1.25;
+  color:var(--ink);margin-bottom:8px;transition:color 0.12s
 }
-.vote-btn:hover, .vote-btn.on { background: var(--red); border-color: var(--red); color: #fff; }
-.vote-n { font-family: var(--font-mono); font-size: 12px; color: var(--text2); min-width: 26px; }
-.hero-age { font-family: var(--font-mono); font-size: 9px; color: var(--text3); margin-left: auto; }
-
-/* ═══════════════════════════════════════
-   CARD GRID — 3 cols
-═══════════════════════════════════════ */
-.cards { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--border); }
-.card {
-  border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
-  padding: 18px 18px 16px 0; cursor: pointer; transition: background 0.12s;
-  animation: fadeup 0.4s ease both;
+.card:hover .card-title{color:var(--red)}
+.card-excerpt{
+  font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden
 }
-.card:nth-child(3n) { border-right: none; }
-.card:hover { background: var(--cream); }
-@keyframes fadeup { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
-.card-img-box { overflow: hidden; aspect-ratio: 3/2; margin-bottom: 12px; background: var(--surface); }
-.card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-.card:hover .card-img { transform: scale(1.05); }
-.card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
-.badge { font-family: var(--font-mono); font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; color: #fff; flex-shrink: 0; }
-.card-age { font-family: var(--font-mono); font-size: 8px; color: var(--text3); margin-left: auto; }
-.card-title { font-family: var(--font-serif); font-size: 17px; font-weight: 700; line-height: 1.25; color: var(--ink); margin-bottom: 7px; transition: color 0.12s; }
-.card:hover .card-title { color: var(--red); }
-.card-excerpt { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.card-foot { display: flex; align-items: center; justify-content: space-between; }
-.card-domain { font-family: var(--font-mono); font-size: 8px; color: var(--text3); transition: color 0.1s; }
-.card-domain:hover { color: var(--red); }
-.mini-votes { display: flex; align-items: center; gap: 5px; }
-.mini-btn { width: 22px; height: 22px; background: none; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 9px; transition: all 0.12s; }
-.mini-btn:hover, .mini-btn.on { background: var(--red); border-color: var(--red); color: #fff; }
-.mini-n { font-family: var(--font-mono); font-size: 9px; color: var(--text3); }
-
-/* ═══════════════════════════════════════
-   LIST STORIES
-═══════════════════════════════════════ */
-.list-item {
-  display: grid; grid-template-columns: 44px 1fr; gap: 0 0; align-items: start;
-  border-bottom: 1px solid var(--border); padding: 14px 0; cursor: pointer;
-  transition: background 0.1s; animation: fadeup 0.35s ease both;
+.card-foot{display:flex;align-items:center;justify-content:space-between}
+.card-src{font-family:var(--mono);font-size:8px;color:var(--text3);transition:color 0.1s}
+.card-src:hover{color:var(--red)}
+.mini-votes{display:flex;align-items:center;gap:5px}
+.mini-btn{
+  width:22px;height:22px;background:none;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text3);font-size:9px;transition:all 0.12s
 }
-.list-item:hover { background: var(--cream); margin: 0 -8px; padding: 14px 8px; }
-.li-num { font-family: var(--font-display); font-size: 22px; color: var(--border); line-height: 1.1; padding-top: 2px; }
-.li-body {}
-.li-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
-.li-age { font-family: var(--font-mono); font-size: 8px; color: var(--text3); }
-.li-votes { display: flex; align-items: center; gap: 5px; margin-left: auto; }
-.li-title { font-family: var(--font-serif); font-size: 16px; font-weight: 600; line-height: 1.3; color: var(--ink); margin-bottom: 3px; transition: color 0.1s; }
-.list-item:hover .li-title { color: var(--red); }
-.li-exc { font-size: 12px; color: var(--text2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mini-btn:hover,.mini-btn.on{background:var(--red);border-color:var(--red);color:#fff}
+.mini-n{font-family:var(--mono);font-size:9px;color:var(--text3)}
 
-/* ═══════════════════════════════════════
-   SIDEBAR
-═══════════════════════════════════════ */
-.sidebar { border-left: 1px solid var(--border); padding: 0 0 40px 24px; }
-.sb-block { padding: 20px 0; border-bottom: 1px solid var(--border); }
-.sb-head { font-family: var(--font-display); font-size: 17px; letter-spacing: 0.08em; border-bottom: 2px solid var(--ink); padding-bottom: 9px; margin-bottom: 13px; }
-
-/* Stats */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
-.stat { background: var(--white); padding: 13px 11px; }
-.stat-n { font-family: var(--font-display); font-size: 34px; color: var(--red); display: block; line-height: 1; }
-.stat-l { font-family: var(--font-mono); font-size: 7px; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; }
-
-/* Trending */
-.trend-item { display: flex; gap: 11px; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
-.trend-item:last-child { border: none; }
-.trend-item:hover .tr-title { color: var(--red); }
-.tr-n { font-family: var(--font-display); font-size: 24px; color: var(--border); line-height: 1; width: 28px; flex-shrink: 0; }
-.tr-src { display: inline-block; font-family: var(--font-mono); font-size: 7px; letter-spacing: 0.1em; text-transform: uppercase; padding: 1px 6px; color: #fff; margin-bottom: 3px; }
-.tr-title { font-family: var(--font-serif); font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--ink); transition: color 0.1s; }
-
-/* Sources */
-.src-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
-.src-item:last-child { border: none; }
-.src-item:hover .si-name { color: var(--red); }
-.si-l { display: flex; align-items: center; gap: 8px; }
-.si-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.si-name { font-family: var(--font-mono); font-size: 9px; color: var(--text2); transition: color 0.1s; }
-.si-r { display: flex; align-items: center; gap: 7px; }
-.si-live { font-family: var(--font-mono); font-size: 7px; color: #4caf50; letter-spacing: 0.1em; }
-.si-live.off { color: #999; }
-.si-ct { font-family: var(--font-mono); font-size: 9px; color: var(--text3); }
-
-/* Newsletter */
-.nl-box { background: var(--ink); padding: 20px; }
-.nl-h { font-family: var(--font-display); font-size: 20px; color: var(--white); letter-spacing: 0.06em; margin-bottom: 7px; }
-.nl-p { font-size: 12px; color: #666; line-height: 1.7; margin-bottom: 13px; }
-.nl-in { width: 100%; background: #1a1a14; border: 1px solid #2a2a24; color: var(--white); padding: 10px 12px; font-family: var(--font-mono); font-size: 10px; outline: none; margin-bottom: 8px; }
-.nl-in::placeholder { color: #444; }
-.nl-in:focus { border-color: var(--red); }
-.nl-btn { width: 100%; background: var(--red); color: #fff; border: none; padding: 11px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; transition: background 0.15s; }
-.nl-btn:hover { background: var(--red-dark); }
-
-/* About */
-.about-txt { font-size: 12px; color: var(--text2); line-height: 1.8; }
-
-/* ═══════════════════════════════════════
-   MODAL
-═══════════════════════════════════════ */
-.modal-bg {
-  position: fixed; inset: 0; background: rgba(12,11,9,0.9); z-index: 800;
-  display: flex; align-items: center; justify-content: center; padding: 20px;
-  opacity: 0; pointer-events: none; transition: opacity 0.25s; backdrop-filter: blur(6px);
+/* ── LIST STORIES ── */
+#list{width:100%}
+.list-item{
+  display:grid;grid-template-columns:48px 1fr;
+  border-bottom:1px solid var(--border);padding:14px 28px 14px 0;
+  cursor:pointer;transition:background 0.1s;animation:fadeup 0.35s ease both;
+  width:100%;
 }
-.modal-bg.open { opacity: 1; pointer-events: all; }
-.modal {
-  background: var(--white); width: 100%; max-width: 580px; max-height: 90vh;
-  overflow-y: auto; padding: 36px; position: relative;
-  animation: modalin 0.28s ease;
+.list-item:hover{background:var(--surface)}
+.li-num{font-family:var(--display);font-size:26px;color:var(--border);line-height:1;padding-top:3px}
+.li-body{min-width:0}
+.li-meta{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.li-age{font-family:var(--mono);font-size:8px;color:var(--text3)}
+.li-votes{display:flex;align-items:center;gap:5px;margin-left:auto}
+.li-title{
+  font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.3;
+  color:var(--ink);margin-bottom:4px;transition:color 0.1s
 }
-@keyframes modalin { from{transform:translateY(18px);opacity:0} to{transform:none;opacity:1} }
-.modal-x {
-  position: absolute; top: 14px; right: 14px; width: 32px; height: 32px;
-  background: none; border: 1px solid var(--border); color: var(--text2);
-  display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all 0.15s;
-}
-.modal-x:hover { background: var(--red); border-color: var(--red); color: #fff; }
-.modal-src { display: inline-block; font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; padding: 3px 10px; color: #fff; margin-bottom: 14px; }
-.modal-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; border: 1px solid var(--border); margin-bottom: 16px; }
-.modal-title { font-family: var(--font-serif); font-size: 24px; font-weight: 700; line-height: 1.2; margin-bottom: 12px; }
-.modal-exc { font-family: var(--font-serif); font-style: italic; font-size: 14px; color: var(--text2); line-height: 1.8; padding-bottom: 18px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
-.modal-cta {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: var(--ink); color: var(--white); padding: 14px 24px; margin-bottom: 8px;
-  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; transition: background 0.15s;
-}
-.modal-cta:hover { background: var(--red); }
-.modal-note { font-size: 11px; color: var(--text3); text-align: center; font-style: italic; }
-
-/* ═══════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════ */
-footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 48px; padding: 44px 24px 28px; }
-.footer-inner { max-width: 1400px; margin: 0 auto; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 32px; }
-.f-name { font-family: var(--font-display); font-size: 36px; color: var(--white); letter-spacing: 0.06em; margin-bottom: 10px; }
-.f-name em { color: var(--red); font-style: normal; }
-.f-desc { font-size: 12px; color: #555; line-height: 1.8; }
-.f-head { font-family: var(--font-mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: #3a3a34; border-bottom: 1px solid #1e1e18; padding-bottom: 8px; margin-bottom: 13px; }
-.f-links { list-style: none; display: flex; flex-direction: column; gap: 2px; }
-.f-links a {
-  font-size: 13px; color: #666; text-decoration: none;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 12px; margin: 0 -12px; border-radius: 4px;
-  transition: background 0.18s ease, color 0.18s ease;
-  cursor: pointer; position: relative;
-}
-.f-links a:hover { color: var(--white); background: rgba(255,255,255,0.06); }
-.f-links a.f-action { color: #666; }
-.f-links a.f-action:hover { color: var(--red); background: rgba(192,48,10,0.1); }
-.f-links a .f-arr { font-size: 10px; opacity: 0; transform: translateX(-6px); transition: opacity 0.18s, transform 0.18s; color: var(--red); }
-.f-links a:hover .f-arr { opacity: 1; transform: translateX(0); }
-.f-desc { font-size: 12px; color: #444; line-height: 1.9; }
-.footer-bottom { border-top: 1px solid #1a1a14; padding-top: 22px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-.footer-bottom p { font-family: var(--font-mono); font-size: 8px; color: #333; letter-spacing: 0.1em; }
-
-/* ═══════════════════════════════════════
-   ERROR BANNER
-═══════════════════════════════════════ */
-.err-banner { background: #fff8e1; border: 1px solid #d4a017; border-left: 4px solid #d4a017; padding: 12px 18px; margin: 16px 0; font-family: var(--font-mono); font-size: 10px; color: #7a5f10; line-height: 1.8; }
-.err-banner a { color: var(--gold); text-decoration: underline; }
-
-/* ═══════════════════════════════════════
-   RESPONSIVE — TABLET (≤ 1024px)
-═══════════════════════════════════════ */
-@media (max-width: 1024px) {
-  .layout { grid-template-columns: 1fr 280px; }
-  .hero-title { font-size: 30px; }
-  .hero-excerpt { font-size: 15px; }
-  .cards { grid-template-columns: 1fr 1fr; }
-  .card:nth-child(3n) { border-right: 1px solid var(--border); }
-  .card:nth-child(2n) { border-right: none; }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+.list-item:hover .li-title{color:var(--red)}
+.li-exc{
+  font-size:12px;color:var(--text2);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
 }
 
-/* ═══════════════════════════════════════
-   RESPONSIVE — TABLET PORTRAIT (≤ 768px)
-═══════════════════════════════════════ */
-@media (max-width: 768px) {
-  :root { --header-h: 56px; }
-  .page { padding: 0 16px; }
-  
-  /* Header */
-  .logo-name { font-size: 34px; }
-  .logo-sub { display: none; }
-  .live-pill { display: none; }
-  .burger { display: flex; }
-  
-  /* Nav — hide desktop tabs, show burger */
-  .mast-nav { display: none; }
-  .mobile-drawer { display: flex; }
-  
-  /* Layout — single column */
-  .layout { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
-  .hero-wrap { padding: 20px 0; }
-  .hero-title { font-size: 26px; }
-  .hero-excerpt { font-size: 14px; display: none; }
-  .hero-img-box { aspect-ratio: 16/9; }
-  
-  /* Cards — 2 col */
-  .cards { grid-template-columns: 1fr 1fr; }
-  .card { padding: 14px 12px 12px 0; }
-  .card:nth-child(3n) { border-right: 1px solid var(--border); }
-  .card:nth-child(2n) { border-right: none; }
-  .card-excerpt { display: none; }
-  
-  /* Footer */
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
-  footer { padding: 32px 16px 24px; }
+/* ── SIDEBAR ── */
+.sidebar{border-left:1px solid var(--border);padding:0 0 40px 24px}
+.sb-block{padding:20px 0;border-bottom:1px solid var(--border)}
+.sb-block:last-child{border-bottom:none}
+.sb-head{
+  font-family:var(--display);font-size:18px;letter-spacing:0.08em;
+  border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:14px
+}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.stat{background:var(--white);padding:14px 12px}
+.stat-n{font-family:var(--display);font-size:36px;color:var(--red);display:block;line-height:1}
+.stat-l{font-family:var(--mono);font-size:7px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase}
+.trend-item{
+  display:grid;grid-template-columns:28px 1fr;gap:0 10px;
+  padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;
+  transition:opacity 0.1s;
+}
+.trend-item:hover{opacity:0.75}
+.trend-item:last-child{border-bottom:none}
+.trend-n{font-family:var(--display);font-size:22px;color:var(--border);line-height:1.1}
+.trend-title{font-family:var(--serif);font-size:13px;font-weight:600;line-height:1.3;color:var(--ink)}
+.trend-src{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:2px}
+.src-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;border-bottom:1px solid var(--border);
+}
+.src-item:last-child{border-bottom:none}
+.src-left{display:flex;align-items:center;gap:8px}
+.src-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.src-name{font-family:var(--sans);font-size:12px;color:var(--text2)}
+.src-right{display:flex;align-items:center;gap:6px}
+.src-live{
+  font-family:var(--mono);font-size:7px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--red);border:1px solid var(--red);padding:1px 5px;
+}
+.src-count{font-family:var(--mono);font-size:11px;color:var(--text2)}
+.src-dead{font-family:var(--mono);font-size:9px;color:var(--border)}
+
+/* ── NEWSLETTER BOX ── */
+.nl-box{background:var(--ink);padding:22px 18px;color:var(--white)}
+.nl-head{font-family:var(--display);font-size:22px;letter-spacing:0.05em;margin-bottom:8px}
+.nl-sub{font-size:12px;color:#666;line-height:1.6;margin-bottom:16px}
+.nl-in{
+  width:100%;background:#1a1a14;border:1px solid #2e2e28;
+  font-family:var(--mono);font-size:11px;color:var(--white);
+  padding:10px 12px;margin-bottom:10px;outline:none;
+  transition:border-color 0.15s;
+}
+.nl-in:focus{border-color:var(--red)}
+.nl-in::placeholder{color:#444}
+.nl-btn{
+  width:100%;background:var(--red);color:var(--white);
+  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  padding:12px;transition:background 0.15s;
+}
+.nl-btn:hover{background:#a0280a}
+.nl-note{font-family:var(--mono);font-size:9px;color:#444;text-align:center;margin-top:8px}
+.about-txt{font-size:12px;color:var(--text2);line-height:1.8}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);border-top:4px solid var(--red);margin-top:48px;padding:48px 24px 28px}
+.footer-inner{max-width:1440px;margin:0 auto}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:32px}
+.f-logo{font-family:var(--display);font-size:32px;color:var(--white);letter-spacing:0.05em;margin-bottom:12px}
+.f-logo em{color:var(--red);font-style:normal}
+.f-desc{font-size:12px;color:#555;line-height:1.9;max-width:280px}
+.f-head{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
+  color:#3a3a34;border-bottom:1px solid #1e1e18;padding-bottom:10px;margin-bottom:14px
+}
+.f-links{display:flex;flex-direction:column;gap:2px}
+.f-link{
+  font-size:13px;color:#666;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 10px;margin:0 -10px;border-radius:3px;
+  transition:background 0.15s,color 0.15s;cursor:pointer
+}
+.f-link:hover{color:var(--white);background:rgba(255,255,255,0.06)}
+.f-link.action:hover{color:var(--red);background:rgba(192,48,10,0.09)}
+.f-arrow{
+  font-size:10px;opacity:0;transform:translateX(-5px);
+  transition:opacity 0.15s,transform 0.15s;color:var(--red)
+}
+.f-link:hover .f-arrow{opacity:1;transform:translateX(0)}
+.footer-bot{
+  border-top:1px solid #1a1a14;padding-top:22px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px
+}
+.footer-bot p{font-family:var(--mono);font-size:8px;color:#2e2e28;letter-spacing:0.1em}
+
+/* ── MODALS ── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(12,11,9,.85);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:24px;
+  backdrop-filter:blur(3px);
+}
+.modal-bg.open{display:flex}
+.modal{
+  background:var(--cream);max-width:700px;width:100%;max-height:90vh;
+  overflow-y:auto;padding:36px;position:relative;
+  animation:modalin 0.2s ease;
+}
+@keyframes modalin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.modal-x{
+  position:absolute;top:16px;right:16px;font-family:var(--mono);font-size:11px;
+  color:var(--text3);padding:6px 10px;transition:color 0.1s;background:none;border:none
+}
+.modal-x:hover{color:var(--red)}
+.modal-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;color:var(--text3);text-transform:uppercase;margin-bottom:14px}
+.modal-src{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:8px}
+.modal-img{width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:20px}
+.modal-title{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.2;margin-bottom:16px}
+.modal-excerpt{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:20px}
+.modal-link{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--white);font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:11px 22px;transition:background 0.15s}
+.modal-link:hover{background:var(--red)}
+
+/* ── TOPIC BANNER ── */
+#topic-banner{
+  position:fixed;top:120px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:var(--cream);
+  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  padding:10px 20px;z-index:300;border-bottom:2px solid var(--red);
+  white-space:nowrap;display:none;
 }
 
-/* ═══════════════════════════════════════
-   RESPONSIVE — MOBILE (≤ 480px)
-═══════════════════════════════════════ */
-@media (max-width: 480px) {
-  :root { --header-h: 52px; }
-  .page { padding: 0 12px; }
-  
-  /* Header */
-  .mast-top { padding: 0 14px; }
-  .logo-name { font-size: 30px; }
-  .logo-sub { display: none; }
-  
-  /* Hero */
-  .hero-wrap { padding: 16px 0; }
-  .hero-img-box { aspect-ratio: 16/9; }
-  .hero-title { font-size: 22px; line-height: 1.2; }
-  .hero-excerpt { display: none; }
-  .hero-foot { gap: 8px; }
-  .btn-read { font-size: 8px; padding: 9px 14px; }
-  .hero-age { display: none; }
-  
-  /* Cards — single column on phone */
-  .cards { grid-template-columns: 1fr; }
-  .card { border-right: none !important; padding: 14px 0 12px; }
-  .card:nth-child(n) { border-right: none; }
-  .card-title { font-size: 16px; }
-  
-  /* List */
-  .list-item { grid-template-columns: 36px 1fr; }
-  .li-num { font-size: 18px; }
-  .li-title { font-size: 15px; }
-  .li-exc { display: none; }
-  
-  /* Footer */
-  .footer-grid { grid-template-columns: 1fr; gap: 20px; }
-  .f-name { font-size: 28px; }
-  footer { padding: 28px 12px 20px; }
-  .footer-bottom { flex-direction: column; text-align: center; }
-  
-  /* Ticker */
-  .tick-item { font-size: 8px; padding: 0 18px; }
-  
-  /* Modal */
-  .modal { padding: 24px 18px; }
-  .modal-title { font-size: 20px; }
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{border-left:none;border-top:2px solid var(--ink);padding:24px 0 0}
+  .stats-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:768px){
+  .hdr-nav{display:none}
+  .burger{display:flex}
+  .logo{font-size:26px}
+  .layout{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr 1fr}
+  .card:nth-child(2n){border-right:none}
+  .card:nth-child(3n){border-right:1px solid var(--border)}
+  .hero-title{font-size:28px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+}
+@media(max-width:480px){
+  .hdr-top{padding:0 14px;height:52px}
+  .page{padding:0 14px}
+  .cards{grid-template-columns:1fr}
+  .card{border-right:none!important;padding-right:0}
+  .hero-title{font-size:24px}
+  .hero-excerpt{font-size:15px}
+  .list-item{padding-right:0}
+  .footer-grid{grid-template-columns:1fr;gap:24px}
+  footer{padding:32px 14px 24px}
+  .footer-bot{flex-direction:column;text-align:center}
+  .modal{padding:24px}
 }
 </style>
 </head>
 <body>
 
 <!-- LOADER -->
-<div class="loader" id="loader">
-  <div class="loader-logo">ARCH<em>NEWS</em></div>
-  <div class="loader-track"><div class="loader-bar" id="lbar"></div></div>
-  <div class="loader-txt" id="ltxt">Connecting to feeds...</div>
+<div id="loader">
+  <div class="ld-logo">ARCH<em>NEWS</em></div>
+  <div class="ld-track"><div class="ld-bar" id="ld-bar"></div></div>
+  <div class="ld-txt" id="ld-txt">Connecting to feeds...</div>
 </div>
 
-<!-- MASTHEAD -->
-<header class="masthead">
-  <div class="mast-top">
-    <a class="logo" href="#" onclick="setFilter('all');return false;">
-      <span class="logo-name">ARCH<em>NEWS</em></span>
-      <div class="logo-sub">
-        <span class="logo-tag">Architecture Intelligence</span>
-        <span class="logo-dt" id="hdr-date"></span>
-      </div>
-    </a>
-    <div class="mast-right">
-      <div class="live-pill"><div class="live-dot"></div>LIVE FEED</div>
-      <button class="burger" id="burger" onclick="toggleBurger()" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
+<!-- HEADER -->
+<header>
+  <div class="hdr-top">
+    <a class="logo" href="#" onclick="setFilter('all');return false">ARCH<em>NEWS</em></a>
+    <div class="logo-sub">
+      <span class="logo-tagline">Architecture Intelligence</span>
+      <span class="logo-date" id="hdr-date"></span>
     </div>
+    <div class="live-pill"><span class="live-dot"></span>Live Feed</div>
+    <button class="burger" id="burger" onclick="toggleBurger()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
-  
-  <!-- Desktop nav -->
-  <nav class="mast-nav" id="desknav">
-    <div class="mast-nav-inner">
-      <div class="nav-tabs" id="nav-tabs">
-        <button class="nav-tab active" onclick="setFilter('all',this)">All</button>
-        <button class="nav-tab" onclick="setFilter('archdaily',this)">ArchDaily</button>
-        <button class="nav-tab" onclick="setFilter('dezeen',this)">Dezeen</button>
-        <button class="nav-tab" onclick="setFilter('archinect',this)">Archinect</button>
-        <button class="nav-tab" onclick="setFilter('metropolis',this)">Metropolis</button>
-        <button class="nav-tab" onclick="setFilter('archrecord',this)">Arch Record</button>
-        <button class="nav-tab" onclick="setFilter('designboom',this)">Designboom</button>
-        <button class="nav-tab" onclick="setFilter('archpaper',this)">Arch Paper</button>
-        <button class="nav-tab" onclick="setFilter('domus',this)">Domus</button>
-      </div>
-      <div class="nav-updated">Updated: <span id="upd-time">—</span></div>
-    </div>
-  </nav>
-  
-  <!-- Mobile nav drawer -->
-  <div class="mobile-drawer" id="mob-drawer">
-    <button class="mob-tab active" onclick="setFilter('all',this);toggleBurger()">All Sources</button>
-    <button class="mob-tab" onclick="setFilter('archdaily',this);toggleBurger()">ArchDaily</button>
-    <button class="mob-tab" onclick="setFilter('dezeen',this);toggleBurger()">Dezeen</button>
-    <button class="mob-tab" onclick="setFilter('archinect',this);toggleBurger()">Archinect</button>
-    <button class="mob-tab" onclick="setFilter('metropolis',this);toggleBurger()">Metropolis</button>
-    <button class="mob-tab" onclick="setFilter('archrecord',this);toggleBurger()">Arch Record</button>
-    <button class="mob-tab" onclick="setFilter('designboom',this);toggleBurger()">Designboom</button>
-    <button class="mob-tab" onclick="setFilter('archpaper',this);toggleBurger()">Arch Paper</button>
-    <button class="mob-tab" onclick="setFilter('domus',this);toggleBurger()">Domus</button>
+  <div class="hdr-nav">
+    <button class="nav-tab active" onclick="setFilter('all',this)">All</button>
+    <button class="nav-tab" onclick="setFilter('archdaily',this)">ArchDaily</button>
+    <button class="nav-tab" onclick="setFilter('dezeen',this)">Dezeen</button>
+    <button class="nav-tab" onclick="setFilter('archinect',this)">Archinect</button>
+    <button class="nav-tab" onclick="setFilter('metropolis',this)">Metropolis</button>
+    <button class="nav-tab" onclick="setFilter('archrecord',this)">Arch Record</button>
+    <button class="nav-tab" onclick="setFilter('designboom',this)">Designboom</button>
+    <button class="nav-tab" onclick="setFilter('archpaper',this)">Arch Paper</button>
+    <button class="nav-tab" onclick="setFilter('domus',this)">Domus</button>
+    <span class="nav-upd">Updated: <span id="upd-time">—</span></span>
   </div>
 </header>
 
+<!-- MOBILE DRAWER -->
+<div class="mob-drawer" id="mob-drawer">
+  <button class="mob-close" onclick="toggleBurger()">✕ CLOSE</button>
+  <button class="mob-tab active" onclick="setFilter('all',this);toggleBurger()">All Sources</button>
+  <button class="mob-tab" onclick="setFilter('archdaily',this);toggleBurger()">ArchDaily</button>
+  <button class="mob-tab" onclick="setFilter('dezeen',this);toggleBurger()">Dezeen</button>
+  <button class="mob-tab" onclick="setFilter('archinect',this);toggleBurger()">Archinect</button>
+  <button class="mob-tab" onclick="setFilter('metropolis',this);toggleBurger()">Metropolis</button>
+  <button class="mob-tab" onclick="setFilter('archrecord',this);toggleBurger()">Arch Record</button>
+  <button class="mob-tab" onclick="setFilter('designboom',this);toggleBurger()">Designboom</button>
+  <button class="mob-tab" onclick="setFilter('archpaper',this);toggleBurger()">Arch Paper</button>
+  <button class="mob-tab" onclick="setFilter('domus',this);toggleBurger()">Domus</button>
+</div>
+
 <!-- TICKER -->
 <div class="ticker">
-  <div class="ticker-track">
-    <span class="tick-item">ARCHDAILY</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DEZEEN</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">ARCHINECT</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">METROPOLIS</span><span class="tick-item tick-sep">·</span>
+  <div class="ticker-track" id="ticker">
     <span class="tick-item">ARCHITECTURAL RECORD</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DESIGNBOOM</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">DEZEEN</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">ARCHDAILY</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">METROPOLIS</span><span class="tick-item tick-sep">·</span>
     <span class="tick-item">THE ARCHITECT'S NEWSPAPER</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">DESIGNBOOM</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">ARCHINECT</span><span class="tick-item tick-sep">·</span>
     <span class="tick-item">DOMUS</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">ARCHDAILY</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DEZEEN</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">ARCHINECT</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">METROPOLIS</span><span class="tick-item tick-sep">·</span>
     <span class="tick-item">ARCHITECTURAL RECORD</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DESIGNBOOM</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">DEZEEN</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">ARCHDAILY</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">METROPOLIS</span><span class="tick-item tick-sep">·</span>
     <span class="tick-item">THE ARCHITECT'S NEWSPAPER</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">DESIGNBOOM</span><span class="tick-item tick-sep">·</span>
+    <span class="tick-item">ARCHINECT</span><span class="tick-item tick-sep">·</span>
     <span class="tick-item">DOMUS</span><span class="tick-item tick-sep">·</span>
   </div>
 </div>
+
+<!-- TOPIC BANNER -->
+<div id="topic-banner"></div>
 
 <!-- MAIN -->
 <main class="page">
@@ -542,8 +487,8 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
     <!-- CONTENT -->
     <div>
       <!-- HERO -->
-      <div class="hero-wrap" id="hero">
-        <div class="hero-img-box">
+      <div class="hero" id="hero">
+        <div class="hero-img-wrap">
           <img class="hero-img" id="h-img" src="" alt=""/>
           <div class="hero-overlay"></div>
           <span class="hero-badge" id="h-badge"></span>
@@ -552,9 +497,7 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
         <h1 class="hero-title" id="h-title">Loading latest stories...</h1>
         <p class="hero-excerpt" id="h-exc"></p>
         <div class="hero-foot">
-          <a class="btn-read" id="h-link" href="#" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-            Read Full Story ↗
-          </a>
+          <a class="btn-read" id="h-link" href="#" target="_blank" rel="noopener" onclick="event.stopPropagation()">Read Full Story ↗</a>
           <div class="vote-row">
             <button class="vote-btn" id="h-vbtn" onclick="event.stopPropagation();heroVote()">▲</button>
             <span class="vote-n" id="h-vn">—</span>
@@ -577,34 +520,30 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
       <div class="sb-block">
         <div class="sb-head">Today's Stats</div>
         <div class="stats-grid">
-          <div class="stat"><span class="stat-n" id="s-stories">—</span><span class="stat-l">Stories</span></div>
-          <div class="stat"><span class="stat-n" id="s-sources">8</span><span class="stat-l">Sources</span></div>
+          <div class="stat"><span class="stat-n" id="s-count">—</span><span class="stat-l">Stories</span></div>
+          <div class="stat"><span class="stat-n" id="s-src">8</span><span class="stat-l">Sources</span></div>
           <div class="stat"><span class="stat-n" id="s-votes">0</span><span class="stat-l">Upvotes</span></div>
           <div class="stat"><span class="stat-n" id="s-status">—</span><span class="stat-l">Status</span></div>
         </div>
       </div>
-
       <div class="sb-block">
         <div class="sb-head">Trending Now</div>
         <div id="sb-trending"></div>
       </div>
-
       <div class="sb-block">
         <div class="sb-head">Live Sources</div>
         <div id="sb-sources"></div>
       </div>
-
-      <div class="sb-block" style="border:none;padding-bottom:0">
+      <div class="sb-block">
         <div class="nl-box">
-          <div class="nl-h">Stay Updated</div>
-          <p class="nl-p">Top 5 architecture stories in your inbox every morning.</p>
-          <input class="nl-in" type="email" placeholder="your@email.com" id="nl-email"/>
-          <button class="nl-btn" onclick="nlSub()"><span id="nl-btn-txt">Subscribe Free →</span></button>
-          <p style="font-size:10px;color:#444;margin-top:8px;font-family:var(--font-mono);text-align:center">Free · No spam · Unsubscribe anytime</p>
+          <div class="nl-head">Stay Updated</div>
+          <p class="nl-sub">Top 5 architecture stories every Monday morning.</p>
+          <input class="nl-in" type="email" id="nl-email" placeholder="your@email.com"/>
+          <button class="nl-btn" onclick="nlSub()"><span id="nl-btxt">Subscribe Free →</span></button>
+          <p class="nl-note">Free · No spam · Unsubscribe anytime</p>
         </div>
       </div>
-
-      <div class="sb-block" style="margin-top:20px">
+      <div class="sb-block">
         <div class="sb-head">About</div>
         <p class="about-txt">Architecture moves fast. Staying informed shouldn't be hard. ARCHNEWS puts every major publication in one live feed — updated all day, every day. Built by a licensed architect, for architects.</p>
       </div>
@@ -613,125 +552,124 @@ footer { background: var(--ink); border-top: 4px solid var(--red); margin-top: 4
 </main>
 
 <!-- FOOTER -->
-<!-- ABOUT MODAL -->
-<div class="modal-bg" id="about-modal" onclick="if(event.target===this)closeAbout()">
-  <div class="modal" style="max-width:640px">
-    <button class="modal-x" onclick="closeAbout()">✕</button>
-    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;color:var(--text3);margin-bottom:16px;text-transform:uppercase;">About ARCHNEWS</div>
-    <h2 style="font-family:var(--font-serif);font-size:28px;font-weight:700;line-height:1.2;margin-bottom:16px;color:var(--ink)">Architecture moves fast.<br>Staying informed shouldn't be hard.</h2>
-    <p style="font-family:var(--font-serif);font-style:italic;font-size:16px;color:var(--text2);line-height:1.8;margin-bottom:20px;border-left:3px solid var(--red);padding-left:16px;">Architects are problem solvers. But keeping up with 8 different publications, hundreds of weekly stories, and constant industry shifts — that's a problem nobody needed to add to their day.</p>
-    <p style="font-size:14px;color:var(--text2);line-height:1.9;margin-bottom:16px;">ARCHNEWS was built to solve that. One live feed. Eight leading publications. Every story updated automatically, all day, every day. You see what matters — without opening eight tabs.</p>
-    <p style="font-size:14px;color:var(--text2);line-height:1.9;margin-bottom:16px;">Every story links directly to its original source. No paywalls introduced. No content stolen. Just the fastest way to know what's happening in architecture right now.</p>
-    <p style="font-size:14px;color:var(--text2);line-height:1.9;margin-bottom:24px;">ARCHNEWS Weekly — the Monday morning newsletter — distills the week's five most important stories into a single, curated briefing. Written by a licensed architect. Not an algorithm.</p>
-    <div style="border-top:1px solid var(--border);padding-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-      <div>
-        <div style="font-family:var(--font-mono);font-size:8px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:3px;">Built by</div>
-        <div style="font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--ink)">Kunal Trivedi</div>
-        <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3)">Licensed Architect · India COA + NCARB · M.Arch SUNY Buffalo</div>
-      </div>
-      <a href="https://archnews.beehiiv.com/subscribe" target="_blank" class="btn-read" style="margin-left:auto">Subscribe Weekly →</a>
-    </div>
-  </div>
-</div>
-
-<!-- SUBMIT MODAL -->
-<div class="modal-bg" id="submit-modal" onclick="if(event.target===this)closeSubmit()">
-  <div class="modal" style="max-width:560px">
-    <button class="modal-x" onclick="closeSubmit()">✕</button>
-    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;color:var(--text3);margin-bottom:16px;text-transform:uppercase;">Submit a Story</div>
-    <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:700;margin-bottom:12px;">Got a story worth sharing?</h2>
-    <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:20px;">If you're working on a project, writing about architecture, or know of a story that deserves more attention — send it our way. We review every submission.</p>
-    <div style="margin-bottom:12px;">
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;margin-bottom:6px;text-transform:uppercase;">Story URL or Description</div>
-      <input id="sub-story" style="width:100%;background:var(--surface);border:1px solid var(--border);padding:10px 12px;font-family:var(--font-sans);font-size:13px;outline:none;color:var(--ink)" placeholder="https://... or describe the story"/>
-    </div>
-    <div style="margin-bottom:16px;">
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:0.1em;margin-bottom:6px;text-transform:uppercase;">Your Email (optional)</div>
-      <input id="sub-email" style="width:100%;background:var(--surface);border:1px solid var(--border);padding:10px 12px;font-family:var(--font-sans);font-size:13px;outline:none;color:var(--ink)" placeholder="your@email.com"/>
-    </div>
-    <button onclick="submitStory()" style="width:100%;background:var(--ink);color:var(--white);border:none;padding:12px;font-family:var(--font-mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#c0300a'" onmouseout="this.style.background='var(--ink)'">Submit Story →</button>
-  </div>
-</div>
-
-<!-- ADVERTISE MODAL -->
-<div class="modal-bg" id="ad-modal" onclick="if(event.target===this)closeAd()">
-  <div class="modal" style="max-width:560px">
-    <button class="modal-x" onclick="closeAd()">✕</button>
-    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.2em;color:var(--text3);margin-bottom:16px;text-transform:uppercase;">Advertise with ARCHNEWS</div>
-    <h2 style="font-family:var(--font-serif);font-size:24px;font-weight:700;margin-bottom:12px;">Reach architects who are paying attention.</h2>
-    <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:16px;">ARCHNEWS readers are practicing architects, designers, developers, and students who actively seek out industry news. They're decision-makers. They specify materials, hire consultants, and recommend software.</p>
-    <p style="font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:20px;">If your product or service serves the architecture and construction industry — this is your audience.</p>
-    <div style="background:var(--cream);border:1px solid var(--border);padding:18px;margin-bottom:18px;">
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:10px;">Current Opportunities</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.9">
-        Newsletter Sponsor — from $100/issue<br>
-        Website Banner — from $200/month<br>
-        Job Board Listing — from $200/post<br>
-        Custom Partnership — let's talk
-      </div>
-    </div>
-    <a href="/cdn-cgi/l/email-protection#5b3a293833322f3e382f34352c342930281b3c363a32377538343664282e39313e382f661a091813151e0c087b1a3f2d3e292f322832353c7b12352a2e322922" class="btn-read" style="display:flex;align-items:center;justify-content:center;gap:8px">Email Us to Discuss →</a>
-  </div>
-</div>
-
 <footer>
   <div class="footer-inner">
     <div class="footer-grid">
       <div>
-        <div class="f-name">ARCH<em>NEWS</em></div>
-        <p class="f-desc">Architecture moves fast. Staying informed shouldn't be hard. One live feed. Eight leading publications. Every story updated automatically — all day, every day. Built for architects, by an architect.</p>
+        <div class="f-logo">ARCH<em>NEWS</em></div>
+        <p class="f-desc">Architecture moves fast. Staying informed shouldn't be hard. One live feed. Eight leading publications. Updated automatically — all day, every day. Built for architects, by a licensed architect.</p>
       </div>
       <div>
         <div class="f-head">Publications</div>
-        <ul class="f-links">
-          <li><a href="https://www.archdaily.com" target="_blank" rel="noopener">ArchDaily ↗</a></li>
-          <li><a href="https://www.dezeen.com" target="_blank" rel="noopener">Dezeen ↗</a></li>
-          <li><a href="https://archinect.com" target="_blank" rel="noopener">Archinect ↗</a></li>
-          <li><a href="https://metropolismag.com" target="_blank" rel="noopener">Metropolis ↗</a></li>
-          <li><a href="https://www.architecturalrecord.com" target="_blank" rel="noopener">Arch Record ↗</a></li>
-          <li><a href="https://www.designboom.com" target="_blank" rel="noopener">Designboom ↗</a></li>
-          <li><a href="https://www.archpaper.com" target="_blank" rel="noopener">Arch Paper ↗</a></li>
-          <li><a href="https://www.domusweb.it" target="_blank" rel="noopener">Domus ↗</a></li>
-        </ul>
+        <div class="f-links">
+          <a class="f-link" href="https://www.archdaily.com" target="_blank">ArchDaily<span class="f-arrow">↗</span></a>
+          <a class="f-link" href="https://www.dezeen.com" target="_blank">Dezeen<span class="f-arrow">↗</span></a>
+          <a class="f-link" href="https://archinect.com" target="_blank">Archinect<span class="f-arrow">↗</span></a>
+          <a class="f-link" href="https://metropolismag.com" target="_blank">Metropolis<span class="f-arrow">↗</span></a>
+          <a class="f-link" href="https://www.architecturalrecord.com" target="_blank">Arch Record<span class="f-arrow">↗</span></a>
+          <a class="f-link" href="https://www.designboom.com" target="_blank">Designboom<span class="f-arrow">↗</span></a>
+          <a class="f-link" href="https://www.archpaper.com" target="_blank">Arch Paper<span class="f-arrow">↗</span></a>
+          <a class="f-link" href="https://www.domusweb.it" target="_blank">Domus<span class="f-arrow">↗</span></a>
+        </div>
       </div>
       <div>
         <div class="f-head">Topics</div>
-        <ul class="f-links">
-          <li><a href="#" class="f-action" onclick="footerSearch('cultural buildings');return false;">Cultural Buildings<span class="f-arr">→</span></a></li>
-          <li><a href="#" class="f-action" onclick="footerSearch('urban design');return false;">Urban Design<span class="f-arr">→</span></a></li>
-          <li><a href="#" class="f-action" onclick="footerSearch('sustainability');return false;">Sustainability<span class="f-arr">→</span></a></li>
-          <li><a href="#" class="f-action" onclick="footerSearch('technology BIM');return false;">Technology + BIM<span class="f-arr">→</span></a></li>
-          <li><a href="#" class="f-action" onclick="footerSearch('practice');return false;">Practice<span class="f-arr">→</span></a></li>
-          <li><a href="#" class="f-action" onclick="footerSearch('awards');return false;">Awards<span class="f-arr">→</span></a></li>
-        </ul>
+        <div class="f-links">
+          <a class="f-link action" href="#" onclick="topicFilter('cultural buildings');return false">Cultural Buildings<span class="f-arrow">→</span></a>
+          <a class="f-link action" href="#" onclick="topicFilter('urban design');return false">Urban Design<span class="f-arrow">→</span></a>
+          <a class="f-link action" href="#" onclick="topicFilter('sustainability');return false">Sustainability<span class="f-arrow">→</span></a>
+          <a class="f-link action" href="#" onclick="topicFilter('technology BIM');return false">Technology + BIM<span class="f-arrow">→</span></a>
+          <a class="f-link action" href="#" onclick="topicFilter('practice');return false">Practice<span class="f-arrow">→</span></a>
+          <a class="f-link action" href="#" onclick="topicFilter('awards');return false">Awards<span class="f-arrow">→</span></a>
+        </div>
       </div>
       <div>
         <div class="f-head">Connect</div>
-        <ul class="f-links">
-          <li><a href="https://archnews.beehiiv.com/subscribe" target="_blank" rel="noopener" class="f-action">Newsletter<span class="f-arr">↗</span></a></li>
-          <li><a href="#" class="f-action" onclick="openSubmit();return false;">Submit a Story<span class="f-arr">→</span></a></li>
-          <li><a href="#" class="f-action" onclick="openAd();return false;">Advertise<span class="f-arr">→</span></a></li>
-          <li><a href="#" class="f-action" onclick="openAbout();return false;">About ARCHNEWS<span class="f-arr">→</span></a></li>
-        </ul>
+        <div class="f-links">
+          <a class="f-link action" href="https://archnews.beehiiv.com/subscribe" target="_blank">Newsletter<span class="f-arrow">↗</span></a>
+          <a class="f-link action" href="#" onclick="openModal('submit');return false">Submit a Story<span class="f-arrow">→</span></a>
+          <a class="f-link action" href="#" onclick="openModal('advertise');return false">Advertise<span class="f-arrow">→</span></a>
+          <a class="f-link action" href="#" onclick="openModal('about');return false">About ARCHNEWS<span class="f-arrow">→</span></a>
+        </div>
       </div>
     </div>
-    <div class="footer-bottom">
+    <div class="footer-bot">
       <p>© 2026 ARCHNEWS — Architecture Intelligence — archnews.vercel.app</p>
       <p>Built for architects · All stories link to original sources</p>
     </div>
   </div>
 </footer>
 
-<!-- MODAL -->
-<div class="modal-bg" id="modal" onclick="bgClose(event)">
+<!-- STORY MODAL -->
+<div class="modal-bg" id="modal-story" onclick="if(event.target===this)closeAllModals()">
   <div class="modal">
-    <button class="modal-x" onclick="closeModal()">✕</button>
-    <span class="modal-src" id="m-src"></span>
-    <img class="modal-img" id="m-img" src="" alt="" onerror="this.style.display='none'"/>
-    <h2 class="modal-title" id="m-title"></h2>
-    <p class="modal-exc" id="m-exc"></p>
-    <a class="modal-cta" id="m-cta" href="#" target="_blank" rel="noopener">Read Full Article on Original Site ↗</a>
-    <p class="modal-note" id="m-note"></p>
+    <button class="modal-x" onclick="closeAllModals()">✕</button>
+    <span class="modal-src" id="ms-src"></span>
+    <img class="modal-img" id="ms-img" src="" alt="" onerror="this.style.display='none'"/>
+    <h2 class="modal-title" id="ms-title"></h2>
+    <p class="modal-excerpt" id="ms-exc"></p>
+    <a class="modal-link" id="ms-link" href="#" target="_blank" rel="noopener">Read Full Article ↗</a>
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div class="modal-bg" id="modal-about" onclick="if(event.target===this)closeAllModals()">
+  <div class="modal" style="max-width:620px">
+    <button class="modal-x" onclick="closeAllModals()">✕</button>
+    <div class="modal-tag">About ARCHNEWS</div>
+    <h2 class="modal-title" style="font-size:28px">Architecture moves fast.<br>Staying informed shouldn't be hard.</h2>
+    <p style="font-family:var(--serif);font-style:italic;font-size:16px;color:var(--text2);line-height:1.8;margin-bottom:18px;border-left:3px solid var(--red);padding-left:16px">Architects are problem solvers. But keeping up with 8 different publications, hundreds of weekly stories, and constant industry shifts — that's a problem nobody needed.</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:14px">ARCHNEWS was built to solve that. One live feed. Eight leading publications. Every story updated automatically, all day. You see what matters — without opening eight tabs.</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:14px">Every story links directly to its original source. No paywalls introduced. No content stolen. Just the fastest way to know what's happening in architecture right now.</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:22px">ARCHNEWS Weekly — the Monday morning newsletter — distills the week's five most important stories into one curated briefing. Written by a licensed architect. Not an algorithm.</p>
+    <div style="border-top:1px solid var(--border);padding-top:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px">Built by</div>
+        <div style="font-family:var(--serif);font-size:16px;font-weight:700">Kunal Trivedi</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--text3)">Licensed Architect · India COA + NCARB · M.Arch SUNY Buffalo</div>
+      </div>
+      <a class="btn-read" href="https://archnews.beehiiv.com/subscribe" target="_blank" style="margin-left:auto">Subscribe →</a>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-bg" id="modal-submit" onclick="if(event.target===this)closeAllModals()">
+  <div class="modal" style="max-width:540px">
+    <button class="modal-x" onclick="closeAllModals()">✕</button>
+    <div class="modal-tag">Submit a Story</div>
+    <h2 class="modal-title" style="font-size:24px">Got a story worth sharing?</h2>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:20px">Working on a project, writing about architecture, or know a story that deserves more attention? Send it our way — we review every submission.</p>
+    <div style="margin-bottom:12px">
+      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Story URL or Description</div>
+      <input id="sub-story" type="text" placeholder="https://... or describe the story" style="width:100%;background:var(--surface);border:1px solid var(--border);padding:10px 12px;font-family:var(--sans);font-size:13px;outline:none;color:var(--ink)"/>
+    </div>
+    <div style="margin-bottom:18px">
+      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Your Email (optional)</div>
+      <input id="sub-email" type="email" placeholder="your@email.com" style="width:100%;background:var(--surface);border:1px solid var(--border);padding:10px 12px;font-family:var(--sans);font-size:13px;outline:none;color:var(--ink)"/>
+    </div>
+    <button onclick="submitStory()" class="nl-btn" style="width:100%">Submit Story →</button>
+  </div>
+</div>
+
+<!-- ADVERTISE MODAL -->
+<div class="modal-bg" id="modal-advertise" onclick="if(event.target===this)closeAllModals()">
+  <div class="modal" style="max-width:540px">
+    <button class="modal-x" onclick="closeAllModals()">✕</button>
+    <div class="modal-tag">Advertise with ARCHNEWS</div>
+    <h2 class="modal-title" style="font-size:24px">Reach architects who are paying attention.</h2>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:14px">ARCHNEWS readers are practicing architects, designers, developers, and students who actively seek out industry news. They specify materials, hire consultants, and recommend software.</p>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:20px">If your product or service serves architecture and construction — this is your audience.</p>
+    <div style="background:var(--surface);border:1px solid var(--border);padding:18px;margin-bottom:20px">
+      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px">Opportunities</div>
+      <div style="font-size:13px;color:var(--text2);line-height:2">
+        Newsletter Sponsor — from $100/issue<br>
+        Website Banner — from $200/month<br>
+        Job Board Listing — from $200/post<br>
+        Custom Partnership — let's talk
+      </div>
+    </div>
+    <a class="btn-read" href="/cdn-cgi/l/email-protection#c2a3b0a1aaabb6a7a1b6adacb5adb0a9b182a5afa3abaeeca1adaffdb1b7a0a8a7a1b6ff8390818a8c879591e283a6b4a7b0b6abb1abaca5" style="display:flex;justify-content:center">Email to Discuss →</a>
   </div>
 </div>
 
@@ -745,158 +683,174 @@ const SRC = {
   archrecord: { name:'Arch Record', color:'#b87008', domain:'architecturalrecord.com' },
   designboom: { name:'Designboom',  color:'#a80875', domain:'designboom.com' },
   archpaper:  { name:'Arch Paper',  color:'#087ab8', domain:'archpaper.com' },
-  domus:      { name:'Domus',       color:'#333322', domain:'domusweb.it' },
+  domus:      { name:'Domus',       color:'#5a5a3a', domain:'domusweb.it' }
 };
+// Source-branded fallback images — architecture-specific per publication
+const SOURCE_FB = {
+  archdaily:  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&q=80',
+  dezeen:     'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+  archinect:  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
+  metropolis: 'https://images.unsplash.com/photo-1460574283810-2aab119d8511?w=800&q=80',
+  archrecord: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80',
+  designboom: 'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=800&q=80',
+  archpaper:  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+  domus:      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
+};
+const FB_IMGS = Object.values(SOURCE_FB);
+function fb(i){ return FB_IMGS[i % FB_IMGS.length]; }
+function fbSrc(sourceId){ return SOURCE_FB[sourceId] || FB_IMGS[0]; }
 
-const FALLBACKS = [
-  'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1200&q=80',
-  'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1200&q=80',
-  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80',
-  'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&q=80',
-  'https://images.unsplash.com/photo-1554080353-a576cf803bda?w=1200&q=80',
-  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=80',
-  'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80',
-  'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1200&q=80',
-];
+// ═══════ STATE ═══════
+let stories = [], filter = 'all', srcStats = {};
+let votes = {};
+try { votes = JSON.parse(localStorage.getItem('an_v3') || '{}'); } catch(e){}
 
-let stories = [], votes = {}, filter = 'all', srcStats = {};
-try { votes = JSON.parse(localStorage.getItem('an_v2') || '{}'); } catch(e) {}
-
-// ═══════ INIT ═══════
+// ═══════ DATE ═══════
 document.getElementById('hdr-date').textContent =
   new Date().toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}).toUpperCase();
 
 // ═══════ LOADER ═══════
-const lbar = document.getElementById('lbar');
-const ltxt = document.getElementById('ltxt');
-let lPct = 0;
-const lTimer = setInterval(() => {
-  lPct = Math.min(lPct + 12, 85);
-  lbar.style.width = lPct + '%';
-}, 400);
+const ldBar = document.getElementById('ld-bar');
+const ldTxt = document.getElementById('ld-txt');
+const MSGS = ['Connecting to feeds...','Fetching latest stories...','Almost ready...'];
+let ldStep = 0;
+const ldTimer = setInterval(() => {
+  ldStep = Math.min(ldStep+1, MSGS.length-1);
+  ldBar.style.width = ((ldStep+1)/MSGS.length * 80) + '%';
+  ldTxt.textContent = MSGS[ldStep];
+}, 1200);
 
-function hideLoader() {
-  clearInterval(lTimer);
-  clearTimeout(window._loaderKill);
-  lbar.style.width = '100%';
-  setTimeout(() => {
-    const el = document.getElementById('loader');
-    if (el) el.classList.add('out');
-  }, 300);
-}
-
-// NUCLEAR FALLBACK — site always shows in 8s no matter what
-window._loaderKill = setTimeout(() => {
+// Nuclear kill — site always shows after 9s
+const ldKill = setTimeout(() => {
   hideLoader();
   if (!stories.length) {
     document.getElementById('err-area').innerHTML =
-      '<div class="err-banner" id="feed-err">Fetching latest stories — <a href="javascript:location.reload()">reload if this persists →</a></div>';
+      '<div class="err-banner">Fetching stories — <a href="javascript:location.reload()">reload if this persists →</a></div>';
     render();
   }
-}, 8000);
+}, 9000);
 
-// ═══════ CLIENT-SIDE FALLBACK — Google News RSS (no CORS issues) ═══════
-const RSS_SOURCES = [
-  { id:'archdaily',  name:'ArchDaily',   color:'#bf2d0a',
-    url:'https://news.google.com/rss/search?q=site:archdaily.com+architecture&hl=en-US&gl=US&ceid=US:en' },
-  { id:'dezeen',     name:'Dezeen',      color:'#0a4fb8',
-    url:'https://news.google.com/rss/search?q=site:dezeen.com+architecture&hl=en-US&gl=US&ceid=US:en' },
-  { id:'archinect',  name:'Archinect',   color:'#0a8a35',
-    url:'https://news.google.com/rss/search?q=site:archinect.com&hl=en-US&gl=US&ceid=US:en' },
-  { id:'metropolis', name:'Metropolis',  color:'#6b08a8',
-    url:'https://news.google.com/rss/search?q=site:metropolismag.com+architecture&hl=en-US&gl=US&ceid=US:en' },
-  { id:'archrecord', name:'Arch Record', color:'#b87008',
-    url:'https://news.google.com/rss/search?q=site:architecturalrecord.com&hl=en-US&gl=US&ceid=US:en' },
-  { id:'designboom', name:'Designboom',  color:'#a80875',
-    url:'https://news.google.com/rss/search?q=site:designboom.com+architecture&hl=en-US&gl=US&ceid=US:en' },
-  { id:'archpaper',  name:'Arch Paper',  color:'#087ab8',
-    url:'https://news.google.com/rss/search?q=site:archpaper.com&hl=en-US&gl=US&ceid=US:en' },
-  { id:'domus',      name:'Domus',       color:'#5a5a3a',
-    url:'https://news.google.com/rss/search?q=site:domusweb.it+architecture&hl=en-US&gl=US&ceid=US:en' }
+function hideLoader() {
+  clearInterval(ldTimer);
+  clearTimeout(ldKill);
+  ldBar.style.width = '100%';
+  setTimeout(() => document.getElementById('loader').classList.add('out'), 300);
+}
+
+// ═══════ CLIENT RSS SOURCES (Google News — no CORS issues) ═══════
+const CLIENT_SOURCES = [
+  { id:'archdaily',  name:'ArchDaily',   color:'#bf2d0a', url:'https://news.google.com/rss/search?q=site:archdaily.com+architecture&hl=en-US&gl=US&ceid=US:en' },
+  { id:'dezeen',     name:'Dezeen',      color:'#0a4fb8', url:'https://news.google.com/rss/search?q=site:dezeen.com+architecture&hl=en-US&gl=US&ceid=US:en' },
+  { id:'archinect',  name:'Archinect',   color:'#0a8a35', url:'https://news.google.com/rss/search?q=site:archinect.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'metropolis', name:'Metropolis',  color:'#6b08a8', url:'https://news.google.com/rss/search?q=site:metropolismag.com+architecture&hl=en-US&gl=US&ceid=US:en' },
+  { id:'archrecord', name:'Arch Record', color:'#b87008', url:'https://news.google.com/rss/search?q=site:architecturalrecord.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'designboom', name:'Designboom',  color:'#a80875', url:'https://news.google.com/rss/search?q=site:designboom.com+architecture&hl=en-US&gl=US&ceid=US:en' },
+  { id:'archpaper',  name:'Arch Paper',  color:'#087ab8', url:'https://news.google.com/rss/search?q=site:archpaper.com&hl=en-US&gl=US&ceid=US:en' },
+  { id:'domus',      name:'Domus',       color:'#5a5a3a', url:'https://news.google.com/rss/search?q=site:domusweb.it+architecture&hl=en-US&gl=US&ceid=US:en' }
 ];
 
-function parseRSSText(xml, src) {
+// Decode HTML entities (Google News encodes images inside descriptions)
+function decodeHTML(s) {
+  return (s||'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')
+    .replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
+    .replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(n));
+}
+
+function parseRSS(xml, src) {
   const items = [];
-  const itemRx = /<item[\s>]([\s\S]*?)<\/item>/gi;
-  const entryRx = /<entry[\s>]([\s\S]*?)<\/entry>/gi;
   let m;
-  while ((m = itemRx.exec(xml)) !== null) items.push(m[1]);
-  while ((m = entryRx.exec(xml)) !== null) items.push(m[1]);
+  const rx = /<item[\s>]([\s\S]*?)<\/item>/gi;
+  while ((m = rx.exec(xml)) !== null) items.push(m[1]);
 
   function getTag(chunk, tag) {
-    const cd = chunk.match(new RegExp('<'+tag+'[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/'+tag+'>', 'i'));
+    const cd = chunk.match(new RegExp('<'+tag+'[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/'+tag+'>','i'));
     if (cd) return cd[1].trim();
-    const pl = chunk.match(new RegExp('<'+tag+'[^>]*>([\s\S]*?)<\/'+tag+'>', 'i'));
+    const pl = chunk.match(new RegExp('<'+tag+'[^>]*>([\\s\\S]*?)<\\/'+tag+'>','i'));
     return pl ? pl[1].replace(/<[^>]+>/g,'').trim() : '';
   }
   function clean(s) {
-    return (s||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'').replace(/\s+/g,' ').trim();
+    return (s||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+      .replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'')
+      .replace(/&quot;/g,'"').replace(/\s+/g,' ').trim();
   }
-  function getImg(chunk) {
-    const px = [/<media:(?:content|thumbnail)[^>]+url=["']([^"']+)["']/i,/<enclosure[^>]+url=["']([^"']+\.(?:jpg|jpeg|png|webp))["']/i,/<img[^>]+src=["']([^"']+)["']/i];
-    for (const rx of px) { const mm = chunk.match(rx); if (mm && mm[1].startsWith('http')) return mm[1]; }
+  function getImg(chunk, rawDesc) {
+    // 1. media tags
+    const med = chunk.match(/<media:(?:content|thumbnail)[^>]+url=["']([^"']+)["']/i);
+    if (med && med[1].startsWith('http')) return med[1];
+    // 2. enclosure
+    const enc = chunk.match(/<enclosure[^>]+url=["']([^"']+\.(?:jpg|jpeg|png|webp))[^>]*/i);
+    if (enc && enc[1].startsWith('http')) return enc[1];
+    // 3. img tag in raw chunk
+    const imgRaw = chunk.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (imgRaw && imgRaw[1].startsWith('http')) return imgRaw[1];
+    // 4. DECODE HTML entities in description — Google News hides images here
+    const decoded = decodeHTML(rawDesc||'');
+    const imgDec = decoded.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (imgDec && imgDec[1].startsWith('http')) return imgDec[1];
+    // 5. Any image URL in decoded text
+    const anyImg = decoded.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^\s"'<>]*)?/i);
+    if (anyImg) return anyImg[0];
     return null;
   }
 
   return items.slice(0, 10).map((item, i) => {
     const title = clean(getTag(item,'title'));
-    let link = clean(getTag(item,'link'));
-    if (!link) { const lm = item.match(/<link[^>]+href=["']([^"']+)["']/i); if(lm) link=lm[1]; }
-    link = link.replace(/&amp;/g,'&');
-    const desc = getTag(item,'description') || getTag(item,'summary') || '';
-    const pub = getTag(item,'pubDate') || getTag(item,'published') || '';
+    let link = clean(getTag(item,'link')).replace(/&amp;/g,'&');
+    if (!link.startsWith('http')) {
+      const lm = item.match(/<link[^>]+href=["']([^"']+)["']/i);
+      if (lm) link = lm[1];
+    }
+    const pub = getTag(item,'pubDate') || '';
     const ts = pub ? (new Date(pub).getTime() || Date.now()-i*3600000) : Date.now()-i*3600000;
+    const rawDesc = getTag(item,'description') || '';
+    const desc = clean(rawDesc).slice(0,280);
     return {
-      id: src.id+'-'+i+'-'+ts, sourceId:src.id, sourceName:src.name, sourceColor:src.color,
-      title, link, excerpt:clean(desc).slice(0,280), image:getImg(item),
-      pubDate: pub || new Date().toISOString(), timestamp:ts
+      id: src.id+'-'+i+'-'+ts,
+      sourceId: src.id, sourceName: src.name, sourceColor: src.color,
+      title, link, excerpt: desc, image: getImg(item, rawDesc),
+      pubDate: pub || new Date().toISOString(), timestamp: ts
     };
   }).filter(s => s.title && s.link && s.link.startsWith('http'));
 }
 
-// Google News RSS feeds — no CORS, no proxy needed, works for all sources
-async function fetchViaProxy(src) {
-  // Google News is CORS-friendly — fetch directly, no proxy needed
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), 8000);
+async function fetchClientSource(src) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 8000);
   try {
-    const r = await fetch(src.url, { signal: controller.signal });
+    const r = await fetch(src.url, { signal: ctrl });
     clearTimeout(t);
     if (!r.ok) return [];
     const xml = await r.text();
-    if (!xml.includes('<item') && !xml.includes('<entry')) return [];
-    return parseRSSText(xml, src);
+    return parseRSS(xml, src);
   } catch(e) {
     clearTimeout(t);
-    // If Google News direct fails, try via allorigins
+    // Fallback: allorigins proxy
     try {
       const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(src.url);
       const r2 = await fetch(proxy);
       if (!r2.ok) return [];
       const d = await r2.json();
-      const xml2 = d.contents || '';
-      if (!xml2.includes('<item') && !xml2.includes('<entry')) return [];
-      return parseRSSText(xml2, src);
+      const xml = d.contents || '';
+      return parseRSS(xml, src);
     } catch(e2) { return []; }
   }
 }
 
-// ═══════ FETCH ═══════
+// ═══════ LOAD FEED ═══════
 async function loadFeed() {
-  // Try 1: our own /api/feed first (fast if cached)
+  // Try 1: Vercel API (fast when cached)
   try {
-    const controller = new AbortController();
-    const fetchTimeout = setTimeout(() => controller.abort(), 7000);
-    const r = await fetch('/api/feed', { signal: controller.signal });
-    clearTimeout(fetchTimeout);
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 7000);
+    const r = await fetch('/api/feed', { signal: ctrl });
+    clearTimeout(t);
     if (r.ok) {
       const d = await r.json();
       if (d.stories && d.stories.length > 0) {
         stories = d.stories;
         srcStats = d.sources || {};
-        const t = new Date(d.updatedAt);
         document.getElementById('upd-time').textContent =
-          t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+          new Date(d.updatedAt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
         document.getElementById('s-status').textContent = 'Live';
         hideLoader();
         render();
@@ -905,66 +859,55 @@ async function loadFeed() {
     }
   } catch(e) {}
 
-  // Try 2: client-side RSS2JSON proxy fallback
-  ltxt.textContent = 'Trying backup feeds...';
+  // Try 2: Google News client-side (works for all 8 sources)
+  ldTxt.textContent = 'Loading from sources...';
   try {
-    const results = await Promise.allSettled(RSS_SOURCES.map(s => fetchViaProxy(s)));
-    let fallbackStories = [];
-    results.forEach(r => {
-      if (r.status === 'fulfilled') fallbackStories = fallbackStories.concat(r.value);
+    const results = await Promise.allSettled(CLIENT_SOURCES.map(fetchClientSource));
+    let all = [];
+    const stats = {};
+    results.forEach((res, i) => {
+      const src = CLIENT_SOURCES[i];
+      if (res.status === 'fulfilled' && res.value.length > 0) {
+        all = all.concat(res.value);
+        stats[src.id] = res.value.length;
+      } else { stats[src.id] = 0; }
     });
-    fallbackStories.sort((a,b) => b.timestamp - a.timestamp);
-    // dedupe
+    all.sort((a,b) => b.timestamp - a.timestamp);
     const seen = new Set();
-    fallbackStories = fallbackStories.filter(s => {
-      const k = s.title.slice(0,40).toLowerCase();
-      if(seen.has(k)) return false;
+    all = all.filter(s => {
+      const k = s.title.slice(0,45).toLowerCase();
+      if (seen.has(k)) return false;
       seen.add(k); return true;
     });
-    if (fallbackStories.length > 0) {
-      stories = fallbackStories;
+    if (all.length > 0) {
+      stories = all;
+      srcStats = stats;
       document.getElementById('s-status').textContent = 'Live';
       document.getElementById('upd-time').textContent =
         new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
       hideLoader();
       render();
+      // Background: enrich missing images via allorigins OG scrape (non-blocking)
+      enrichImages(all).then(() => render());
       return;
     }
   } catch(e) {}
 
-  // Try 3: nothing worked — show site, silent retry in 15s
+  // Try 3: Nothing worked
   hideLoader();
   document.getElementById('err-area').innerHTML =
-    '<div class="err-banner" id="feed-err">Fetching latest stories — <a href="javascript:location.reload()">reload if this persists →</a></div>';
+    '<div class="err-banner">Feed unavailable — <a href="javascript:location.reload()">tap to reload →</a></div>';
   render();
-  // Auto-retry once after 15s silently
-  setTimeout(async () => {
-    try {
-      const r2 = await fetch('/api/feed');
-      if (r2.ok) {
-        const d2 = await r2.json();
-        if (d2.stories && d2.stories.length > 0) {
-          stories = d2.stories;
-          srcStats = d2.sources || {};
-          document.getElementById('s-status').textContent = 'Live';
-          const eb = document.getElementById('feed-err');
-          if (eb) eb.remove();
-          render();
-        }
-      }
-    } catch(e) {}
-  }, 15000);
 }
 
 // ═══════ TIME ═══════
 function ago(ts) {
-  const s = Math.floor((Date.now() - ts) / 1000);
-  if (s < 60) return s + 's ago';
-  if (s < 3600) return Math.floor(s/60) + 'm ago';
-  if (s < 86400) return Math.floor(s/3600) + 'h ago';
-  return Math.floor(s/86400) + 'd ago';
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s < 60) return s+'s ago';
+  if (s < 3600) return Math.floor(s/60)+'m ago';
+  if (s < 86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
 }
-function fb(i) { return FALLBACKS[i % FALLBACKS.length]; }
 
 // ═══════ RENDER ═══════
 function render() {
@@ -972,15 +915,17 @@ function render() {
   if (!list.length) {
     document.getElementById('cards').innerHTML = '';
     document.getElementById('list').innerHTML =
-      '<p style="padding:48px 0;text-align:center;font-family:IBM Plex Mono,monospace;font-size:11px;color:#999">No stories yet for this source.</p>';
+      '<p style="padding:48px 0;text-align:center;font-family:var(--mono);font-size:11px;color:#999">No stories available.</p>';
+    renderSidebar([]);
     return;
   }
 
   // HERO
   const h = list[0];
   const hs = SRC[h.sourceId] || { name:h.sourceName, color:'#555', domain:'' };
-  document.getElementById('h-img').src = h.image || fb(0);
-  document.getElementById('h-img').onerror = function(){ this.src = fb(0); };
+  const hImg = document.getElementById('h-img');
+  hImg.src = h.image || fbSrc(h.sourceId);
+  hImg.onerror = () => { hImg.src = fbSrc(h.sourceId); };
   document.getElementById('h-badge').textContent = hs.name;
   document.getElementById('h-badge').style.background = hs.color;
   document.getElementById('h-src').textContent = hs.name;
@@ -988,65 +933,61 @@ function render() {
   document.getElementById('h-title').textContent = h.title;
   document.getElementById('h-exc').textContent = h.excerpt || '';
   document.getElementById('h-link').href = h.link;
-  document.getElementById('h-link').textContent = 'Read on ' + hs.domain + ' ↗';
-  const hv = 48 + (votes[h.id] || 0);
-  document.getElementById('h-vn').textContent = hv;
+  document.getElementById('h-link').textContent = 'Read on ' + (hs.domain || 'site') + ' ↗';
+  document.getElementById('h-vn').textContent = 48 + (votes[h.id]||0);
   document.getElementById('h-vbtn').className = 'vote-btn' + (votes[h.id] ? ' on' : '');
   document.getElementById('h-age').textContent = ago(h.timestamp);
-  document.getElementById('hero').onclick = () => openModal(h);
+  document.getElementById('hero').onclick = () => openStoryModal(h);
 
-  // CARDS
-  document.getElementById('cards').innerHTML = list.slice(1, 10).map((s, i) => {
+  // CARDS (items 2–10)
+  document.getElementById('cards').innerHTML = list.slice(1,10).map((s,i) => {
     const sm = SRC[s.sourceId] || { name:s.sourceName, color:'#555', domain:'' };
-    const v = 25 + (votes[s.id] || 0);
-    const voted = !!votes[s.id];
-    const d = JSON.stringify(s).replace(/"/g, '&quot;');
-    return `<div class="card" style="animation-delay:${i*.05}s" onclick="openModal(JSON.parse(this.dataset.s))" data-s="${d}">
-      <div class="card-img-box">
-        <img class="card-img" src="${s.image || fb(i+1)}" alt="" onerror="this.src='${fb(i+1)}'" loading="lazy"/>
+    const v = 25 + (votes[s.id]||0);
+    const d = encodeURIComponent(JSON.stringify(s));
+    return `<div class="card" style="animation-delay:${i*.05}s" onclick="openStoryModalById('${s.id}')">
+      <div class="card-img-wrap">
+        <img class="card-img" src="${s.image || fbSrc(s.sourceId)}" alt="" onerror="this.src='${fbSrc(s.sourceId)}'" loading="lazy"/>
       </div>
       <div class="card-meta">
         <span class="badge" style="background:${sm.color}">${sm.name}</span>
         <span class="card-age">${ago(s.timestamp)}</span>
       </div>
       <div class="card-title">${s.title}</div>
-      <p class="card-excerpt">${s.excerpt || ''}</p>
+      <p class="card-excerpt">${s.excerpt||''}</p>
       <div class="card-foot">
-        <a class="card-domain" href="${s.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${sm.domain} ↗</a>
+        <a class="card-src" href="${s.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${sm.domain} ↗</a>
         <div class="mini-votes">
-          <button class="mini-btn ${voted?'on':''}" onclick="event.stopPropagation();doVote('${s.id}',this)">▲</button>
+          <button class="mini-btn ${votes[s.id]?'on':''}" onclick="event.stopPropagation();doVote('${s.id}',this)">▲</button>
           <span class="mini-n" id="vc-${s.id}">${v}</span>
         </div>
       </div>
     </div>`;
   }).join('');
 
-  // LIST
-  document.getElementById('list').innerHTML = list.slice(10).map((s, i) => {
+  // LIST (items 11+)
+  document.getElementById('list').innerHTML = list.slice(10).map((s,i) => {
     const sm = SRC[s.sourceId] || { name:s.sourceName, color:'#555', domain:'' };
-    const v = 18 + (votes[s.id] || 0);
-    const voted = !!votes[s.id];
-    const d = JSON.stringify(s).replace(/"/g, '&quot;');
-    return `<div class="list-item" style="animation-delay:${i*.03}s" onclick="openModal(JSON.parse(this.dataset.s))" data-s="${d}">
+    const v = 18 + (votes[s.id]||0);
+    return `<div class="list-item" style="animation-delay:${i*.025}s" onclick="openStoryModalById('${s.id}')">
       <span class="li-num">${i+11}</span>
       <div class="li-body">
         <div class="li-meta">
           <span class="badge" style="background:${sm.color}">${sm.name}</span>
           <span class="li-age">${ago(s.timestamp)}</span>
           <div class="li-votes">
-            <button class="mini-btn ${voted?'on':''}" onclick="event.stopPropagation();doVote('${s.id}',this)">▲</button>
+            <button class="mini-btn ${votes[s.id]?'on':''}" onclick="event.stopPropagation();doVote('${s.id}',this)">▲</button>
             <span class="mini-n" id="vc-${s.id}">${v}</span>
           </div>
         </div>
         <div class="li-title">${s.title}</div>
-        <div class="li-exc">${s.exc || s.excerpt || ''}</div>
+        <div class="li-exc">${s.excerpt||''}</div>
       </div>
     </div>`;
   }).join('');
 
   // STATS
-  document.getElementById('s-stories').textContent = list.length;
-  document.getElementById('s-sources').textContent = Object.values(srcStats).filter(v=>v>0).length || 8;
+  document.getElementById('s-count').textContent = list.length;
+  document.getElementById('s-src').textContent = Object.values(srcStats).filter(v=>v>0).length || 8;
   document.getElementById('s-votes').textContent = Object.keys(votes).length;
 
   renderSidebar(list);
@@ -1054,160 +995,173 @@ function render() {
 
 function renderSidebar(list) {
   // Trending
-  const top5 = [...list].sort((a,b)=>(b.votes||0)-(a.votes||0)).slice(0,5);
-  document.getElementById('sb-trending').innerHTML = top5.map((s,i) => {
+  const top5 = [...list].slice(0,5);
+  document.getElementById('sb-trending').innerHTML = top5.length ? top5.map((s,i) => {
     const sm = SRC[s.sourceId] || { name:s.sourceName, color:'#555' };
-    const d = JSON.stringify(s).replace(/"/g,'&quot;');
-    return `<div class="trend-item" onclick="openModal(JSON.parse(this.dataset.s))" data-s="${d}">
-      <span class="tr-n">0${i+1}</span>
-      <div><span class="tr-src" style="background:${sm.color}">${sm.name}</span><div class="tr-title">${s.title}</div></div>
+    return `<div class="trend-item" onclick="openStoryModalById('${s.id}')">
+      <div class="trend-n">${String(i+1).padStart(2,'0')}</div>
+      <div>
+        <div class="trend-title">${s.title}</div>
+        <div class="trend-src" style="color:${sm.color}">${sm.name}</div>
+      </div>
     </div>`;
-  }).join('');
+  }).join('') : '<p style="font-family:var(--mono);font-size:10px;color:#999;padding:12px 0">Loading...</p>';
 
   // Sources
-  document.getElementById('sb-sources').innerHTML = Object.entries(SRC).map(([id,meta]) => {
-    const ct = srcStats[id] || 0;
-    return `<div class="src-item" onclick="setFilter('${id}',null)">
-      <div class="si-l"><div class="si-dot" style="background:${meta.color}"></div><span class="si-name">${meta.name}</span></div>
-      <div class="si-r"><span class="si-live ${ct?'':'off'}">${ct?'● LIVE':'○ —'}</span><span class="si-ct">${ct}</span></div>
+  const allSrcs = Object.values(SRC);
+  document.getElementById('sb-sources').innerHTML = allSrcs.map(s => {
+    const count = srcStats[Object.keys(SRC).find(k => SRC[k]===s)] || 0;
+    return `<div class="src-item">
+      <div class="src-left">
+        <div class="src-dot" style="background:${s.color}"></div>
+        <span class="src-name">${s.name}</span>
+      </div>
+      <div class="src-right">
+        ${count > 0
+          ? `<span class="src-live">Live</span><span class="src-count">${count}</span>`
+          : `<span class="src-dead">○ — 0</span>`}
+      </div>
     </div>`;
   }).join('');
 }
+
+// ═══════ STORY MODAL ═══════
+function openStoryModalById(id) {
+  const s = stories.find(x => x.id === id);
+  if (s) openStoryModal(s);
+}
+function openStoryModal(s) {
+  const sm = SRC[s.sourceId] || { name:s.sourceName, color:'#555', domain:'' };
+  document.getElementById('ms-src').textContent = sm.name.toUpperCase() + ' — ' + ago(s.timestamp);
+  const img = document.getElementById('ms-img');
+  img.style.display = s.image ? 'block' : 'none';
+  if (s.image) img.src = s.image;
+  document.getElementById('ms-title').textContent = s.title;
+  document.getElementById('ms-exc').textContent = s.excerpt || '';
+  document.getElementById('ms-link').href = s.link;
+  document.getElementById('ms-link').textContent = 'Read Full Article on ' + (sm.domain||'site') + ' ↗';
+  document.getElementById('modal-story').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+// ═══════ MODALS ═══════
+function openModal(type) {
+  closeAllModals();
+  const el = document.getElementById('modal-'+type);
+  if (el) { el.classList.add('open'); document.body.style.overflow='hidden'; }
+}
+function closeAllModals() {
+  document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('open'));
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeAllModals(); });
 
 // ═══════ VOTES ═══════
 function doVote(id, btn) {
   if (votes[id]) return;
   votes[id] = 1;
   btn.classList.add('on');
-  document.querySelectorAll('#vc-' + id).forEach(el => {
-    const s = stories.find(x => x.id === id);
-    if (s) el.textContent = 25 + 1;
+  document.querySelectorAll('#vc-'+id).forEach(el => {
+    el.textContent = parseInt(el.textContent) + 1;
   });
   document.getElementById('s-votes').textContent = Object.keys(votes).length;
-  try { localStorage.setItem('an_v2', JSON.stringify(votes)); } catch(e) {}
+  try { localStorage.setItem('an_v3', JSON.stringify(votes)); } catch(e){}
 }
-
 function heroVote() {
-  const list = filter === 'all' ? stories : stories.filter(s => s.sourceId === filter);
-  const h = list[0]; if (!h || votes[h.id]) return;
+  const list = filter==='all' ? stories : stories.filter(s=>s.sourceId===filter);
+  if (!list[0] || votes[list[0].id]) return;
+  const h = list[0];
   votes[h.id] = 1;
   document.getElementById('h-vbtn').classList.add('on');
   document.getElementById('h-vn').textContent = 49;
   document.getElementById('s-votes').textContent = Object.keys(votes).length;
-  try { localStorage.setItem('an_v2', JSON.stringify(votes)); } catch(e) {}
+  try { localStorage.setItem('an_v3', JSON.stringify(votes)); } catch(e){}
 }
 
 // ═══════ FILTER ═══════
 function setFilter(f, btn) {
   filter = f;
-  // Update desktop tabs
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-  // Update mobile tabs
-  document.querySelectorAll('.mob-tab').forEach(b => b.classList.remove('active'));
-  if (btn) {
-    btn.classList.add('active');
-  } else {
-    document.querySelectorAll('.nav-tab, .mob-tab').forEach(b => {
-      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'"+f+"'"))
-        b.classList.add('active');
-    });
-  }
+  document.querySelectorAll('.nav-tab,.mob-tab').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
   render();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+// ═══════ TOPIC FILTER ═══════
+function topicFilter(keyword) {
+  const filtered = stories.filter(s =>
+    (s.title+' '+s.excerpt).toLowerCase().includes(keyword.toLowerCase())
+  );
+  const orig = stories;
+  if (filtered.length) {
+    stories = filtered;
+    render();
+    stories = orig;
+  }
+  const banner = document.getElementById('topic-banner');
+  banner.style.display = 'block';
+  banner.innerHTML = 'TOPIC: '+keyword.toUpperCase()+' &nbsp;·&nbsp; <span onclick="clearTopic()" style="color:var(--red);cursor:pointer">Clear ✕</span>';
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+function clearTopic() {
+  document.getElementById('topic-banner').style.display = 'none';
+  render();
 }
 
 // ═══════ BURGER ═══════
 function toggleBurger() {
-  const b = document.getElementById('burger');
-  const d = document.getElementById('mob-drawer');
-  b.classList.toggle('open');
-  d.classList.toggle('open');
+  document.getElementById('mob-drawer').classList.toggle('open');
+  document.body.style.overflow = document.getElementById('mob-drawer').classList.contains('open') ? 'hidden' : '';
 }
-
-// ═══════ MODAL ═══════
-function openModal(story) {
-  const sm = SRC[story.sourceId] || { name:story.sourceName, color:'#555', domain:story.link };
-  document.getElementById('m-src').textContent = sm.name;
-  document.getElementById('m-src').style.background = sm.color;
-  const img = document.getElementById('m-img');
-  if (story.image) { img.src = story.image; img.style.display = 'block'; }
-  else { img.style.display = 'none'; }
-  document.getElementById('m-title').textContent = story.title;
-  document.getElementById('m-exc').textContent = story.excerpt || 'Click below to read the full story on the original publication.';
-  document.getElementById('m-cta').href = story.link;
-  document.getElementById('m-cta').textContent = 'Read Full Article on ' + (sm.domain || 'Source') + ' ↗';
-  document.getElementById('m-note').textContent = story.link;
-  document.getElementById('modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function bgClose(e) { if (e.target === document.getElementById('modal')) closeModal(); }
-function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow = ''; }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeAbout(); closeSubmit(); closeAd(); } });
 
 // ═══════ NEWSLETTER ═══════
 function nlSub() {
-  const el = document.getElementById('nl-email');
-  const btn = document.getElementById('nl-btn-txt');
-  const v = el.value.trim();
-  if (!v || !v.includes('@')) {
-    el.style.borderColor = '#c0300a';
-    el.placeholder = 'Enter a valid email';
+  const email = document.getElementById('nl-email').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('nl-email').style.borderColor = 'var(--red)';
     return;
   }
-  // Send to Beehiiv with email pre-filled
-  window.open('https://archnews.beehiiv.com/subscribe?email=' + encodeURIComponent(v), '_blank');
-  el.value = '';
-  el.style.borderColor = '#4caf50';
-  btn.textContent = '✓ Opening subscribe page...';
-  setTimeout(() => { btn.textContent = 'Subscribe Free →'; el.style.borderColor = ''; }, 3000);
+  window.open('https://archnews.beehiiv.com/subscribe?email='+encodeURIComponent(email), '_blank');
+  document.getElementById('nl-btxt').textContent = 'Subscribed! ✓';
+  document.getElementById('nl-email').value = '';
+  setTimeout(() => { document.getElementById('nl-btxt').textContent = 'Subscribe Free →'; }, 3000);
 }
 
-// ═══════ FOOTER MODALS ═══════
-function openAbout()  { document.getElementById('about-modal').classList.add('open');  document.body.style.overflow='hidden'; }
-function closeAbout() { document.getElementById('about-modal').classList.remove('open'); document.body.style.overflow=''; }
-function openSubmit()  { document.getElementById('submit-modal').classList.add('open');  document.body.style.overflow='hidden'; }
-function closeSubmit() { document.getElementById('submit-modal').classList.remove('open'); document.body.style.overflow=''; }
-function openAd()  { document.getElementById('ad-modal').classList.add('open');  document.body.style.overflow='hidden'; }
-function closeAd() { document.getElementById('ad-modal').classList.remove('open'); document.body.style.overflow=''; }
-
+// ═══════ SUBMIT STORY ═══════
 function submitStory() {
   const story = document.getElementById('sub-story').value.trim();
   const email = document.getElementById('sub-email').value.trim();
-  if (!story) { document.getElementById('sub-story').style.borderColor='#c0300a'; return; }
-  // Send to email
-  window.location.href = 'mailto:architectonworks@gmail.com?subject=ARCHNEWS Story Submission&body=Story: ' + encodeURIComponent(story) + '%0D%0AFrom: ' + encodeURIComponent(email || 'Anonymous');
-  closeSubmit();
+  if (!story) { document.getElementById('sub-story').style.borderColor='var(--red)'; return; }
+  window.location.href = 'mailto:architectonworks@gmail.com?subject=ARCHNEWS Story Submission&body=Story: '+encodeURIComponent(story)+'%0D%0AFrom: '+encodeURIComponent(email||'Anonymous');
+  closeAllModals();
 }
 
-function footerSearch(keyword) {
-  // Filter stories by keyword in title/excerpt
-  const filtered = stories.filter(s =>
-    (s.title + ' ' + s.excerpt).toLowerCase().includes(keyword.toLowerCase())
-  );
-  if (filtered.length) {
-    const origStories = stories;
-    stories = filtered;
-    render();
-    stories = origStories;
-    // Show banner
-    const banner = document.createElement('div');
-    banner.style.cssText = 'position:fixed;top:130px;left:50%;transform:translateX(-50%);background:#0c0b09;color:#f5f1ea;font-family:monospace;font-size:10px;letter-spacing:0.15em;padding:10px 20px;z-index:600;border-bottom:2px solid #c0300a';
-    banner.innerHTML = 'TOPIC: ' + keyword.toUpperCase() + ' &nbsp;·&nbsp; <span onclick="resetTopic()" style="color:#c0300a;cursor:pointer;text-transform:uppercase">Clear ✕</span>';
-    banner.id = 'topic-banner';
-    document.body.appendChild(banner);
-  }
-  window.scrollTo({top: 0, behavior: 'smooth'});
-}
-
-function resetTopic() {
-  render();
-  const b = document.getElementById('topic-banner');
-  if (b) b.remove();
+// ═══════ OG IMAGE ENRICHMENT (background, non-blocking) ═══════
+async function enrichImages(list) {
+  const noImg = list.filter(s => !s.image).slice(0, 6);
+  await Promise.allSettled(noImg.map(async s => {
+    try {
+      const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(s.link);
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 5000);
+      const r = await fetch(proxy, { signal: ctrl });
+      clearTimeout(t);
+      if (!r.ok) return;
+      const d = await r.json();
+      const html = d.contents || '';
+      const og = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+               || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i)
+               || html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i);
+      if (og && og[1] && og[1].startsWith('http')) {
+        s.image = og[1];
+      }
+    } catch(e) {}
+  }));
 }
 
 // ═══════ START ═══════
 loadFeed();
-setInterval(loadFeed, 900000); // refresh every 15 min
+setInterval(loadFeed, 900000); // auto-refresh every 15 min
 
 </script>
 </body>
