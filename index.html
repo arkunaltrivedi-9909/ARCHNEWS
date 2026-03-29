@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ARCHNEWS — Architecture Intelligence</title>
-<meta name="description" content="The architecture community's daily intelligence briefing. Live stories from ArchDaily, Dezeen, Archinect, Architectural Record and more."/>
+<meta name="description" content="Live architecture news from ArchDaily, Dezeen, Archinect, Architectural Record and more."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -14,502 +14,429 @@ a{text-decoration:none;color:inherit}
 button{cursor:pointer;border:none;background:none;font-family:inherit}
 
 :root{
-  --ink:#0f0f0f;
-  --red:#c0300a;
-  --white:#ffffff;
-  --bg:#f4f1ed;
+  --bg:#f5f2ee;
   --card:#ffffff;
-  --border:#e4e0d8;
-  --text2:#5a5652;
-  --text3:#9a9690;
-  --display:'Bebas Neue',sans-serif;
+  --ink:#111111;
+  --red:#c0300a;
+  --border:#e2ddd6;
+  --t2:#5c5650;
+  --t3:#9c9690;
   --sans:'DM Sans',system-ui,sans-serif;
   --mono:'IBM Plex Mono',monospace;
+  --disp:'Bebas Neue',sans-serif;
 }
 body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 
-/* ── LOADER ── */
-#loader{
-  position:fixed;inset:0;background:var(--ink);z-index:9999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
-  transition:opacity 0.5s,visibility 0.5s;
-}
+/* LOADER */
+#loader{position:fixed;inset:0;background:#111;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .5s,visibility .5s}
 #loader.out{opacity:0;visibility:hidden;pointer-events:none}
-.ld-logo{font-family:var(--display);font-size:52px;letter-spacing:0.05em;color:#fff}
+.ld-logo{font-family:var(--disp);font-size:52px;letter-spacing:.05em;color:#fff}
 .ld-logo em{color:var(--red);font-style:normal}
-.ld-bar-wrap{width:240px;height:2px;background:#222}
-.ld-bar{height:100%;background:var(--red);width:0%;transition:width 0.4s ease}
-.ld-txt{font-family:var(--mono);font-size:9px;color:#444;letter-spacing:0.2em;text-transform:uppercase}
+.ld-track{width:240px;height:2px;background:#222}
+.ld-fill{height:100%;background:var(--red);width:0;transition:width .4s ease}
+.ld-msg{font-family:var(--mono);font-size:9px;color:#444;letter-spacing:.2em;text-transform:uppercase}
 
-/* ── HEADER ── */
-header{
-  background:var(--ink);position:sticky;top:0;z-index:100;
-  border-bottom:2px solid var(--red);
-}
-.hdr-inner{
-  max-width:1280px;margin:0 auto;padding:0 20px;
-  display:flex;align-items:center;height:56px;gap:16px;
-}
-.logo{font-family:var(--display);font-size:30px;letter-spacing:0.05em;color:#fff;flex-shrink:0}
+/* HEADER */
+header{background:#111;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--red)}
+.hdr{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;height:56px;gap:16px}
+.logo{font-family:var(--disp);font-size:30px;letter-spacing:.05em;color:#fff;flex-shrink:0}
 .logo em{color:var(--red);font-style:normal}
-.hdr-pill{
-  display:flex;align-items:center;gap:6px;margin-left:auto;
-  font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;
-  color:#666;border:1px solid #222;padding:4px 10px;flex-shrink:0;
-}
-.hdr-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.live{display:flex;align-items:center;gap:6px;margin-left:auto;font-family:var(--mono);font-size:8px;letter-spacing:.14em;text-transform:uppercase;color:#555;border:1px solid #222;padding:4px 10px;flex-shrink:0}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 .burger{display:none;flex-direction:column;gap:5px;padding:6px;margin-left:auto}
 .burger span{width:20px;height:2px;background:#666;display:block}
 
-/* ── CATEGORY TABS ── */
-.tabs-wrap{
-  background:var(--ink);border-bottom:1px solid #1a1a1a;
-  overflow-x:auto;scrollbar-width:none;
-}
-.tabs-wrap::-webkit-scrollbar{display:none}
-.tabs-inner{
-  max-width:1280px;margin:0 auto;padding:0 20px;
-  display:flex;align-items:center;gap:0;white-space:nowrap;
-}
-.tab{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.13em;text-transform:uppercase;
-  padding:10px 14px;color:#555;border-bottom:2px solid transparent;
-  transition:color .15s,border-color .15s;flex-shrink:0;
-}
+/* TABS */
+.tabs{background:#111;border-bottom:1px solid #1a1a1a;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs-row{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;white-space:nowrap}
+.tab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:11px 14px;color:#555;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;flex-shrink:0}
 .tab:hover{color:#888}
 .tab.on{color:var(--red);border-bottom-color:var(--red)}
-.tab-upd{font-family:var(--mono);font-size:8px;color:#2a2a2a;margin-left:auto;padding:10px 0;flex-shrink:0}
+.upd{font-family:var(--mono);font-size:8px;color:#2a2a2a;margin-left:auto;padding:11px 0;flex-shrink:0}
 
-/* ── MOBILE DRAWER ── */
-.mob-drawer{
-  display:none;position:fixed;inset:0;background:var(--ink);z-index:200;
-  flex-direction:column;padding:70px 20px 20px;overflow-y:auto;
-}
-.mob-drawer.open{display:flex}
-.mob-close{position:absolute;top:16px;right:20px;font-family:var(--mono);font-size:10px;color:#555;padding:8px}
-.mob-tab{
-  font-family:var(--mono);font-size:10px;letter-spacing:0.13em;text-transform:uppercase;
-  color:#555;padding:14px 0;border-bottom:1px solid #111;text-align:left;
-}
-.mob-tab.on{color:var(--red)}
+/* MOBILE DRAWER */
+.drawer{display:none;position:fixed;inset:0;background:#111;z-index:200;flex-direction:column;padding:70px 24px 24px;overflow-y:auto}
+.drawer.open{display:flex}
+.drawer-close{position:absolute;top:16px;right:24px;font-family:var(--mono);font-size:10px;color:#555;padding:8px}
+.dtab{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#555;padding:14px 0;border-bottom:1px solid #111;text-align:left}
+.dtab.on{color:var(--red)}
 
-/* ── ERROR STRIP ── */
-.err-strip{
-  background:#fef9f0;border-bottom:1px solid #f0e6cc;
-  font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.08em;
-  padding:9px 20px;text-align:center;display:none;
-}
-.err-strip a{color:var(--red)}
-.err-strip.show{display:block}
+/* PAGE */
+.page{max-width:1280px;margin:0 auto;padding:24px 24px 64px}
+.err{background:#fffbf0;border-bottom:1px solid #ecddb8;font-family:var(--mono);font-size:9px;color:#888;padding:9px 24px;text-align:center;display:none}
+.err.show{display:block}
+.err a{color:var(--red)}
 
-/* ── MAIN ── */
-.page{max-width:1280px;margin:0 auto;padding:24px 20px 60px}
+/* SECTION LABEL */
+.sec{display:flex;align-items:center;gap:12px;margin-bottom:16px;margin-top:8px}
+.sec span{font-family:var(--disp);font-size:15px;letter-spacing:.12em;color:var(--ink)}
+.sec hr{flex:1;border:none;border-top:1px solid var(--border)}
 
-/* ── SECTION LABEL ── */
-.sec-label{
-  display:flex;align-items:center;gap:12px;margin-bottom:16px;
-}
-.sec-label span{font-family:var(--display);font-size:16px;letter-spacing:0.1em;color:var(--ink)}
-.sec-label hr{flex:1;border:none;border-top:1px solid var(--border)}
+/* FEATURED STORY */
+.feat{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;display:grid;grid-template-columns:55% 45%;margin-bottom:20px;transition:box-shadow .2s}
+.feat:hover{box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.feat-img{width:100%;height:100%;min-height:280px;object-fit:cover}
+.feat-img-ph{width:100%;min-height:280px;display:flex;align-items:center;justify-content:center}
+.feat-body{padding:32px;display:flex;flex-direction:column;justify-content:center}
+.feat-meta{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.feat-src{font-family:var(--mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;font-weight:600}
+.feat-age{font-family:var(--mono);font-size:8px;color:var(--t3)}
+.feat-ttl{font-size:24px;font-weight:700;line-height:1.25;color:var(--ink);margin-bottom:12px;transition:color .15s}
+.feat:hover .feat-ttl{color:var(--red)}
+.feat-exc{font-size:13px;color:var(--t2);line-height:1.75;margin-bottom:22px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.feat-btn{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:10px 18px;border-radius:5px;align-self:flex-start;transition:background .15s}
+.feat:hover .feat-btn{background:var(--red)}
 
-/* ── CARD GRID — Perplexity style ── */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-  margin-bottom:32px;
-}
-.card{
-  background:var(--card);border:1px solid var(--border);
-  border-radius:10px;overflow:hidden;cursor:pointer;
-  transition:transform .15s,box-shadow .15s;
-  animation:up .35s ease both;
-  display:flex;flex-direction:column;
-}
+/* CARD GRID */
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;animation:fadeup .35s ease both}
 .card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.08)}
-@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.card-img{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--border)}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+
+/* Card image area — always 16:9 */
+.card-img-wrap{width:100%;aspect-ratio:16/9;overflow:hidden;flex-shrink:0}
+.card-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.card:hover .card-img{transform:scale(1.04)}
+/* Placeholder when no real image — source-branded gradient */
+.card-img-ph{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.ph-src{font-family:var(--disp);font-size:22px;letter-spacing:.1em;color:rgba(255,255,255,.9)}
+.ph-line{width:32px;height:2px;background:rgba(255,255,255,.4)}
+
+/* Card body */
 .card-body{padding:14px;flex:1;display:flex;flex-direction:column}
-.card-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.src-pill{
-  font-family:var(--mono);font-size:7px;letter-spacing:0.1em;text-transform:uppercase;
-  padding:2px 7px;border-radius:3px;color:#fff;flex-shrink:0;
-}
-.card-time{font-family:var(--mono);font-size:8px;color:var(--text3);margin-left:auto}
-.card-title{
-  font-size:14px;font-weight:600;line-height:1.4;color:var(--ink);
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
-  transition:color .12s;
-}
-.card:hover .card-title{color:var(--red)}
-.card-exc{
-  font-size:12px;color:var(--text2);line-height:1.6;margin-top:6px;flex:1;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-}
-.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
-.card-domain{font-family:var(--mono);font-size:8px;color:var(--text3)}
-.card-action{
-  font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--red);opacity:0;transition:opacity .15s;
-}
-.card:hover .card-action{opacity:1}
+.card-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pill{font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;color:#fff;flex-shrink:0}
+.card-age{font-family:var(--mono);font-size:8px;color:var(--t3);margin-left:auto}
+.card-ttl{font-size:13px;font-weight:600;line-height:1.45;color:var(--ink);transition:color .12s;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card:hover .card-ttl{color:var(--red)}
+.card-foot{margin-top:auto;padding-top:10px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border)}
+.card-domain{font-family:var(--mono);font-size:8px;color:var(--t3)}
+.card-read{font-family:var(--mono);font-size:8px;color:var(--red);opacity:0;transition:opacity .15s}
+.card:hover .card-read{opacity:1}
 
-/* ── FEATURED (top story, full width) ── */
-.featured{
-  background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;
-  cursor:pointer;display:grid;grid-template-columns:1fr 1fr;margin-bottom:16px;
-  transition:transform .15s,box-shadow .15s;animation:up .3s ease;
-}
-.featured:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
-.feat-img{width:100%;height:100%;min-height:240px;object-fit:cover;background:var(--border)}
-.feat-body{padding:28px;display:flex;flex-direction:column;justify-content:center}
-.feat-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.feat-src{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);font-weight:500}
-.feat-time{font-family:var(--mono);font-size:8px;color:var(--text3)}
-.feat-title{
-  font-size:22px;font-weight:700;line-height:1.25;color:var(--ink);
-  margin-bottom:12px;transition:color .12s;
-}
-.featured:hover .feat-title{color:var(--red)}
-.feat-exc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px}
-.feat-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--ink);color:#fff;font-family:var(--mono);font-size:8px;
-  letter-spacing:0.12em;text-transform:uppercase;padding:9px 16px;border-radius:4px;
-  align-self:flex-start;transition:background .15s;
-}
-.featured:hover .feat-btn{background:var(--red)}
+/* LOAD MORE */
+.more{text-align:center;padding:20px 0}
+.more-btn{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);color:var(--t2);font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:12px 28px;border-radius:6px;transition:all .15s}
+.more-btn:hover{border-color:var(--ink);color:var(--ink)}
 
-/* ── LOAD MORE ── */
-.load-more-wrap{text-align:center;padding:20px 0}
-.load-more{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--card);border:1px solid var(--border);color:var(--text2);
-  font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;
-  padding:12px 24px;border-radius:6px;transition:all .15s;
-}
-.load-more:hover{border-color:var(--ink);color:var(--ink)}
-
-/* ── STORY MODAL ── */
-.modal-bg{
-  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;
-  display:none;align-items:center;justify-content:center;padding:20px;
-  backdrop-filter:blur(4px);
-}
-.modal-bg.open{display:flex}
-.modal{
-  background:var(--card);max-width:640px;width:100%;max-height:88vh;
-  overflow-y:auto;border-radius:12px;padding:32px;position:relative;
-  animation:modalin .2s ease;
-}
-@keyframes modalin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.modal-x{
-  position:absolute;top:14px;right:14px;width:30px;height:30px;
-  border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;
-  font-size:12px;color:var(--text3);transition:background .15s;
-}
+/* STORY MODAL */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.mbg.open{display:flex}
+.modal{background:var(--card);max-width:640px;width:100%;max-height:88vh;overflow-y:auto;border-radius:12px;padding:32px;position:relative;animation:min .2s ease}
+@keyframes min{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.modal-x{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--t3);transition:background .15s}
 .modal-x:hover{background:var(--border)}
-.modal-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.18em;color:var(--text3);text-transform:uppercase;margin-bottom:12px}
+.modal-tag{font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--t3);text-transform:uppercase;margin-bottom:12px}
 .modal-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-bottom:18px}
 .modal-ttl{font-size:22px;font-weight:700;line-height:1.3;margin-bottom:12px}
-.modal-exc{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:22px}
-.modal-link{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--ink);color:#fff;font-family:var(--mono);font-size:9px;
-  letter-spacing:0.1em;text-transform:uppercase;padding:11px 20px;border-radius:5px;
-  transition:background .15s;
-}
-.modal-link:hover{background:var(--red)}
+.modal-exc{font-size:14px;color:var(--t2);line-height:1.8;margin-bottom:22px}
+.modal-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:11px 20px;border-radius:5px;transition:background .15s}
+.modal-btn:hover{background:var(--red)}
 
-/* ── INFO MODALS ── */
-.info-modal{background:var(--card);max-width:580px;width:100%;border-radius:12px;padding:32px;position:relative;animation:modalin .2s ease;max-height:88vh;overflow-y:auto}
-.info-h{font-size:22px;font-weight:700;line-height:1.3;margin-bottom:14px}
-.info-p{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px}
+/* INFO MODAL */
+.imodal{background:var(--card);max-width:580px;width:100%;border-radius:12px;padding:32px;position:relative;animation:min .2s ease;max-height:88vh;overflow-y:auto}
+.ih{font-size:22px;font-weight:700;line-height:1.3;margin-bottom:14px}
+.ip{font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:12px}
 
-/* ── FOOTER ── */
-footer{background:var(--ink);border-top:3px solid var(--red);padding:40px 20px 24px;margin-top:0}
-.foot-inner{max-width:1280px;margin:0 auto}
+/* FOOTER */
+footer{background:#111;border-top:3px solid var(--red);padding:40px 24px 24px}
+.foot{max-width:1280px;margin:0 auto}
 .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:28px}
-.foot-logo{font-family:var(--display);font-size:28px;color:#fff;letter-spacing:.04em;margin-bottom:10px}
-.foot-logo em{color:var(--red);font-style:normal}
-.foot-desc{font-size:12px;color:#555;line-height:1.8;max-width:260px}
-.foot-head{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:#333;border-bottom:1px solid #1a1a1a;padding-bottom:8px;margin-bottom:12px}
-.foot-link{
-  display:flex;align-items:center;justify-content:space-between;
-  font-size:12px;color:#555;padding:6px 0;cursor:pointer;
-  transition:color .15s;border-bottom:1px solid #111;
-}
-.foot-link:last-child{border-bottom:none}
-.foot-link:hover{color:#fff}
-.foot-link.act:hover{color:var(--red)}
-.foot-arrow{font-size:10px;opacity:0;transition:opacity .15s}
-.foot-link:hover .foot-arrow{opacity:1}
-.foot-bot{border-top:1px solid #111;padding-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.foot-bot p{font-family:var(--mono);font-size:8px;color:#222;letter-spacing:.08em}
+.f-logo{font-family:var(--disp);font-size:28px;color:#fff;letter-spacing:.04em;margin-bottom:10px}
+.f-logo em{color:var(--red);font-style:normal}
+.f-desc{font-size:12px;color:#555;line-height:1.8;max-width:260px}
+.f-head{font-family:var(--mono);font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#333;border-bottom:1px solid #1a1a1a;padding-bottom:8px;margin-bottom:12px}
+.f-link{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#555;padding:7px 0;cursor:pointer;transition:color .15s;border-bottom:1px solid #111}
+.f-link:last-child{border-bottom:none}
+.f-link:hover,.f-link.act:hover{color:var(--red)}
+.f-arr{font-size:10px;opacity:0;transition:opacity .15s}
+.f-link:hover .f-arr{opacity:1}
+.f-bot{border-top:1px solid #111;padding-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.f-bot p{font-family:var(--mono);font-size:8px;color:#222;letter-spacing:.08em}
 
-/* ── RESPONSIVE ── */
-@media(max-width:1024px){
-  .grid{grid-template-columns:repeat(3,1fr)}
-}
+/* RESPONSIVE */
+@media(max-width:1024px){.grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:768px){
-  .tabs-inner .tab{display:none}
-  .tabs-inner .tab.on,.tabs-inner .tab:first-child{display:block}
-  .burger{display:flex}
-  .hdr-pill{display:none}
+  .tabs-row .tab{display:none}
+  .tabs-row .tab.on,.tabs-row .tab:first-child{display:block}
+  .burger{display:flex}.live{display:none}
   .grid{grid-template-columns:repeat(2,1fr);gap:12px}
-  .featured{grid-template-columns:1fr}
-  .feat-img{min-height:180px}
+  .feat{grid-template-columns:1fr}
+  .feat-img,.feat-img-ph{min-height:200px}
   .foot-grid{grid-template-columns:1fr 1fr;gap:24px}
-  .tabs-inner .tab{display:block}
+  .tabs-row .tab{display:block}
 }
 @media(max-width:480px){
   .page{padding:16px 14px 48px}
-  .grid{grid-template-columns:1fr;gap:12px}
-  .featured{grid-template-columns:1fr}
-  .feat-body{padding:18px}
-  .feat-title{font-size:18px}
+  .grid{grid-template-columns:1fr}
+  .feat-body{padding:20px}
+  .feat-ttl{font-size:19px}
   .foot-grid{grid-template-columns:1fr;gap:20px}
   footer{padding:28px 14px 20px}
-  .foot-bot{flex-direction:column;text-align:center}
-  .modal,.info-modal{padding:20px;border-radius:8px}
+  .modal,.imodal{padding:20px}
+  .f-bot{flex-direction:column;text-align:center}
 }
 </style>
 </head>
 <body>
 
-<!-- LOADER -->
 <div id="loader">
   <div class="ld-logo">ARCH<em>NEWS</em></div>
-  <div class="ld-bar-wrap"><div class="ld-bar" id="lbar"></div></div>
-  <div class="ld-txt" id="ltxt">Connecting to feeds...</div>
+  <div class="ld-track"><div class="ld-fill" id="lf"></div></div>
+  <div class="ld-msg" id="lm">Connecting to feeds...</div>
 </div>
 
-<!-- HEADER -->
 <header>
-  <div class="hdr-inner">
-    <a class="logo" href="#" onclick="setTab('all');return false">ARCH<em>NEWS</em></a>
-    <div class="hdr-pill"><span class="hdr-dot"></span>Live Feed</div>
-    <button class="burger" id="burger" onclick="openDrawer()" aria-label="Menu">
+  <div class="hdr">
+    <a class="logo" href="#" onclick="doTab('all');return false">ARCH<em>NEWS</em></a>
+    <div class="live"><span class="live-dot"></span>Live Feed</div>
+    <button class="burger" id="burg" onclick="openDrw()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
 
-<!-- TABS -->
-<div class="tabs-wrap">
-  <div class="tabs-inner">
-    <button class="tab on" onclick="setTab('all',this)">All</button>
-    <button class="tab" onclick="setTab('archdaily',this)">ArchDaily</button>
-    <button class="tab" onclick="setTab('dezeen',this)">Dezeen</button>
-    <button class="tab" onclick="setTab('archinect',this)">Archinect</button>
-    <button class="tab" onclick="setTab('metropolis',this)">Metropolis</button>
-    <button class="tab" onclick="setTab('archrecord',this)">Arch Record</button>
-    <button class="tab" onclick="setTab('designboom',this)">Designboom</button>
-    <button class="tab" onclick="setTab('archpaper',this)">Arch Paper</button>
-    <button class="tab" onclick="setTab('domus',this)">Domus</button>
-    <span class="tab-upd" id="upd">—</span>
+<div class="tabs">
+  <div class="tabs-row">
+    <button class="tab on" onclick="doTab('all',this)">All</button>
+    <button class="tab" onclick="doTab('archdaily',this)">ArchDaily</button>
+    <button class="tab" onclick="doTab('dezeen',this)">Dezeen</button>
+    <button class="tab" onclick="doTab('archinect',this)">Archinect</button>
+    <button class="tab" onclick="doTab('metropolis',this)">Metropolis</button>
+    <button class="tab" onclick="doTab('archrecord',this)">Arch Record</button>
+    <button class="tab" onclick="doTab('designboom',this)">Designboom</button>
+    <button class="tab" onclick="doTab('archpaper',this)">Arch Paper</button>
+    <button class="tab" onclick="doTab('domus',this)">Domus</button>
+    <span class="upd" id="upd">—</span>
   </div>
 </div>
 
-<!-- MOBILE DRAWER -->
-<div class="mob-drawer" id="drawer">
-  <button class="mob-close" onclick="closeDrawer()">✕ Close</button>
-  <button class="mob-tab on" onclick="setTab('all',this);closeDrawer()">All Sources</button>
-  <button class="mob-tab" onclick="setTab('archdaily',this);closeDrawer()">ArchDaily</button>
-  <button class="mob-tab" onclick="setTab('dezeen',this);closeDrawer()">Dezeen</button>
-  <button class="mob-tab" onclick="setTab('archinect',this);closeDrawer()">Archinect</button>
-  <button class="mob-tab" onclick="setTab('metropolis',this);closeDrawer()">Metropolis</button>
-  <button class="mob-tab" onclick="setTab('archrecord',this);closeDrawer()">Arch Record</button>
-  <button class="mob-tab" onclick="setTab('designboom',this);closeDrawer()">Designboom</button>
-  <button class="mob-tab" onclick="setTab('archpaper',this);closeDrawer()">Arch Paper</button>
-  <button class="mob-tab" onclick="setTab('domus',this);closeDrawer()">Domus</button>
+<div class="drawer" id="drw">
+  <button class="drawer-close" onclick="closeDrw()">✕ Close</button>
+  <button class="dtab on" onclick="doTab('all',this);closeDrw()">All Sources</button>
+  <button class="dtab" onclick="doTab('archdaily',this);closeDrw()">ArchDaily</button>
+  <button class="dtab" onclick="doTab('dezeen',this);closeDrw()">Dezeen</button>
+  <button class="dtab" onclick="doTab('archinect',this);closeDrw()">Archinect</button>
+  <button class="dtab" onclick="doTab('metropolis',this);closeDrw()">Metropolis</button>
+  <button class="dtab" onclick="doTab('archrecord',this);closeDrw()">Arch Record</button>
+  <button class="dtab" onclick="doTab('designboom',this);closeDrw()">Designboom</button>
+  <button class="dtab" onclick="doTab('archpaper',this);closeDrw()">Arch Paper</button>
+  <button class="dtab" onclick="doTab('domus',this);closeDrw()">Domus</button>
 </div>
 
-<!-- ERROR STRIP -->
-<div class="err-strip" id="err"></div>
+<div class="err" id="err"></div>
 
-<!-- MAIN -->
-<main class="page" id="main">
-  <!-- Featured story injected here -->
-  <div id="featured-wrap"></div>
-  <!-- Cards grid injected here -->
-  <div class="sec-label" id="sec-label" style="display:none">
-    <span>Latest Stories</span><hr/>
-  </div>
+<main class="page">
+  <div id="feat-wrap"></div>
+  <div class="sec" id="sec-lbl" style="display:none"><span>Latest Stories</span><hr/></div>
   <div class="grid" id="grid"></div>
-  <div class="load-more-wrap" id="more-wrap" style="display:none">
-    <button class="load-more" onclick="loadMore()">Load More Stories →</button>
+  <div class="more" id="more" style="display:none">
+    <button class="more-btn" onclick="loadMore()">Load More Stories →</button>
   </div>
 </main>
 
-<!-- FOOTER -->
 <footer>
-  <div class="foot-inner">
+  <div class="foot">
     <div class="foot-grid">
       <div>
-        <div class="foot-logo">ARCH<em>NEWS</em></div>
-        <p class="foot-desc">Architecture moves fast. Staying informed shouldn't be hard. One live feed. Eight leading publications. Every story updated automatically — all day, every day.</p>
+        <div class="f-logo">ARCH<em>NEWS</em></div>
+        <p class="f-desc">Architecture moves fast. Staying informed shouldn't be hard. One live feed. Eight leading publications. Updated all day, every day.</p>
       </div>
       <div>
-        <div class="foot-head">Publications</div>
-        <a class="foot-link" href="https://www.archdaily.com" target="_blank">ArchDaily<span class="foot-arrow">↗</span></a>
-        <a class="foot-link" href="https://www.dezeen.com" target="_blank">Dezeen<span class="foot-arrow">↗</span></a>
-        <a class="foot-link" href="https://archinect.com" target="_blank">Archinect<span class="foot-arrow">↗</span></a>
-        <a class="foot-link" href="https://metropolismag.com" target="_blank">Metropolis<span class="foot-arrow">↗</span></a>
-        <a class="foot-link" href="https://www.architecturalrecord.com" target="_blank">Arch Record<span class="foot-arrow">↗</span></a>
-        <a class="foot-link" href="https://www.designboom.com" target="_blank">Designboom<span class="foot-arrow">↗</span></a>
-        <a class="foot-link" href="https://www.archpaper.com" target="_blank">Arch Paper<span class="foot-arrow">↗</span></a>
-        <a class="foot-link" href="https://www.domusweb.it" target="_blank">Domus<span class="foot-arrow">↗</span></a>
+        <div class="f-head">Publications</div>
+        <a class="f-link" href="https://www.archdaily.com" target="_blank">ArchDaily<span class="f-arr">↗</span></a>
+        <a class="f-link" href="https://www.dezeen.com" target="_blank">Dezeen<span class="f-arr">↗</span></a>
+        <a class="f-link" href="https://archinect.com" target="_blank">Archinect<span class="f-arr">↗</span></a>
+        <a class="f-link" href="https://metropolismag.com" target="_blank">Metropolis<span class="f-arr">↗</span></a>
+        <a class="f-link" href="https://www.architecturalrecord.com" target="_blank">Arch Record<span class="f-arr">↗</span></a>
+        <a class="f-link" href="https://www.designboom.com" target="_blank">Designboom<span class="f-arr">↗</span></a>
+        <a class="f-link" href="https://www.archpaper.com" target="_blank">Arch Paper<span class="f-arr">↗</span></a>
+        <a class="f-link" href="https://www.domusweb.it" target="_blank">Domus<span class="f-arr">↗</span></a>
       </div>
       <div>
-        <div class="foot-head">Topics</div>
-        <a class="foot-link act" href="#" onclick="topicFilter('cultural buildings');return false">Cultural Buildings<span class="foot-arrow">→</span></a>
-        <a class="foot-link act" href="#" onclick="topicFilter('urban design');return false">Urban Design<span class="foot-arrow">→</span></a>
-        <a class="foot-link act" href="#" onclick="topicFilter('sustainability');return false">Sustainability<span class="foot-arrow">→</span></a>
-        <a class="foot-link act" href="#" onclick="topicFilter('technology BIM');return false">Technology + BIM<span class="foot-arrow">→</span></a>
-        <a class="foot-link act" href="#" onclick="topicFilter('practice');return false">Practice<span class="foot-arrow">→</span></a>
-        <a class="foot-link act" href="#" onclick="topicFilter('awards');return false">Awards<span class="foot-arrow">→</span></a>
+        <div class="f-head">Topics</div>
+        <a class="f-link act" href="#" onclick="topicFlt('cultural buildings');return false">Cultural Buildings<span class="f-arr">→</span></a>
+        <a class="f-link act" href="#" onclick="topicFlt('urban design');return false">Urban Design<span class="f-arr">→</span></a>
+        <a class="f-link act" href="#" onclick="topicFlt('sustainability');return false">Sustainability<span class="f-arr">→</span></a>
+        <a class="f-link act" href="#" onclick="topicFlt('technology');return false">Technology + BIM<span class="f-arr">→</span></a>
+        <a class="f-link act" href="#" onclick="topicFlt('practice');return false">Practice<span class="f-arr">→</span></a>
+        <a class="f-link act" href="#" onclick="topicFlt('awards');return false">Awards<span class="f-arr">→</span></a>
       </div>
       <div>
-        <div class="foot-head">Connect</div>
-        <a class="foot-link act" href="https://archnews.beehiiv.com/subscribe" target="_blank">Newsletter<span class="foot-arrow">↗</span></a>
-        <a class="foot-link act" href="#" onclick="showInfo('submit');return false">Submit a Story<span class="foot-arrow">→</span></a>
-        <a class="foot-link act" href="#" onclick="showInfo('advertise');return false">Advertise<span class="foot-arrow">→</span></a>
-        <a class="foot-link act" href="#" onclick="showInfo('about');return false">About ARCHNEWS<span class="foot-arrow">→</span></a>
+        <div class="f-head">Connect</div>
+        <a class="f-link act" href="https://archnews.beehiiv.com/subscribe" target="_blank">Newsletter<span class="f-arr">↗</span></a>
+        <a class="f-link act" href="#" onclick="openInfo('submit');return false">Submit a Story<span class="f-arr">→</span></a>
+        <a class="f-link act" href="#" onclick="openInfo('advertise');return false">Advertise<span class="f-arr">→</span></a>
+        <a class="f-link act" href="#" onclick="openInfo('about');return false">About<span class="f-arr">→</span></a>
       </div>
     </div>
-    <div class="foot-bot">
-      <p>© 2026 ARCHNEWS — Architecture Intelligence — archnews.vercel.app</p>
-      <p>Built for architects · All stories link directly to original sources</p>
+    <div class="f-bot">
+      <p>© 2026 ARCHNEWS — Architecture Intelligence</p>
+      <p>Built for architects · Stories link to original sources</p>
     </div>
   </div>
 </footer>
 
 <!-- STORY MODAL -->
-<div class="modal-bg" id="modal-story" onclick="if(event.target===this)closeModals()">
+<div class="mbg" id="m-story" onclick="if(event.target===this)closeAll()">
   <div class="modal">
-    <button class="modal-x" onclick="closeModals()">✕</button>
-    <div class="modal-tag" id="ms-tag"></div>
-    <img class="modal-img" id="ms-img" src="" alt="" onerror="this.style.display='none'"/>
-    <h2 class="modal-ttl" id="ms-ttl"></h2>
-    <p class="modal-exc" id="ms-exc"></p>
-    <a class="modal-link" id="ms-link" href="#" target="_blank" rel="noopener">Read Full Article ↗</a>
+    <button class="modal-x" onclick="closeAll()">✕</button>
+    <div class="modal-tag" id="m-tag"></div>
+    <img class="modal-img" id="m-img" src="" alt="" onerror="this.style.display='none'"/>
+    <h2 class="modal-ttl" id="m-ttl"></h2>
+    <p class="modal-exc" id="m-exc"></p>
+    <a class="modal-btn" id="m-link" href="#" target="_blank" rel="noopener">Read Full Article ↗</a>
   </div>
 </div>
 
-<!-- ABOUT MODAL -->
-<div class="modal-bg" id="modal-about" onclick="if(event.target===this)closeModals()">
-  <div class="info-modal">
-    <button class="modal-x" onclick="closeModals()">✕</button>
+<!-- ABOUT -->
+<div class="mbg" id="m-about" onclick="if(event.target===this)closeAll()">
+  <div class="imodal">
+    <button class="modal-x" onclick="closeAll()">✕</button>
     <div class="modal-tag">About ARCHNEWS</div>
-    <h2 class="info-h">Architecture moves fast.<br>Staying informed shouldn't be hard.</h2>
-    <p class="info-p">Architects are problem solvers. But keeping up with 8 different publications, hundreds of weekly stories, and constant industry shifts — that's a problem nobody needed to add to their day.</p>
-    <p class="info-p">ARCHNEWS was built to solve that. One live feed. Eight leading publications. Every story updated automatically, all day. You see what matters — without opening eight tabs.</p>
-    <p class="info-p">Every story links directly to its original source. No paywalls introduced. No content stolen. Just the fastest way to know what's happening in architecture right now.</p>
-    <p class="info-p" style="margin-bottom:20px">ARCHNEWS Weekly — the Monday morning newsletter — distills the week's five most important stories into one curated briefing. Written by a licensed architect. Not an algorithm.</p>
+    <h2 class="ih">Architecture moves fast.<br>Staying informed shouldn't be hard.</h2>
+    <p class="ip">One live feed. Eight leading publications. Every story updated automatically, all day. You see what matters — without opening eight tabs.</p>
+    <p class="ip">Every story links to its original source. No paywalls. No content stolen. Just the fastest way to know what's happening in architecture right now.</p>
+    <p class="ip" style="margin-bottom:20px">ARCHNEWS Weekly — the Monday newsletter — distills the week's most important stories. Written by a licensed architect, not an algorithm.</p>
     <div style="border-top:1px solid var(--border);padding-top:16px">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px">Built by</div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px">Built by</div>
       <div style="font-size:16px;font-weight:700;margin-bottom:3px">Kunal Trivedi</div>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:16px">Licensed Architect · India COA + NCARB · M.Arch SUNY Buffalo</div>
-      <a class="modal-link" href="https://archnews.beehiiv.com/subscribe" target="_blank">Subscribe to Weekly Newsletter →</a>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-bottom:16px">Licensed Architect · India COA + NCARB · M.Arch SUNY Buffalo</div>
+      <a class="modal-btn" href="https://archnews.beehiiv.com/subscribe" target="_blank">Subscribe to Weekly Newsletter →</a>
     </div>
   </div>
 </div>
 
-<!-- SUBMIT MODAL -->
-<div class="modal-bg" id="modal-submit" onclick="if(event.target===this)closeModals()">
-  <div class="info-modal">
-    <button class="modal-x" onclick="closeModals()">✕</button>
+<!-- SUBMIT -->
+<div class="mbg" id="m-submit" onclick="if(event.target===this)closeAll()">
+  <div class="imodal">
+    <button class="modal-x" onclick="closeAll()">✕</button>
     <div class="modal-tag">Submit a Story</div>
-    <h2 class="info-h">Got a story worth sharing?</h2>
-    <p class="info-p" style="margin-bottom:20px">Working on a project, writing about architecture, or know a story that deserves attention? Send it our way — we review every submission.</p>
+    <h2 class="ih">Got a story worth sharing?</h2>
+    <p class="ip" style="margin-bottom:20px">Know a story that deserves attention? Send it our way — we review every submission.</p>
     <div style="margin-bottom:12px">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">Story URL or Description</div>
-      <input id="sub-url" type="text" placeholder="https://... or describe the story" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:10px 12px;font-family:var(--sans);font-size:13px;outline:none;color:var(--ink);border-radius:5px"/>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">Story URL</div>
+      <input id="sub-url" type="text" placeholder="https://..." style="width:100%;background:var(--bg);border:1px solid var(--border);padding:10px 12px;font-size:13px;outline:none;color:var(--ink);border-radius:5px"/>
     </div>
     <div style="margin-bottom:18px">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">Your Email (optional)</div>
-      <input id="sub-email" type="email" placeholder="your@email.com" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:10px 12px;font-family:var(--sans);font-size:13px;outline:none;color:var(--ink);border-radius:5px"/>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">Your Email (optional)</div>
+      <input id="sub-email" type="email" placeholder="your@email.com" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:10px 12px;font-size:13px;outline:none;color:var(--ink);border-radius:5px"/>
     </div>
-    <button onclick="doSubmit()" class="modal-link" style="border:none;cursor:pointer;width:100%;justify-content:center">Submit Story →</button>
+    <button onclick="doSubmit()" class="modal-btn" style="border:none;cursor:pointer;width:100%;justify-content:center">Submit Story →</button>
   </div>
 </div>
 
-<!-- ADVERTISE MODAL -->
-<div class="modal-bg" id="modal-advertise" onclick="if(event.target===this)closeModals()">
-  <div class="info-modal">
-    <button class="modal-x" onclick="closeModals()">✕</button>
+<!-- ADVERTISE -->
+<div class="mbg" id="m-advertise" onclick="if(event.target===this)closeAll()">
+  <div class="imodal">
+    <button class="modal-x" onclick="closeAll()">✕</button>
     <div class="modal-tag">Advertise</div>
-    <h2 class="info-h">Reach architects who are paying attention.</h2>
-    <p class="info-p">ARCHNEWS readers are practicing architects, designers, developers, and students who actively seek out industry news. They specify materials, hire consultants, and recommend software.</p>
-    <p class="info-p" style="margin-bottom:16px">If your product serves architecture and construction — this is your audience.</p>
+    <h2 class="ih">Reach architects who are paying attention.</h2>
+    <p class="ip" style="margin-bottom:16px">ARCHNEWS readers are practicing architects, designers, and developers who specify materials, hire consultants, and recommend software.</p>
     <div style="background:var(--bg);border:1px solid var(--border);padding:16px;border-radius:6px;margin-bottom:18px">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px">Opportunities</div>
-      <div style="font-size:13px;color:var(--text2);line-height:2">
-        Newsletter Sponsor — from $100/issue<br>
-        Website Banner — from $200/month<br>
-        Job Board Listing — from $200/post<br>
-        Custom Partnership — let's talk
-      </div>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--t3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px">Opportunities</div>
+      <div style="font-size:13px;color:var(--t2);line-height:2.1">Newsletter Sponsor — from $100/issue<br>Website Banner — from $200/month<br>Job Board Listing — from $200/post<br>Custom Partnership — let's talk</div>
     </div>
-    <a class="modal-link" href="mailto:architectonworks@gmail.com?subject=ARCHNEWS Advertising" style="display:flex;justify-content:center">Email to Discuss →</a>
+    <a class="modal-btn" href="mailto:architectonworks@gmail.com?subject=ARCHNEWS Advertising" style="display:flex;justify-content:center">Email to Discuss →</a>
   </div>
 </div>
 
 <script>
-// ── CONFIG ──
+// ═══════════════════════════════════
+// SOURCE CONFIG
+// ═══════════════════════════════════
 const SRCS = {
-  archdaily:  {name:'ArchDaily',  color:'#c0300a', domain:'archdaily.com'},
-  dezeen:     {name:'Dezeen',     color:'#0a4fb8', domain:'dezeen.com'},
-  archinect:  {name:'Archinect',  color:'#0a8a35', domain:'archinect.com'},
-  metropolis: {name:'Metropolis', color:'#6b08a8', domain:'metropolismag.com'},
-  archrecord: {name:'Arch Record',color:'#b87008', domain:'architecturalrecord.com'},
-  designboom: {name:'Designboom', color:'#a80875', domain:'designboom.com'},
-  archpaper:  {name:'Arch Paper', color:'#087ab8', domain:'archpaper.com'},
-  domus:      {name:'Domus',      color:'#5a5a3a', domain:'domusweb.it'},
+  archdaily:  {name:'ArchDaily',   color:'#c0300a', domain:'archdaily.com'},
+  dezeen:     {name:'Dezeen',      color:'#0a4fb8', domain:'dezeen.com'},
+  archinect:  {name:'Archinect',   color:'#0a8a35', domain:'archinect.com'},
+  metropolis: {name:'Metropolis',  color:'#6b08a8', domain:'metropolismag.com'},
+  archrecord: {name:'Arch Record', color:'#b87008', domain:'architecturalrecord.com'},
+  designboom: {name:'Designboom',  color:'#a80875', domain:'designboom.com'},
+  archpaper:  {name:'Arch Paper',  color:'#087ab8', domain:'archpaper.com'},
+  domus:      {name:'Domus',       color:'#5a5a3a', domain:'domusweb.it'},
 };
-// Pool of 20 varied architecture images — each story gets a different one by index
-const FB_POOL = [
-  'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
-  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&q=80',
-  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
-  'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80',
-  'https://images.unsplash.com/photo-1460574283810-2aab119d8511?w=800&q=80',
-  'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=800&q=80',
-  'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
-  'https://images.unsplash.com/photo-1431576901776-e539bd916ba2?w=800&q=80',
-  'https://images.unsplash.com/photo-1470723710355-95304d8aece4?w=800&q=80',
-  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-  'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800&q=80',
-  'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
-  'https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?w=800&q=80',
-  'https://images.unsplash.com/photo-1520583457224-aee11bad5112?w=800&q=80',
-  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
-  'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80',
-  'https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=800&q=80',
-  'https://images.unsplash.com/photo-1502005097973-6a7082348e28?w=800&q=80',
-];
-// FB kept for compatibility — unused now
-const FB = {};
-// Known garbage images (Google News generic app icon — NOT article images)
-const BAD_IMGS = [
+
+// Known GARBAGE image URLs (not real article images)
+const GARBAGE_IMG_PATTERNS = [
   'lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc',
   'news.google.com',
 ];
-function isBadImg(url){
-  if(!url) return true;
-  return BAD_IMGS.some(b => url.includes(b));
-}
-// Get varied fallback by story index — never repeat same image per row
-function getImg(story, idx){
-  if(story.image && !isBadImg(story.image)) return story.image;
-  return FB_POOL[(idx||0) % FB_POOL.length];
+
+function isRealImage(url) {
+  if (!url || typeof url !== 'string') return false;
+  if (!url.startsWith('http')) return false;
+  for (const p of GARBAGE_IMG_PATTERNS) {
+    if (url.includes(p)) return false;
+  }
+  return true;
 }
 
-const GNEWS = [
+// Pool of 20 varied architecture photos — indexed by story position
+// so adjacent cards NEVER show the same photo
+const PHOTO_POOL = [
+  'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+  'https://images.unsplash.com/photo-1431576901776-e539bd916ba2?w=800&q=80',
+  'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80',
+  'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800&q=80',
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+  'https://images.unsplash.com/photo-1460574283810-2aab119d8511?w=800&q=80',
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
+  'https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?w=800&q=80',
+  'https://images.unsplash.com/photo-1520583457224-aee11bad5112?w=800&q=80',
+  'https://images.unsplash.com/photo-1470723710355-95304d8aece4?w=800&q=80',
+  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&q=80',
+  'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=800&q=80',
+  'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
+  'https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=800&q=80',
+  'https://images.unsplash.com/photo-1502005097973-6a7082348e28?w=800&q=80',
+  'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&q=80',
+  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
+  'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80',
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+];
+
+// Get display image for a story
+// Returns: { type: 'photo', url } or { type: 'placeholder' }
+function resolveImg(story, slotIndex) {
+  if (isRealImage(story.image)) {
+    return { type: 'photo', url: story.image };
+  }
+  // Use photo pool — cycle by slot so each card gets different photo
+  return { type: 'photo', url: PHOTO_POOL[slotIndex % PHOTO_POOL.length] };
+}
+
+// Build image HTML for a card
+function cardImgHTML(story, slotIndex) {
+  const src = SRCS[story.sourceId] || {name: story.sourceName, color:'#555'};
+  const img = resolveImg(story, slotIndex);
+  const fallback = PHOTO_POOL[slotIndex % PHOTO_POOL.length];
+  if (img.type === 'photo') {
+    return `<div class="card-img-wrap"><img class="card-img" src="${img.url}" alt="" loading="lazy" onerror="this.src='${fallback}'"/></div>`;
+  }
+  // Branded placeholder (source color gradient)
+  return `<div class="card-img-wrap"><div class="card-img-ph" style="background:linear-gradient(135deg,${src.color}dd,${src.color}88)"><span class="ph-src">${src.name.toUpperCase()}</span><div class="ph-line"></div></div></div>`;
+}
+
+// Build image HTML for featured story
+function featImgHTML(story) {
+  const src = SRCS[story.sourceId] || {name: story.sourceName, color:'#555'};
+  const img = resolveImg(story, 0);
+  const fallback = PHOTO_POOL[0];
+  if (img.type === 'photo') {
+    return `<img class="feat-img" src="${img.url}" alt="" onerror="this.src='${fallback}'"/>`;
+  }
+  return `<div class="feat-img-ph" style="background:linear-gradient(135deg,${src.color}dd,${src.color}88)"><span style="font-family:var(--disp);font-size:36px;letter-spacing:.08em;color:rgba(255,255,255,.9)">${src.name.toUpperCase()}</span></div>`;
+}
+
+// ═══════════════════════════════════
+// GOOGLE NEWS FEED SOURCES
+// ═══════════════════════════════════
+const GFEEDS = [
   {id:'archdaily',  url:'https://news.google.com/rss/search?q=site:archdaily.com+architecture&hl=en-US&gl=US&ceid=US:en'},
   {id:'dezeen',     url:'https://news.google.com/rss/search?q=site:dezeen.com+architecture&hl=en-US&gl=US&ceid=US:en'},
   {id:'archinect',  url:'https://news.google.com/rss/search?q=site:archinect.com&hl=en-US&gl=US&ceid=US:en'},
@@ -520,304 +447,362 @@ const GNEWS = [
   {id:'domus',      url:'https://news.google.com/rss/search?q=site:domusweb.it+architecture&hl=en-US&gl=US&ceid=US:en'},
 ];
 
-let stories=[], tab='all', shown=8;
-
-// ── LOADER ──
-const lbar=document.getElementById('lbar'), ltxt=document.getElementById('ltxt');
-let lp=0;
-const lt=setInterval(()=>{lp=Math.min(lp+15,80);lbar.style.width=lp+'%';},600);
-const lkill=setTimeout(()=>{hideLoader();if(!stories.length){showErr('Feed loading slowly — <a href="javascript:location.reload()">reload →</a>');render();}},9000);
-function hideLoader(){
-  clearInterval(lt);clearTimeout(lkill);
-  lbar.style.width='100%';
-  setTimeout(()=>document.getElementById('loader').classList.add('out'),300);
-}
-
-// ── RSS PARSER ──
-function dH(s){
+// ═══════════════════════════════════
+// RSS PARSER — note: extractRSSImage (NOT getImg — different name!)
+// ═══════════════════════════════════
+function htmlDecode(s) {
   return (s||'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')
     .replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
     .replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(n));
 }
-function clean(s){
+function stripTags(s) {
   return (s||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<')
     .replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'')
     .replace(/\s+/g,' ').trim();
 }
-function getTag(c,t){
-  const cd=c.match(new RegExp('<'+t+'[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/'+t+'>','i'));
-  if(cd)return cd[1].trim();
-  const pl=c.match(new RegExp('<'+t+'[^>]*>([\\s\\S]*?)<\\/'+t+'>','i'));
-  return pl?pl[1].replace(/<[^>]+>/g,'').trim():'';
+function getXMLTag(chunk, tag) {
+  const cd = chunk.match(new RegExp('<'+tag+'[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/'+tag+'>','i'));
+  if (cd) return cd[1].trim();
+  const pl = chunk.match(new RegExp('<'+tag+'[^>]*>([\\s\\S]*?)<\\/'+tag+'>','i'));
+  return pl ? pl[1].replace(/<[^>]+>/g,'').trim() : '';
 }
-function getImg(chunk,rawDesc){
-  const pats=[
+
+// Extract image from RSS item — NAMED extractRSSImage (not getImg)
+function extractRSSImage(itemChunk, rawDesc) {
+  const patterns = [
     /<media:(?:content|thumbnail)[^>]+url=["']([^"']+)["']/i,
     /<enclosure[^>]+url=["']([^"']+\.(?:jpg|jpeg|png|webp))[^>]*/i,
     /<img[^>]+src=["']([^"']+)["']/i,
   ];
-  for(const rx of pats){const m=chunk.match(rx);if(m&&m[1].startsWith('http'))return m[1];}
-  const dec=dH(rawDesc||'');
-  const dm=dec.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if(dm&&dm[1].startsWith('http'))return dm[1];
-  const am=dec.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^\s"'<>]*)?/i);
-  if(am)return am[0];
+  for (const rx of patterns) {
+    const m = itemChunk.match(rx);
+    if (m && m[1].startsWith('http')) return m[1];
+  }
+  // Decode HTML entities in description (Google News hides images there)
+  const decoded = htmlDecode(rawDesc || '');
+  const imgInDesc = decoded.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if (imgInDesc && imgInDesc[1].startsWith('http')) return imgInDesc[1];
+  const anyUrl = decoded.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^\s"'<>]*)?/i);
+  if (anyUrl) return anyUrl[0];
   return null;
 }
-function parseRSS(xml,srcId){
-  const items=[];let m;
-  const rx=/<item[\s>]([\s\S]*?)<\/item>/gi;
-  while((m=rx.exec(xml))!==null)items.push(m[1]);
-  const src=SRCS[srcId]||{name:srcId,color:'#555',domain:''};
-  return items.slice(0,10).map((item,i)=>{
-    const title=clean(getTag(item,'title'));
-    let link=clean(getTag(item,'link')).replace(/&amp;/g,'&');
-    if(!link.startsWith('http')){const lm=item.match(/<link[^>]+href=["']([^"']+)["']/i);if(lm)link=lm[1];}
-    const pub=getTag(item,'pubDate')||'';
-    const ts=pub?(new Date(pub).getTime()||Date.now()-i*3600000):Date.now()-i*3600000;
-    const rawDesc=getTag(item,'description')||'';
-    return{
-      id:srcId+'-'+i+'-'+ts, sourceId:srcId,
-      sourceName:src.name, sourceColor:src.color,
-      title, link, excerpt:clean(rawDesc).slice(0,240),
-      image:getImg(item,rawDesc), timestamp:ts,
+
+function parseRSSFeed(xmlText, sourceId) {
+  const src = SRCS[sourceId] || {name: sourceId, color:'#555', domain:''};
+  const items = [];
+  let m;
+  const itemRx = /<item[\s>]([\s\S]*?)<\/item>/gi;
+  while ((m = itemRx.exec(xmlText)) !== null) items.push(m[1]);
+
+  return items.slice(0, 12).map((item, i) => {
+    const title = stripTags(getXMLTag(item, 'title'));
+    let link = stripTags(getXMLTag(item, 'link')).replace(/&amp;/g, '&');
+    if (!link.startsWith('http')) {
+      const lm = item.match(/<link[^>]+href=["']([^"']+)["']/i);
+      if (lm) link = lm[1];
+    }
+    const pubStr = getXMLTag(item, 'pubDate') || '';
+    const ts = pubStr ? (new Date(pubStr).getTime() || Date.now() - i*3600000) : Date.now() - i*3600000;
+    const rawDesc = getXMLTag(item, 'description') || '';
+    const image = extractRSSImage(item, rawDesc); // ← uses extractRSSImage, not getImg
+    return {
+      id: sourceId + '-' + i + '-' + ts,
+      sourceId, sourceName: src.name, sourceColor: src.color,
+      title, link,
+      excerpt: stripTags(rawDesc).slice(0, 260),
+      image,
+      timestamp: ts,
     };
-  }).filter(s=>s.title&&s.link.startsWith('http'));
+  }).filter(s => s.title && s.link.startsWith('http'));
 }
 
-// ── FETCH ──
-async function fetchOne(src){
-  // NOTE: Always use .signal not the controller object itself
-  const ctrl=new AbortController();
-  const t=setTimeout(()=>ctrl.abort(),8000);
-  try{
-    const r=await fetch(src.url,{signal:ctrl.signal});
-    clearTimeout(t);
-    if(!r.ok)return[];
-    return parseRSS(await r.text(),src.id);
-  }catch(e){
-    clearTimeout(t);
-    try{
-      const proxy='https://api.allorigins.win/get?url='+encodeURIComponent(src.url);
-      const r2=await fetch(proxy);
-      if(!r2.ok)return[];
-      const d=await r2.json();
-      return parseRSS(d.contents||'',src.id);
-    }catch(e2){return[];}
+// ═══════════════════════════════════
+// FETCH SINGLE FEED
+// ═══════════════════════════════════
+async function fetchFeed(src) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const r = await fetch(src.url, { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (!r.ok) return [];
+    return parseRSSFeed(await r.text(), src.id);
+  } catch(e) {
+    clearTimeout(timer);
+    // Fallback: allorigins proxy
+    try {
+      const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(src.url);
+      const r2 = await fetch(proxy);
+      if (!r2.ok) return [];
+      const d = await r2.json();
+      return parseRSSFeed(d.contents || '', src.id);
+    } catch(e2) { return []; }
   }
 }
 
-async function loadFeed(){
-  // Try 1: Vercel API
-  try{
-    const ctrl=new AbortController();
-    const t=setTimeout(()=>ctrl.abort(),7000);
-    const r=await fetch('/api/feed',{signal:ctrl.signal});
-    clearTimeout(t);
-    if(r.ok){
-      const d=await r.json();
-      if(d.stories&&d.stories.length>0){
-        stories=d.stories;
-        document.getElementById('upd').textContent=
-          new Date(d.updatedAt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-        hideLoader();render();return;
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+let ALL_STORIES = [];
+let activeTab = 'all';
+let shownCount = 8;
+
+// ═══════════════════════════════════
+// LOADER
+// ═══════════════════════════════════
+const lf = document.getElementById('lf');
+const lm = document.getElementById('lm');
+let lPct = 0;
+const lInt = setInterval(() => { lPct = Math.min(lPct + 14, 80); lf.style.width = lPct + '%'; }, 600);
+const lKill = setTimeout(() => {
+  hideLoader();
+  if (!ALL_STORIES.length) {
+    showErr('Feed loading slowly — <a href="javascript:location.reload()">reload →</a>');
+    render();
+  }
+}, 9000);
+function hideLoader() {
+  clearInterval(lInt); clearTimeout(lKill);
+  lf.style.width = '100%';
+  setTimeout(() => document.getElementById('loader').classList.add('out'), 300);
+}
+
+// ═══════════════════════════════════
+// LOAD FEED
+// ═══════════════════════════════════
+async function loadFeed() {
+  // Try 1: Vercel API (server-side, fast when cached)
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 7000);
+    const r = await fetch('/api/feed', { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (r.ok) {
+      const data = await r.json();
+      if (data.stories && data.stories.length > 0) {
+        ALL_STORIES = data.stories;
+        document.getElementById('upd').textContent =
+          new Date(data.updatedAt).toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+        hideLoader();
+        render();
+        return;
       }
     }
-  }catch(e){}
+  } catch(e) {}
 
-  // Try 2: Google News direct (all 8 sources, no CORS issues)
-  ltxt.textContent='Loading from sources...';
-  try{
-    const results=await Promise.allSettled(GNEWS.map(fetchOne));
-    let all=[];
-    results.forEach((res,i)=>{
-      if(res.status==='fulfilled')all=all.concat(res.value);
+  // Try 2: Google News client-side (works for all 8 sources, no CORS)
+  lm.textContent = 'Loading from sources...';
+  try {
+    const results = await Promise.allSettled(GFEEDS.map(fetchFeed));
+    let all = [];
+    results.forEach(res => {
+      if (res.status === 'fulfilled') all = all.concat(res.value);
     });
-    all.sort((a,b)=>b.timestamp-a.timestamp);
-    const seen=new Set();
-    all=all.filter(s=>{
-      const k=s.title.slice(0,45).toLowerCase();
-      if(seen.has(k))return false;seen.add(k);return true;
+    all.sort((a, b) => b.timestamp - a.timestamp);
+    // Deduplicate
+    const seen = new Set();
+    all = all.filter(s => {
+      const key = s.title.slice(0, 50).toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
-    if(all.length>0){
-      stories=all;
-      document.getElementById('upd').textContent=
-        new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-      hideLoader();render();
-      enrichImages(all).then(()=>render());
+    if (all.length > 0) {
+      ALL_STORIES = all;
+      document.getElementById('upd').textContent =
+        new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+      hideLoader();
+      render();
       return;
     }
-  }catch(e){}
+  } catch(e) {}
 
-  // Try 3: show error
+  // Try 3: Give up
   hideLoader();
   showErr('Feed unavailable — <a href="javascript:location.reload()">tap to reload →</a>');
   render();
 }
 
-// ── ENRICH IMAGES (background, non-blocking) ──
-async function enrichImages(list){
-  const noImg=list.filter(s=>!s.image).slice(0,5);
-  await Promise.allSettled(noImg.map(async s=>{
-    try{
-      const proxy='https://api.allorigins.win/get?url='+encodeURIComponent(s.link);
-      const ctrl=new AbortController();
-      const t=setTimeout(()=>ctrl.abort(),5000);
-      const r=await fetch(proxy,{signal:ctrl.signal});
-      clearTimeout(t);
-      if(!r.ok)return;
-      const d=await r.json();
-      const html=d.contents||'';
-      const og=html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-             ||html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
-      if(og&&og[1]&&og[1].startsWith('http'))s.image=og[1];
-    }catch(e){}
-  }));
+// ═══════════════════════════════════
+// TIME
+// ═══════════════════════════════════
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return s + 's ago';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
 }
 
-// ── TIME ──
-function ago(ts){
-  const s=Math.floor((Date.now()-ts)/1000);
-  if(s<60)return s+'s ago';
-  if(s<3600)return Math.floor(s/60)+'m ago';
-  if(s<86400)return Math.floor(s/3600)+'h ago';
-  return Math.floor(s/86400)+'d ago';
-}
+// ═══════════════════════════════════
+// RENDER
+// ═══════════════════════════════════
+function render() {
+  const list = activeTab === 'all'
+    ? ALL_STORIES
+    : ALL_STORIES.filter(s => s.sourceId === activeTab);
 
-// ── RENDER ──
-function render(){
-  const list=tab==='all'?stories:stories.filter(s=>s.sourceId===tab);
-  shown=Math.min(shown,list.length);
+  shownCount = Math.min(shownCount, list.length);
 
-  // Featured (first story)
-  const fw=document.getElementById('featured-wrap');
-  if(list.length>0){
-    const h=list[0];
-    const hs=SRCS[h.sourceId]||{name:h.sourceName,color:'#555',domain:''};
-    fw.innerHTML=`
-      <div class="featured" onclick="openStory('${h.id}')">
-        <img class="feat-img" src="${getImg(h,0)}" alt=""
-          onerror="this.src='${FB_POOL[0]}'"/>
+  // ── FEATURED (story 0) ──
+  const fw = document.getElementById('feat-wrap');
+  if (list.length > 0) {
+    const h = list[0];
+    const hs = SRCS[h.sourceId] || {name: h.sourceName, color:'#555', domain:''};
+    fw.innerHTML = `
+      <div class="feat" onclick="openStory('${h.id}')">
+        ${featImgHTML(h)}
         <div class="feat-body">
-          <div class="feat-top">
+          <div class="feat-meta">
             <span class="feat-src" style="color:${hs.color}">${hs.name}</span>
-            <span class="feat-time">${ago(h.timestamp)}</span>
+            <span class="feat-age">${timeAgo(h.timestamp)}</span>
           </div>
-          <div class="feat-title">${h.title}</div>
-          <p class="feat-exc">${h.excerpt||''}</p>
+          <div class="feat-ttl">${h.title}</div>
+          <p class="feat-exc">${h.excerpt || ''}</p>
           <a class="feat-btn" href="${h.link}" target="_blank" rel="noopener"
             onclick="event.stopPropagation()">Read on ${hs.domain} ↗</a>
         </div>
       </div>`;
-  } else { fw.innerHTML=''; }
+  } else {
+    fw.innerHTML = '';
+  }
 
-  // Grid cards (2–shown)
-  const sl=document.getElementById('sec-label');
-  const grid=document.getElementById('grid');
-  if(list.length>1){
-    sl.style.display='flex';
-    grid.innerHTML=list.slice(1,shown+1).map((s,i)=>{
-      const sm=SRCS[s.sourceId]||{name:s.sourceName,color:'#555',domain:''};
+  // ── GRID (stories 1 to shownCount) ──
+  const secLbl = document.getElementById('sec-lbl');
+  const grid = document.getElementById('grid');
+  if (list.length > 1) {
+    secLbl.style.display = 'flex';
+    const cards = list.slice(1, shownCount + 1);
+    grid.innerHTML = cards.map((s, i) => {
+      const sm = SRCS[s.sourceId] || {name: s.sourceName, color:'#555', domain:''};
       return `<div class="card" style="animation-delay:${i*.04}s" onclick="openStory('${s.id}')">
-        <img class="card-img" src="${getImg(s,i+1)}" alt=""
-          onerror="this.src='${FB_POOL[(i+1)%FB_POOL.length]}'"/>
+        ${cardImgHTML(s, i + 1)}
         <div class="card-body">
-          <div class="card-top">
-            <span class="src-pill" style="background:${sm.color}">${sm.name}</span>
-            <span class="card-time">${ago(s.timestamp)}</span>
+          <div class="card-meta">
+            <span class="pill" style="background:${sm.color}">${sm.name}</span>
+            <span class="card-age">${timeAgo(s.timestamp)}</span>
           </div>
-          <div class="card-title">${s.title}</div>
-          <p class="card-exc">${s.excerpt||''}</p>
+          <div class="card-ttl">${s.title}</div>
           <div class="card-foot">
             <span class="card-domain">${sm.domain}</span>
-            <span class="card-action">Read →</span>
+            <span class="card-read">Read →</span>
           </div>
         </div>
       </div>`;
     }).join('');
   } else {
-    sl.style.display='none';
-    grid.innerHTML='';
+    secLbl.style.display = 'none';
+    grid.innerHTML = '';
   }
 
-  // Load more
-  const mw=document.getElementById('more-wrap');
-  mw.style.display=(list.length>shown+1)?'block':'none';
+  // ── LOAD MORE ──
+  document.getElementById('more').style.display = (list.length > shownCount + 1) ? 'block' : 'none';
 }
 
-function loadMore(){
-  shown=Math.min(shown+8, stories.length);
+function loadMore() {
+  shownCount = Math.min(shownCount + 8, ALL_STORIES.length);
   render();
-  window.scrollBy({top:200,behavior:'smooth'});
+  window.scrollBy({ top: 200, behavior: 'smooth' });
 }
 
-// ── STORY MODAL ──
-function openStory(id){
-  const s=stories.find(x=>x.id===id);if(!s)return;
-  const sm=SRCS[s.sourceId]||{name:s.sourceName,color:'#555',domain:''};
-  document.getElementById('ms-tag').textContent=sm.name.toUpperCase()+' · '+ago(s.timestamp);
-  const img=document.getElementById('ms-img');
-  const modalImgUrl = (!s.image || isBadImg(s.image)) ? null : s.image;
-  if(modalImgUrl){img.src=modalImgUrl;img.style.display='block';}else{img.style.display='none';}
-  document.getElementById('ms-ttl').textContent=s.title;
-  document.getElementById('ms-exc').textContent=s.excerpt||'';
-  document.getElementById('ms-link').href=s.link;
-  document.getElementById('ms-link').textContent='Read Full Article on '+sm.domain+' ↗';
-  document.getElementById('modal-story').classList.add('open');
-  document.body.style.overflow='hidden';
+// ═══════════════════════════════════
+// STORY MODAL
+// ═══════════════════════════════════
+function openStory(id) {
+  const s = ALL_STORIES.find(x => x.id === id);
+  if (!s) return;
+  const sm = SRCS[s.sourceId] || {name: s.sourceName, color:'#555', domain:''};
+  document.getElementById('m-tag').textContent = sm.name.toUpperCase() + ' · ' + timeAgo(s.timestamp);
+  const img = document.getElementById('m-img');
+  if (isRealImage(s.image)) {
+    img.src = s.image;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+  document.getElementById('m-ttl').textContent = s.title;
+  document.getElementById('m-exc').textContent = s.excerpt || '';
+  document.getElementById('m-link').href = s.link;
+  document.getElementById('m-link').textContent = 'Read on ' + sm.domain + ' ↗';
+  document.getElementById('m-story').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
-// ── INFO MODALS ──
-function showInfo(type){
-  closeModals();
-  const el=document.getElementById('modal-'+type);
-  if(el){el.classList.add('open');document.body.style.overflow='hidden';}
+// ═══════════════════════════════════
+// INFO MODALS
+// ═══════════════════════════════════
+function openInfo(type) {
+  closeAll();
+  const el = document.getElementById('m-' + type);
+  if (el) { el.classList.add('open'); document.body.style.overflow = 'hidden'; }
 }
-function closeModals(){
-  document.querySelectorAll('.modal-bg').forEach(m=>m.classList.remove('open'));
-  document.body.style.overflow='';
+function closeAll() {
+  document.querySelectorAll('.mbg').forEach(m => m.classList.remove('open'));
+  document.body.style.overflow = '';
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
 
-// ── TAB FILTER ──
-function setTab(f,btn){
-  tab=f;shown=8;
-  document.querySelectorAll('.tab,.mob-tab').forEach(b=>b.classList.remove('on'));
-  if(btn)btn.classList.add('on');
+// ═══════════════════════════════════
+// TABS
+// ═══════════════════════════════════
+function doTab(id, btn) {
+  activeTab = id;
+  shownCount = 8;
+  document.querySelectorAll('.tab, .dtab').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
   render();
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── TOPIC FILTER ──
-function topicFilter(kw){
-  const orig=stories;
-  const filtered=stories.filter(s=>(s.title+' '+s.excerpt).toLowerCase().includes(kw.toLowerCase()));
-  if(filtered.length){stories=filtered;shown=8;render();stories=orig;}
-  window.scrollTo({top:0,behavior:'smooth'});
+function topicFlt(kw) {
+  const orig = ALL_STORIES;
+  const filtered = ALL_STORIES.filter(s =>
+    (s.title + ' ' + s.excerpt).toLowerCase().includes(kw.toLowerCase())
+  );
+  if (filtered.length) {
+    ALL_STORIES = filtered;
+    shownCount = 8;
+    render();
+    ALL_STORIES = orig;
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ── BURGER ──
-function openDrawer(){document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden';}
-function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';}
-
-// ── SUBMIT ──
-function doSubmit(){
-  const url=document.getElementById('sub-url').value.trim();
-  const email=document.getElementById('sub-email').value.trim();
-  if(!url){document.getElementById('sub-url').style.borderColor='var(--red)';return;}
-  window.location.href='mailto:architectonworks@gmail.com?subject=ARCHNEWS Story Submission&body=Story: '+encodeURIComponent(url)+'%0D%0AFrom: '+encodeURIComponent(email||'Anonymous');
-  closeModals();
+// ═══════════════════════════════════
+// BURGER / DRAWER
+// ═══════════════════════════════════
+function openDrw() {
+  document.getElementById('drw').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDrw() {
+  document.getElementById('drw').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
-// ── ERROR ──
-function showErr(html){
-  const el=document.getElementById('err');
-  el.innerHTML=html;el.classList.add('show');
+// ═══════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════
+function doSubmit() {
+  const url = document.getElementById('sub-url').value.trim();
+  const email = document.getElementById('sub-email').value.trim();
+  if (!url) { document.getElementById('sub-url').style.borderColor = 'var(--red)'; return; }
+  window.location.href = 'mailto:architectonworks@gmail.com?subject=ARCHNEWS Story Submission&body=Story: '
+    + encodeURIComponent(url) + '%0D%0AFrom: ' + encodeURIComponent(email || 'Anonymous');
+  closeAll();
 }
 
-// ── START ──
+function showErr(html) {
+  const el = document.getElementById('err');
+  el.innerHTML = html;
+  el.classList.add('show');
+}
+
+// ═══════════════════════════════════
+// START
+// ═══════════════════════════════════
 loadFeed();
-setInterval(loadFeed,900000);
+setInterval(loadFeed, 900000); // refresh every 15 min
 </script>
 </body>
 </html>
