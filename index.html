@@ -4,404 +4,274 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ARCHNEWS — Architecture Intelligence</title>
+<meta name="description" content="The architecture community's daily intelligence briefing. Live stories from ArchDaily, Dezeen, Archinect, Architectural Record and more."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-/* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 img{display:block;max-width:100%}
 a{text-decoration:none;color:inherit}
 button{cursor:pointer;border:none;background:none;font-family:inherit}
-ul{list-style:none}
 
-/* ── TOKENS ── */
 :root{
-  --ink:#0c0b09;
+  --ink:#0f0f0f;
   --red:#c0300a;
   --white:#ffffff;
-  --cream:#f5f1ea;
-  --surface:#ede8df;
-  --border:#cec8bb;
-  --text2:#4a4540;
-  --text3:#8a8278;
+  --bg:#f4f1ed;
+  --card:#ffffff;
+  --border:#e4e0d8;
+  --text2:#5a5652;
+  --text3:#9a9690;
   --display:'Bebas Neue',sans-serif;
-  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
   --mono:'IBM Plex Mono',monospace;
-  --sans:'DM Sans',sans-serif;
 }
-body{font-family:var(--sans);background:var(--cream);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 
 /* ── LOADER ── */
 #loader{
   position:fixed;inset:0;background:var(--ink);z-index:9999;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
-  transition:opacity 0.4s ease,visibility 0.4s ease;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  transition:opacity 0.5s,visibility 0.5s;
 }
 #loader.out{opacity:0;visibility:hidden;pointer-events:none}
-.ld-logo{font-family:var(--display);font-size:56px;letter-spacing:0.06em;color:var(--white)}
+.ld-logo{font-family:var(--display);font-size:52px;letter-spacing:0.05em;color:#fff}
 .ld-logo em{color:var(--red);font-style:normal}
-.ld-track{width:280px;height:2px;background:#1e1e18}
-.ld-bar{height:100%;background:var(--red);width:0;transition:width 0.5s ease}
+.ld-bar-wrap{width:240px;height:2px;background:#222}
+.ld-bar{height:100%;background:var(--red);width:0%;transition:width 0.4s ease}
 .ld-txt{font-family:var(--mono);font-size:9px;color:#444;letter-spacing:0.2em;text-transform:uppercase}
 
 /* ── HEADER ── */
 header{
-  background:var(--ink);border-bottom:3px solid var(--red);
-  position:sticky;top:0;z-index:200;
+  background:var(--ink);position:sticky;top:0;z-index:100;
+  border-bottom:2px solid var(--red);
 }
-.hdr-top{
-  max-width:1440px;margin:0 auto;padding:0 24px;
-  display:flex;align-items:center;gap:20px;height:60px;
+.hdr-inner{
+  max-width:1280px;margin:0 auto;padding:0 20px;
+  display:flex;align-items:center;height:56px;gap:16px;
 }
-.logo{font-family:var(--display);font-size:34px;letter-spacing:0.05em;color:var(--white);flex-shrink:0}
+.logo{font-family:var(--display);font-size:30px;letter-spacing:0.05em;color:#fff;flex-shrink:0}
 .logo em{color:var(--red);font-style:normal}
-.logo-sub{display:flex;flex-direction:column;justify-content:center;gap:1px;flex:1}
-.logo-tagline{font-family:var(--mono);font-size:8px;color:#555;letter-spacing:0.18em;text-transform:uppercase}
-.logo-date{font-family:var(--mono);font-size:8px;color:#333;letter-spacing:0.12em}
-.live-pill{
-  margin-left:auto;display:flex;align-items:center;gap:7px;
-  font-family:var(--mono);font-size:8px;letter-spacing:0.15em;text-transform:uppercase;
-  color:#888;border:1px solid #222;padding:5px 12px;flex-shrink:0;
+.hdr-pill{
+  display:flex;align-items:center;gap:6px;margin-left:auto;
+  font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;
+  color:#666;border:1px solid #222;padding:4px 10px;flex-shrink:0;
 }
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.4s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.hdr-dot{width:5px;height:5px;border-radius:50%;background:var(--red);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.burger{display:none;flex-direction:column;gap:5px;padding:6px;margin-left:auto}
+.burger span{width:20px;height:2px;background:#666;display:block}
 
-/* ── NAV TABS ── */
-.hdr-nav{
-  max-width:1440px;margin:0 auto;padding:0 24px;
-  display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;
+/* ── CATEGORY TABS ── */
+.tabs-wrap{
+  background:var(--ink);border-bottom:1px solid #1a1a1a;
+  overflow-x:auto;scrollbar-width:none;
 }
-.hdr-nav::-webkit-scrollbar{display:none}
-.nav-tab{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
-  padding:10px 16px;color:#555;border-bottom:2px solid transparent;
-  transition:color 0.15s,border-color 0.15s;white-space:nowrap;background:none;
+.tabs-wrap::-webkit-scrollbar{display:none}
+.tabs-inner{
+  max-width:1280px;margin:0 auto;padding:0 20px;
+  display:flex;align-items:center;gap:0;white-space:nowrap;
 }
-.nav-tab:hover{color:#888}
-.nav-tab.active{color:var(--red);border-bottom-color:var(--red)}
-.nav-upd{font-family:var(--mono);font-size:8px;color:#333;margin-left:auto;padding:10px 0;white-space:nowrap}
+.tab{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.13em;text-transform:uppercase;
+  padding:10px 14px;color:#555;border-bottom:2px solid transparent;
+  transition:color .15s,border-color .15s;flex-shrink:0;
+}
+.tab:hover{color:#888}
+.tab.on{color:var(--red);border-bottom-color:var(--red)}
+.tab-upd{font-family:var(--mono);font-size:8px;color:#2a2a2a;margin-left:auto;padding:10px 0;flex-shrink:0}
 
-/* ── TICKER ── */
-.ticker{background:var(--red);padding:8px 0;overflow:hidden;position:relative}
-.ticker-track{
-  display:flex;gap:0;white-space:nowrap;
-  animation:ticker 35s linear infinite;
-}
-.ticker-track:hover{animation-play-state:paused}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.tick-item{
-  font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;
-  color:var(--white);padding:0 40px;
-}
-.tick-sep{color:rgba(255,255,255,0.4)}
-
-/* ── MOBILE BURGER ── */
-.burger{
-  display:none;flex-direction:column;gap:5px;padding:8px;margin-left:auto;
-}
-.burger span{width:22px;height:2px;background:#888;transition:all 0.2s;display:block}
+/* ── MOBILE DRAWER ── */
 .mob-drawer{
-  display:none;position:fixed;inset:0;background:var(--ink);z-index:190;
-  padding:80px 24px 24px;overflow-y:auto;flex-direction:column;gap:4px;
+  display:none;position:fixed;inset:0;background:var(--ink);z-index:200;
+  flex-direction:column;padding:70px 20px 20px;overflow-y:auto;
 }
 .mob-drawer.open{display:flex}
+.mob-close{position:absolute;top:16px;right:20px;font-family:var(--mono);font-size:10px;color:#555;padding:8px}
 .mob-tab{
-  font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
-  color:#666;padding:14px 16px;border-bottom:1px solid #1a1a14;text-align:left;
-  transition:color 0.1s;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.13em;text-transform:uppercase;
+  color:#555;padding:14px 0;border-bottom:1px solid #111;text-align:left;
 }
-.mob-tab.active{color:var(--red)}
-.mob-close{
-  position:absolute;top:20px;right:24px;font-family:var(--mono);font-size:11px;
-  color:#555;letter-spacing:0.1em;padding:8px;
-}
+.mob-tab.on{color:var(--red)}
 
-/* ── PAGE ── */
-.page{max-width:1440px;margin:0 auto;padding:0 24px}
-.err-banner{
-  background:#fdf6e3;border:1px solid #e8d5a0;border-left:3px solid var(--red);
-  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:#666;
-  padding:12px 16px;margin:16px 0;
+/* ── ERROR STRIP ── */
+.err-strip{
+  background:#fef9f0;border-bottom:1px solid #f0e6cc;
+  font-family:var(--mono);font-size:9px;color:#888;letter-spacing:0.08em;
+  padding:9px 20px;text-align:center;display:none;
 }
-.err-banner a{color:var(--red)}
+.err-strip a{color:var(--red)}
+.err-strip.show{display:block}
 
-/* ── LAYOUT ── */
-.layout{display:grid;grid-template-columns:1fr 300px;gap:0;align-items:start;padding-top:8px}
+/* ── MAIN ── */
+.page{max-width:1280px;margin:0 auto;padding:24px 20px 60px}
 
-/* ── SECTION HEADS ── */
-.sec-head{display:flex;align-items:center;gap:14px;padding:28px 0 12px}
-.sec-label{font-family:var(--display);font-size:20px;letter-spacing:0.08em;color:var(--ink);white-space:nowrap}
-.sec-rule{flex:1;height:2px;background:var(--ink)}
+/* ── SECTION LABEL ── */
+.sec-label{
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;
+}
+.sec-label span{font-family:var(--display);font-size:16px;letter-spacing:0.1em;color:var(--ink)}
+.sec-label hr{flex:1;border:none;border-top:1px solid var(--border)}
 
-/* ── HERO ── */
-.hero{
-  padding:8px 28px 28px 0;border-bottom:2px solid var(--ink);cursor:pointer;
-  transition:opacity 0.15s;
-}
-.hero:hover{opacity:0.96}
-.hero-img-wrap{
-  position:relative;overflow:hidden;aspect-ratio:21/9;margin-bottom:20px;
-  background:var(--surface);
-}
-.hero-img{width:100%;height:100%;object-fit:cover;transition:transform 0.7s ease}
-.hero:hover .hero-img{transform:scale(1.03)}
-.hero-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(160deg,rgba(12,11,9,.55) 0%,transparent 40%,transparent 65%,rgba(12,11,9,.2) 100%)
-}
-.hero-badge{
-  position:absolute;top:16px;left:16px;font-family:var(--mono);font-size:8px;
-  letter-spacing:0.15em;text-transform:uppercase;padding:4px 10px;color:#fff
-}
-.hero-kicker{font-family:var(--mono);font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
-.hero-kicker b{color:var(--red);font-weight:500}
-.hero-title{
-  font-family:var(--serif);font-size:40px;font-weight:700;line-height:1.1;
-  color:var(--ink);margin-bottom:14px;max-width:680px;transition:color 0.15s
-}
-.hero:hover .hero-title{color:var(--red)}
-.hero-excerpt{
-  font-family:var(--serif);font-style:italic;font-size:17px;color:var(--text2);
-  line-height:1.7;max-width:640px;margin-bottom:20px
-}
-.hero-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.btn-read{
-  display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--white);
-  font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;
-  padding:11px 22px;border:2px solid var(--ink);transition:all 0.15s;flex-shrink:0
-}
-.btn-read:hover{background:var(--red);border-color:var(--red)}
-.vote-row{display:flex;align-items:center;gap:8px}
-.vote-btn{
-  width:32px;height:32px;background:none;border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;color:var(--text3);
-  font-size:12px;transition:all 0.15s;
-}
-.vote-btn:hover,.vote-btn.on{background:var(--red);border-color:var(--red);color:#fff}
-.vote-n{font-family:var(--mono);font-size:12px;color:var(--text2);min-width:24px}
-.hero-age{font-family:var(--mono);font-size:9px;color:var(--text3);margin-left:auto}
-
-/* ── CARDS GRID ── */
-.cards{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  border-bottom:1px solid var(--border);
+/* ── CARD GRID — Perplexity style ── */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:32px;
 }
 .card{
-  border-right:1px solid var(--border);
-  padding:16px 18px 16px 0;cursor:pointer;
-  transition:background 0.12s;animation:fadeup 0.4s ease both;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;cursor:pointer;
+  transition:transform .15s,box-shadow .15s;
+  animation:up .35s ease both;
 }
-.card:nth-child(3n){border-right:none;padding-right:0}
-.card:hover{background:var(--surface)}
-@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.card-img-wrap{overflow:hidden;aspect-ratio:3/2;margin-bottom:12px;background:var(--surface)}
-.card-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease}
-.card:hover .card-img{transform:scale(1.04)}
-.badge{
-  font-family:var(--mono);font-size:7px;letter-spacing:0.12em;text-transform:uppercase;
-  padding:3px 8px;color:#fff;flex-shrink:0;display:inline-block
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.08)}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card-img{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--border)}
+.card-body{padding:14px}
+.card-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.src-pill{
+  font-family:var(--mono);font-size:7px;letter-spacing:0.1em;text-transform:uppercase;
+  padding:2px 7px;border-radius:3px;color:#fff;flex-shrink:0;
 }
-.card-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.card-age{font-family:var(--mono);font-size:8px;color:var(--text3);margin-left:auto}
+.card-time{font-family:var(--mono);font-size:8px;color:var(--text3);margin-left:auto}
 .card-title{
-  font-family:var(--serif);font-size:17px;font-weight:700;line-height:1.25;
-  color:var(--ink);margin-bottom:8px;transition:color 0.12s
+  font-size:14px;font-weight:600;line-height:1.4;color:var(--ink);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  transition:color .12s;
 }
 .card:hover .card-title{color:var(--red)}
-.card-excerpt{
-  font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;
-  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden
+.card-exc{
+  font-size:12px;color:var(--text2);line-height:1.6;margin-top:6px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
-.card-foot{display:flex;align-items:center;justify-content:space-between}
-.card-src{font-family:var(--mono);font-size:8px;color:var(--text3);transition:color 0.1s}
-.card-src:hover{color:var(--red)}
-.mini-votes{display:flex;align-items:center;gap:5px}
-.mini-btn{
-  width:22px;height:22px;background:none;border:1px solid var(--border);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--text3);font-size:9px;transition:all 0.12s
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.card-domain{font-family:var(--mono);font-size:8px;color:var(--text3)}
+.card-action{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--red);opacity:0;transition:opacity .15s;
 }
-.mini-btn:hover,.mini-btn.on{background:var(--red);border-color:var(--red);color:#fff}
-.mini-n{font-family:var(--mono);font-size:9px;color:var(--text3)}
+.card:hover .card-action{opacity:1}
 
-/* ── LIST STORIES ── */
-#list{width:100%}
-.list-item{
-  display:grid;grid-template-columns:48px 1fr;
-  border-bottom:1px solid var(--border);padding:14px 28px 14px 0;
-  cursor:pointer;transition:background 0.1s;animation:fadeup 0.35s ease both;
-  width:100%;
+/* ── FEATURED (top story, full width) ── */
+.featured{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  cursor:pointer;display:grid;grid-template-columns:1fr 1fr;margin-bottom:16px;
+  transition:transform .15s,box-shadow .15s;animation:up .3s ease;
 }
-.list-item:hover{background:var(--surface)}
-.li-num{font-family:var(--display);font-size:26px;color:var(--border);line-height:1;padding-top:3px}
-.li-body{min-width:0}
-.li-meta{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
-.li-age{font-family:var(--mono);font-size:8px;color:var(--text3)}
-.li-votes{display:flex;align-items:center;gap:5px;margin-left:auto}
-.li-title{
-  font-family:var(--serif);font-size:17px;font-weight:600;line-height:1.3;
-  color:var(--ink);margin-bottom:4px;transition:color 0.1s
+.featured:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.1)}
+.feat-img{width:100%;height:100%;min-height:240px;object-fit:cover;background:var(--border)}
+.feat-body{padding:28px;display:flex;flex-direction:column;justify-content:center}
+.feat-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.feat-src{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);font-weight:500}
+.feat-time{font-family:var(--mono);font-size:8px;color:var(--text3)}
+.feat-title{
+  font-size:22px;font-weight:700;line-height:1.25;color:var(--ink);
+  margin-bottom:12px;transition:color .12s;
 }
-.list-item:hover .li-title{color:var(--red)}
-.li-exc{
-  font-size:12px;color:var(--text2);
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
+.featured:hover .feat-title{color:var(--red)}
+.feat-exc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px}
+.feat-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--ink);color:#fff;font-family:var(--mono);font-size:8px;
+  letter-spacing:0.12em;text-transform:uppercase;padding:9px 16px;border-radius:4px;
+  align-self:flex-start;transition:background .15s;
 }
+.featured:hover .feat-btn{background:var(--red)}
 
-/* ── SIDEBAR ── */
-.sidebar{border-left:1px solid var(--border);padding:0 0 40px 24px}
-.sb-block{padding:20px 0;border-bottom:1px solid var(--border)}
-.sb-block:last-child{border-bottom:none}
-.sb-head{
-  font-family:var(--display);font-size:18px;letter-spacing:0.08em;
-  border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:14px
+/* ── LOAD MORE ── */
+.load-more-wrap{text-align:center;padding:20px 0}
+.load-more{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--card);border:1px solid var(--border);color:var(--text2);
+  font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;
+  padding:12px 24px;border-radius:6px;transition:all .15s;
 }
-.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
-.stat{background:var(--white);padding:14px 12px}
-.stat-n{font-family:var(--display);font-size:36px;color:var(--red);display:block;line-height:1}
-.stat-l{font-family:var(--mono);font-size:7px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase}
-.trend-item{
-  display:grid;grid-template-columns:28px 1fr;gap:0 10px;
-  padding:10px 0;border-bottom:1px solid var(--border);cursor:pointer;
-  transition:opacity 0.1s;
-}
-.trend-item:hover{opacity:0.75}
-.trend-item:last-child{border-bottom:none}
-.trend-n{font-family:var(--display);font-size:22px;color:var(--border);line-height:1.1}
-.trend-title{font-family:var(--serif);font-size:13px;font-weight:600;line-height:1.3;color:var(--ink)}
-.trend-src{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:2px}
-.src-item{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 0;border-bottom:1px solid var(--border);
-}
-.src-item:last-child{border-bottom:none}
-.src-left{display:flex;align-items:center;gap:8px}
-.src-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.src-name{font-family:var(--sans);font-size:12px;color:var(--text2)}
-.src-right{display:flex;align-items:center;gap:6px}
-.src-live{
-  font-family:var(--mono);font-size:7px;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--red);border:1px solid var(--red);padding:1px 5px;
-}
-.src-count{font-family:var(--mono);font-size:11px;color:var(--text2)}
-.src-dead{font-family:var(--mono);font-size:9px;color:var(--border)}
+.load-more:hover{border-color:var(--ink);color:var(--ink)}
 
-/* ── NEWSLETTER BOX ── */
-.nl-box{background:var(--ink);padding:22px 18px;color:var(--white)}
-.nl-head{font-family:var(--display);font-size:22px;letter-spacing:0.05em;margin-bottom:8px}
-.nl-sub{font-size:12px;color:#666;line-height:1.6;margin-bottom:16px}
-.nl-in{
-  width:100%;background:#1a1a14;border:1px solid #2e2e28;
-  font-family:var(--mono);font-size:11px;color:var(--white);
-  padding:10px 12px;margin-bottom:10px;outline:none;
-  transition:border-color 0.15s;
-}
-.nl-in:focus{border-color:var(--red)}
-.nl-in::placeholder{color:#444}
-.nl-btn{
-  width:100%;background:var(--red);color:var(--white);
-  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
-  padding:12px;transition:background 0.15s;
-}
-.nl-btn:hover{background:#a0280a}
-.nl-note{font-family:var(--mono);font-size:9px;color:#444;text-align:center;margin-top:8px}
-.about-txt{font-size:12px;color:var(--text2);line-height:1.8}
-
-/* ── FOOTER ── */
-footer{background:var(--ink);border-top:4px solid var(--red);margin-top:48px;padding:48px 24px 28px}
-.footer-inner{max-width:1440px;margin:0 auto}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:32px}
-.f-logo{font-family:var(--display);font-size:32px;color:var(--white);letter-spacing:0.05em;margin-bottom:12px}
-.f-logo em{color:var(--red);font-style:normal}
-.f-desc{font-size:12px;color:#555;line-height:1.9;max-width:280px}
-.f-head{
-  font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;
-  color:#3a3a34;border-bottom:1px solid #1e1e18;padding-bottom:10px;margin-bottom:14px
-}
-.f-links{display:flex;flex-direction:column;gap:2px}
-.f-link{
-  font-size:13px;color:#666;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:7px 10px;margin:0 -10px;border-radius:3px;
-  transition:background 0.15s,color 0.15s;cursor:pointer
-}
-.f-link:hover{color:var(--white);background:rgba(255,255,255,0.06)}
-.f-link.action:hover{color:var(--red);background:rgba(192,48,10,0.09)}
-.f-arrow{
-  font-size:10px;opacity:0;transform:translateX(-5px);
-  transition:opacity 0.15s,transform 0.15s;color:var(--red)
-}
-.f-link:hover .f-arrow{opacity:1;transform:translateX(0)}
-.footer-bot{
-  border-top:1px solid #1a1a14;padding-top:22px;
-  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px
-}
-.footer-bot p{font-family:var(--mono);font-size:8px;color:#2e2e28;letter-spacing:0.1em}
-
-/* ── MODALS ── */
+/* ── STORY MODAL ── */
 .modal-bg{
-  position:fixed;inset:0;background:rgba(12,11,9,.85);z-index:500;
-  display:none;align-items:center;justify-content:center;padding:24px;
-  backdrop-filter:blur(3px);
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(4px);
 }
 .modal-bg.open{display:flex}
 .modal{
-  background:var(--cream);max-width:700px;width:100%;max-height:90vh;
-  overflow-y:auto;padding:36px;position:relative;
-  animation:modalin 0.2s ease;
+  background:var(--card);max-width:640px;width:100%;max-height:88vh;
+  overflow-y:auto;border-radius:12px;padding:32px;position:relative;
+  animation:modalin .2s ease;
 }
-@keyframes modalin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes modalin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .modal-x{
-  position:absolute;top:16px;right:16px;font-family:var(--mono);font-size:11px;
-  color:var(--text3);padding:6px 10px;transition:color 0.1s;background:none;border:none
+  position:absolute;top:14px;right:14px;width:30px;height:30px;
+  border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--text3);transition:background .15s;
 }
-.modal-x:hover{color:var(--red)}
-.modal-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;color:var(--text3);text-transform:uppercase;margin-bottom:14px}
-.modal-src{font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:8px}
-.modal-img{width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:20px}
-.modal-title{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.2;margin-bottom:16px}
-.modal-excerpt{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:20px}
-.modal-link{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--white);font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:11px 22px;transition:background 0.15s}
+.modal-x:hover{background:var(--border)}
+.modal-tag{font-family:var(--mono);font-size:8px;letter-spacing:0.18em;color:var(--text3);text-transform:uppercase;margin-bottom:12px}
+.modal-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-bottom:18px}
+.modal-ttl{font-size:22px;font-weight:700;line-height:1.3;margin-bottom:12px}
+.modal-exc{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:22px}
+.modal-link{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);color:#fff;font-family:var(--mono);font-size:9px;
+  letter-spacing:0.1em;text-transform:uppercase;padding:11px 20px;border-radius:5px;
+  transition:background .15s;
+}
 .modal-link:hover{background:var(--red)}
 
-/* ── TOPIC BANNER ── */
-#topic-banner{
-  position:fixed;top:120px;left:50%;transform:translateX(-50%);
-  background:var(--ink);color:var(--cream);
-  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
-  padding:10px 20px;z-index:300;border-bottom:2px solid var(--red);
-  white-space:nowrap;display:none;
+/* ── INFO MODALS ── */
+.info-modal{background:var(--card);max-width:580px;width:100%;border-radius:12px;padding:32px;position:relative;animation:modalin .2s ease;max-height:88vh;overflow-y:auto}
+.info-h{font-size:22px;font-weight:700;line-height:1.3;margin-bottom:14px}
+.info-p{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:12px}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);border-top:3px solid var(--red);padding:40px 20px 24px;margin-top:0}
+.foot-inner{max-width:1280px;margin:0 auto}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:28px}
+.foot-logo{font-family:var(--display);font-size:28px;color:#fff;letter-spacing:.04em;margin-bottom:10px}
+.foot-logo em{color:var(--red);font-style:normal}
+.foot-desc{font-size:12px;color:#555;line-height:1.8;max-width:260px}
+.foot-head{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:#333;border-bottom:1px solid #1a1a1a;padding-bottom:8px;margin-bottom:12px}
+.foot-link{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;color:#555;padding:6px 0;cursor:pointer;
+  transition:color .15s;border-bottom:1px solid #111;
 }
+.foot-link:last-child{border-bottom:none}
+.foot-link:hover{color:#fff}
+.foot-link.act:hover{color:var(--red)}
+.foot-arrow{font-size:10px;opacity:0;transition:opacity .15s}
+.foot-link:hover .foot-arrow{opacity:1}
+.foot-bot{border-top:1px solid #111;padding-top:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.foot-bot p{font-family:var(--mono);font-size:8px;color:#222;letter-spacing:.08em}
 
 /* ── RESPONSIVE ── */
 @media(max-width:1024px){
-  .layout{grid-template-columns:1fr}
-  .sidebar{border-left:none;border-top:2px solid var(--ink);padding:24px 0 0}
-  .stats-grid{grid-template-columns:repeat(4,1fr)}
+  .grid{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:768px){
-  .hdr-nav{display:none}
+  .tabs-inner .tab{display:none}
+  .tabs-inner .tab.on,.tabs-inner .tab:first-child{display:block}
   .burger{display:flex}
-  .logo{font-size:26px}
-  .layout{grid-template-columns:1fr}
-  .cards{grid-template-columns:1fr 1fr}
-  .card:nth-child(2n){border-right:none}
-  .card:nth-child(3n){border-right:1px solid var(--border)}
-  .hero-title{font-size:28px}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
+  .hdr-pill{display:none}
+  .grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .featured{grid-template-columns:1fr}
+  .feat-img{min-height:180px}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:24px}
+  .tabs-inner .tab{display:block}
 }
 @media(max-width:480px){
-  .hdr-top{padding:0 14px;height:52px}
-  .page{padding:0 14px}
-  .cards{grid-template-columns:1fr}
-  .card{border-right:none!important;padding-right:0}
-  .hero-title{font-size:24px}
-  .hero-excerpt{font-size:15px}
-  .list-item{padding-right:0}
-  .footer-grid{grid-template-columns:1fr;gap:24px}
-  footer{padding:32px 14px 24px}
-  .footer-bot{flex-direction:column;text-align:center}
-  .modal{padding:24px}
+  .page{padding:16px 14px 48px}
+  .grid{grid-template-columns:1fr;gap:12px}
+  .featured{grid-template-columns:1fr}
+  .feat-body{padding:18px}
+  .feat-title{font-size:18px}
+  .foot-grid{grid-template-columns:1fr;gap:20px}
+  footer{padding:28px 14px 20px}
+  .foot-bot{flex-direction:column;text-align:center}
+  .modal,.info-modal{padding:20px;border-radius:8px}
 }
 </style>
 </head>
@@ -410,258 +280,171 @@ footer{background:var(--ink);border-top:4px solid var(--red);margin-top:48px;pad
 <!-- LOADER -->
 <div id="loader">
   <div class="ld-logo">ARCH<em>NEWS</em></div>
-  <div class="ld-track"><div class="ld-bar" id="ld-bar"></div></div>
-  <div class="ld-txt" id="ld-txt">Connecting to feeds...</div>
+  <div class="ld-bar-wrap"><div class="ld-bar" id="lbar"></div></div>
+  <div class="ld-txt" id="ltxt">Connecting to feeds...</div>
 </div>
 
 <!-- HEADER -->
 <header>
-  <div class="hdr-top">
-    <a class="logo" href="#" onclick="setFilter('all');return false">ARCH<em>NEWS</em></a>
-    <div class="logo-sub">
-      <span class="logo-tagline">Architecture Intelligence</span>
-      <span class="logo-date" id="hdr-date"></span>
-    </div>
-    <div class="live-pill"><span class="live-dot"></span>Live Feed</div>
-    <button class="burger" id="burger" onclick="toggleBurger()" aria-label="Menu">
+  <div class="hdr-inner">
+    <a class="logo" href="#" onclick="setTab('all');return false">ARCH<em>NEWS</em></a>
+    <div class="hdr-pill"><span class="hdr-dot"></span>Live Feed</div>
+    <button class="burger" id="burger" onclick="openDrawer()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>
-  <div class="hdr-nav">
-    <button class="nav-tab active" onclick="setFilter('all',this)">All</button>
-    <button class="nav-tab" onclick="setFilter('archdaily',this)">ArchDaily</button>
-    <button class="nav-tab" onclick="setFilter('dezeen',this)">Dezeen</button>
-    <button class="nav-tab" onclick="setFilter('archinect',this)">Archinect</button>
-    <button class="nav-tab" onclick="setFilter('metropolis',this)">Metropolis</button>
-    <button class="nav-tab" onclick="setFilter('archrecord',this)">Arch Record</button>
-    <button class="nav-tab" onclick="setFilter('designboom',this)">Designboom</button>
-    <button class="nav-tab" onclick="setFilter('archpaper',this)">Arch Paper</button>
-    <button class="nav-tab" onclick="setFilter('domus',this)">Domus</button>
-    <span class="nav-upd">Updated: <span id="upd-time">—</span></span>
-  </div>
 </header>
 
-<!-- MOBILE DRAWER -->
-<div class="mob-drawer" id="mob-drawer">
-  <button class="mob-close" onclick="toggleBurger()">✕ CLOSE</button>
-  <button class="mob-tab active" onclick="setFilter('all',this);toggleBurger()">All Sources</button>
-  <button class="mob-tab" onclick="setFilter('archdaily',this);toggleBurger()">ArchDaily</button>
-  <button class="mob-tab" onclick="setFilter('dezeen',this);toggleBurger()">Dezeen</button>
-  <button class="mob-tab" onclick="setFilter('archinect',this);toggleBurger()">Archinect</button>
-  <button class="mob-tab" onclick="setFilter('metropolis',this);toggleBurger()">Metropolis</button>
-  <button class="mob-tab" onclick="setFilter('archrecord',this);toggleBurger()">Arch Record</button>
-  <button class="mob-tab" onclick="setFilter('designboom',this);toggleBurger()">Designboom</button>
-  <button class="mob-tab" onclick="setFilter('archpaper',this);toggleBurger()">Arch Paper</button>
-  <button class="mob-tab" onclick="setFilter('domus',this);toggleBurger()">Domus</button>
-</div>
-
-<!-- TICKER -->
-<div class="ticker">
-  <div class="ticker-track" id="ticker">
-    <span class="tick-item">ARCHITECTURAL RECORD</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DEZEEN</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">ARCHDAILY</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">METROPOLIS</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">THE ARCHITECT'S NEWSPAPER</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DESIGNBOOM</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">ARCHINECT</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DOMUS</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">ARCHITECTURAL RECORD</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DEZEEN</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">ARCHDAILY</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">METROPOLIS</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">THE ARCHITECT'S NEWSPAPER</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DESIGNBOOM</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">ARCHINECT</span><span class="tick-item tick-sep">·</span>
-    <span class="tick-item">DOMUS</span><span class="tick-item tick-sep">·</span>
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs-inner">
+    <button class="tab on" onclick="setTab('all',this)">All</button>
+    <button class="tab" onclick="setTab('archdaily',this)">ArchDaily</button>
+    <button class="tab" onclick="setTab('dezeen',this)">Dezeen</button>
+    <button class="tab" onclick="setTab('archinect',this)">Archinect</button>
+    <button class="tab" onclick="setTab('metropolis',this)">Metropolis</button>
+    <button class="tab" onclick="setTab('archrecord',this)">Arch Record</button>
+    <button class="tab" onclick="setTab('designboom',this)">Designboom</button>
+    <button class="tab" onclick="setTab('archpaper',this)">Arch Paper</button>
+    <button class="tab" onclick="setTab('domus',this)">Domus</button>
+    <span class="tab-upd" id="upd">—</span>
   </div>
 </div>
 
-<!-- TOPIC BANNER -->
-<div id="topic-banner"></div>
+<!-- MOBILE DRAWER -->
+<div class="mob-drawer" id="drawer">
+  <button class="mob-close" onclick="closeDrawer()">✕ Close</button>
+  <button class="mob-tab on" onclick="setTab('all',this);closeDrawer()">All Sources</button>
+  <button class="mob-tab" onclick="setTab('archdaily',this);closeDrawer()">ArchDaily</button>
+  <button class="mob-tab" onclick="setTab('dezeen',this);closeDrawer()">Dezeen</button>
+  <button class="mob-tab" onclick="setTab('archinect',this);closeDrawer()">Archinect</button>
+  <button class="mob-tab" onclick="setTab('metropolis',this);closeDrawer()">Metropolis</button>
+  <button class="mob-tab" onclick="setTab('archrecord',this);closeDrawer()">Arch Record</button>
+  <button class="mob-tab" onclick="setTab('designboom',this);closeDrawer()">Designboom</button>
+  <button class="mob-tab" onclick="setTab('archpaper',this);closeDrawer()">Arch Paper</button>
+  <button class="mob-tab" onclick="setTab('domus',this);closeDrawer()">Domus</button>
+</div>
+
+<!-- ERROR STRIP -->
+<div class="err-strip" id="err"></div>
 
 <!-- MAIN -->
-<main class="page">
-  <div id="err-area"></div>
-  <div class="layout">
-    <!-- CONTENT -->
-    <div>
-      <!-- HERO -->
-      <div class="hero" id="hero">
-        <div class="hero-img-wrap">
-          <img class="hero-img" id="h-img" src="" alt=""/>
-          <div class="hero-overlay"></div>
-          <span class="hero-badge" id="h-badge"></span>
-        </div>
-        <div class="hero-kicker"><b id="h-src"></b> — <span id="h-ktime"></span></div>
-        <h1 class="hero-title" id="h-title">Loading latest stories...</h1>
-        <p class="hero-excerpt" id="h-exc"></p>
-        <div class="hero-foot">
-          <a class="btn-read" id="h-link" href="#" target="_blank" rel="noopener" onclick="event.stopPropagation()">Read Full Story ↗</a>
-          <div class="vote-row">
-            <button class="vote-btn" id="h-vbtn" onclick="event.stopPropagation();heroVote()">▲</button>
-            <span class="vote-n" id="h-vn">—</span>
-          </div>
-          <span class="hero-age" id="h-age"></span>
-        </div>
-      </div>
-
-      <!-- CARDS -->
-      <div class="sec-head"><span class="sec-label">Latest Stories</span><div class="sec-rule"></div></div>
-      <div class="cards" id="cards"></div>
-
-      <!-- LIST -->
-      <div class="sec-head"><span class="sec-label">More Stories</span><div class="sec-rule"></div></div>
-      <div id="list"></div>
-    </div>
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sb-block">
-        <div class="sb-head">Today's Stats</div>
-        <div class="stats-grid">
-          <div class="stat"><span class="stat-n" id="s-count">—</span><span class="stat-l">Stories</span></div>
-          <div class="stat"><span class="stat-n" id="s-src">8</span><span class="stat-l">Sources</span></div>
-          <div class="stat"><span class="stat-n" id="s-votes">0</span><span class="stat-l">Upvotes</span></div>
-          <div class="stat"><span class="stat-n" id="s-status">—</span><span class="stat-l">Status</span></div>
-        </div>
-      </div>
-      <div class="sb-block">
-        <div class="sb-head">Trending Now</div>
-        <div id="sb-trending"></div>
-      </div>
-      <div class="sb-block">
-        <div class="sb-head">Live Sources</div>
-        <div id="sb-sources"></div>
-      </div>
-      <div class="sb-block">
-        <div class="nl-box">
-          <div class="nl-head">Stay Updated</div>
-          <p class="nl-sub">Top 5 architecture stories every Monday morning.</p>
-          <input class="nl-in" type="email" id="nl-email" placeholder="your@email.com"/>
-          <button class="nl-btn" onclick="nlSub()"><span id="nl-btxt">Subscribe Free →</span></button>
-          <p class="nl-note">Free · No spam · Unsubscribe anytime</p>
-        </div>
-      </div>
-      <div class="sb-block">
-        <div class="sb-head">About</div>
-        <p class="about-txt">Architecture moves fast. Staying informed shouldn't be hard. ARCHNEWS puts every major publication in one live feed — updated all day, every day. Built by a licensed architect, for architects.</p>
-      </div>
-    </aside>
+<main class="page" id="main">
+  <!-- Featured story injected here -->
+  <div id="featured-wrap"></div>
+  <!-- Cards grid injected here -->
+  <div class="sec-label" id="sec-label" style="display:none">
+    <span>Latest Stories</span><hr/>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="load-more-wrap" id="more-wrap" style="display:none">
+    <button class="load-more" onclick="loadMore()">Load More Stories →</button>
   </div>
 </main>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-grid">
+  <div class="foot-inner">
+    <div class="foot-grid">
       <div>
-        <div class="f-logo">ARCH<em>NEWS</em></div>
-        <p class="f-desc">Architecture moves fast. Staying informed shouldn't be hard. One live feed. Eight leading publications. Updated automatically — all day, every day. Built for architects, by a licensed architect.</p>
+        <div class="foot-logo">ARCH<em>NEWS</em></div>
+        <p class="foot-desc">Architecture moves fast. Staying informed shouldn't be hard. One live feed. Eight leading publications. Every story updated automatically — all day, every day.</p>
       </div>
       <div>
-        <div class="f-head">Publications</div>
-        <div class="f-links">
-          <a class="f-link" href="https://www.archdaily.com" target="_blank">ArchDaily<span class="f-arrow">↗</span></a>
-          <a class="f-link" href="https://www.dezeen.com" target="_blank">Dezeen<span class="f-arrow">↗</span></a>
-          <a class="f-link" href="https://archinect.com" target="_blank">Archinect<span class="f-arrow">↗</span></a>
-          <a class="f-link" href="https://metropolismag.com" target="_blank">Metropolis<span class="f-arrow">↗</span></a>
-          <a class="f-link" href="https://www.architecturalrecord.com" target="_blank">Arch Record<span class="f-arrow">↗</span></a>
-          <a class="f-link" href="https://www.designboom.com" target="_blank">Designboom<span class="f-arrow">↗</span></a>
-          <a class="f-link" href="https://www.archpaper.com" target="_blank">Arch Paper<span class="f-arrow">↗</span></a>
-          <a class="f-link" href="https://www.domusweb.it" target="_blank">Domus<span class="f-arrow">↗</span></a>
-        </div>
+        <div class="foot-head">Publications</div>
+        <a class="foot-link" href="https://www.archdaily.com" target="_blank">ArchDaily<span class="foot-arrow">↗</span></a>
+        <a class="foot-link" href="https://www.dezeen.com" target="_blank">Dezeen<span class="foot-arrow">↗</span></a>
+        <a class="foot-link" href="https://archinect.com" target="_blank">Archinect<span class="foot-arrow">↗</span></a>
+        <a class="foot-link" href="https://metropolismag.com" target="_blank">Metropolis<span class="foot-arrow">↗</span></a>
+        <a class="foot-link" href="https://www.architecturalrecord.com" target="_blank">Arch Record<span class="foot-arrow">↗</span></a>
+        <a class="foot-link" href="https://www.designboom.com" target="_blank">Designboom<span class="foot-arrow">↗</span></a>
+        <a class="foot-link" href="https://www.archpaper.com" target="_blank">Arch Paper<span class="foot-arrow">↗</span></a>
+        <a class="foot-link" href="https://www.domusweb.it" target="_blank">Domus<span class="foot-arrow">↗</span></a>
       </div>
       <div>
-        <div class="f-head">Topics</div>
-        <div class="f-links">
-          <a class="f-link action" href="#" onclick="topicFilter('cultural buildings');return false">Cultural Buildings<span class="f-arrow">→</span></a>
-          <a class="f-link action" href="#" onclick="topicFilter('urban design');return false">Urban Design<span class="f-arrow">→</span></a>
-          <a class="f-link action" href="#" onclick="topicFilter('sustainability');return false">Sustainability<span class="f-arrow">→</span></a>
-          <a class="f-link action" href="#" onclick="topicFilter('technology BIM');return false">Technology + BIM<span class="f-arrow">→</span></a>
-          <a class="f-link action" href="#" onclick="topicFilter('practice');return false">Practice<span class="f-arrow">→</span></a>
-          <a class="f-link action" href="#" onclick="topicFilter('awards');return false">Awards<span class="f-arrow">→</span></a>
-        </div>
+        <div class="foot-head">Topics</div>
+        <a class="foot-link act" href="#" onclick="topicFilter('cultural buildings');return false">Cultural Buildings<span class="foot-arrow">→</span></a>
+        <a class="foot-link act" href="#" onclick="topicFilter('urban design');return false">Urban Design<span class="foot-arrow">→</span></a>
+        <a class="foot-link act" href="#" onclick="topicFilter('sustainability');return false">Sustainability<span class="foot-arrow">→</span></a>
+        <a class="foot-link act" href="#" onclick="topicFilter('technology BIM');return false">Technology + BIM<span class="foot-arrow">→</span></a>
+        <a class="foot-link act" href="#" onclick="topicFilter('practice');return false">Practice<span class="foot-arrow">→</span></a>
+        <a class="foot-link act" href="#" onclick="topicFilter('awards');return false">Awards<span class="foot-arrow">→</span></a>
       </div>
       <div>
-        <div class="f-head">Connect</div>
-        <div class="f-links">
-          <a class="f-link action" href="https://archnews.beehiiv.com/subscribe" target="_blank">Newsletter<span class="f-arrow">↗</span></a>
-          <a class="f-link action" href="#" onclick="openModal('submit');return false">Submit a Story<span class="f-arrow">→</span></a>
-          <a class="f-link action" href="#" onclick="openModal('advertise');return false">Advertise<span class="f-arrow">→</span></a>
-          <a class="f-link action" href="#" onclick="openModal('about');return false">About ARCHNEWS<span class="f-arrow">→</span></a>
-        </div>
+        <div class="foot-head">Connect</div>
+        <a class="foot-link act" href="https://archnews.beehiiv.com/subscribe" target="_blank">Newsletter<span class="foot-arrow">↗</span></a>
+        <a class="foot-link act" href="#" onclick="showInfo('submit');return false">Submit a Story<span class="foot-arrow">→</span></a>
+        <a class="foot-link act" href="#" onclick="showInfo('advertise');return false">Advertise<span class="foot-arrow">→</span></a>
+        <a class="foot-link act" href="#" onclick="showInfo('about');return false">About ARCHNEWS<span class="foot-arrow">→</span></a>
       </div>
     </div>
-    <div class="footer-bot">
+    <div class="foot-bot">
       <p>© 2026 ARCHNEWS — Architecture Intelligence — archnews.vercel.app</p>
-      <p>Built for architects · All stories link to original sources</p>
+      <p>Built for architects · All stories link directly to original sources</p>
     </div>
   </div>
 </footer>
 
 <!-- STORY MODAL -->
-<div class="modal-bg" id="modal-story" onclick="if(event.target===this)closeAllModals()">
+<div class="modal-bg" id="modal-story" onclick="if(event.target===this)closeModals()">
   <div class="modal">
-    <button class="modal-x" onclick="closeAllModals()">✕</button>
-    <span class="modal-src" id="ms-src"></span>
+    <button class="modal-x" onclick="closeModals()">✕</button>
+    <div class="modal-tag" id="ms-tag"></div>
     <img class="modal-img" id="ms-img" src="" alt="" onerror="this.style.display='none'"/>
-    <h2 class="modal-title" id="ms-title"></h2>
-    <p class="modal-excerpt" id="ms-exc"></p>
+    <h2 class="modal-ttl" id="ms-ttl"></h2>
+    <p class="modal-exc" id="ms-exc"></p>
     <a class="modal-link" id="ms-link" href="#" target="_blank" rel="noopener">Read Full Article ↗</a>
   </div>
 </div>
 
 <!-- ABOUT MODAL -->
-<div class="modal-bg" id="modal-about" onclick="if(event.target===this)closeAllModals()">
-  <div class="modal" style="max-width:620px">
-    <button class="modal-x" onclick="closeAllModals()">✕</button>
+<div class="modal-bg" id="modal-about" onclick="if(event.target===this)closeModals()">
+  <div class="info-modal">
+    <button class="modal-x" onclick="closeModals()">✕</button>
     <div class="modal-tag">About ARCHNEWS</div>
-    <h2 class="modal-title" style="font-size:28px">Architecture moves fast.<br>Staying informed shouldn't be hard.</h2>
-    <p style="font-family:var(--serif);font-style:italic;font-size:16px;color:var(--text2);line-height:1.8;margin-bottom:18px;border-left:3px solid var(--red);padding-left:16px">Architects are problem solvers. But keeping up with 8 different publications, hundreds of weekly stories, and constant industry shifts — that's a problem nobody needed.</p>
-    <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:14px">ARCHNEWS was built to solve that. One live feed. Eight leading publications. Every story updated automatically, all day. You see what matters — without opening eight tabs.</p>
-    <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:14px">Every story links directly to its original source. No paywalls introduced. No content stolen. Just the fastest way to know what's happening in architecture right now.</p>
-    <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:22px">ARCHNEWS Weekly — the Monday morning newsletter — distills the week's five most important stories into one curated briefing. Written by a licensed architect. Not an algorithm.</p>
-    <div style="border-top:1px solid var(--border);padding-top:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-      <div>
-        <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px">Built by</div>
-        <div style="font-family:var(--serif);font-size:16px;font-weight:700">Kunal Trivedi</div>
-        <div style="font-family:var(--mono);font-size:9px;color:var(--text3)">Licensed Architect · India COA + NCARB · M.Arch SUNY Buffalo</div>
-      </div>
-      <a class="btn-read" href="https://archnews.beehiiv.com/subscribe" target="_blank" style="margin-left:auto">Subscribe →</a>
+    <h2 class="info-h">Architecture moves fast.<br>Staying informed shouldn't be hard.</h2>
+    <p class="info-p">Architects are problem solvers. But keeping up with 8 different publications, hundreds of weekly stories, and constant industry shifts — that's a problem nobody needed to add to their day.</p>
+    <p class="info-p">ARCHNEWS was built to solve that. One live feed. Eight leading publications. Every story updated automatically, all day. You see what matters — without opening eight tabs.</p>
+    <p class="info-p">Every story links directly to its original source. No paywalls introduced. No content stolen. Just the fastest way to know what's happening in architecture right now.</p>
+    <p class="info-p" style="margin-bottom:20px">ARCHNEWS Weekly — the Monday morning newsletter — distills the week's five most important stories into one curated briefing. Written by a licensed architect. Not an algorithm.</p>
+    <div style="border-top:1px solid var(--border);padding-top:16px">
+      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px">Built by</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:3px">Kunal Trivedi</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:16px">Licensed Architect · India COA + NCARB · M.Arch SUNY Buffalo</div>
+      <a class="modal-link" href="https://archnews.beehiiv.com/subscribe" target="_blank">Subscribe to Weekly Newsletter →</a>
     </div>
   </div>
 </div>
 
 <!-- SUBMIT MODAL -->
-<div class="modal-bg" id="modal-submit" onclick="if(event.target===this)closeAllModals()">
-  <div class="modal" style="max-width:540px">
-    <button class="modal-x" onclick="closeAllModals()">✕</button>
+<div class="modal-bg" id="modal-submit" onclick="if(event.target===this)closeModals()">
+  <div class="info-modal">
+    <button class="modal-x" onclick="closeModals()">✕</button>
     <div class="modal-tag">Submit a Story</div>
-    <h2 class="modal-title" style="font-size:24px">Got a story worth sharing?</h2>
-    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:20px">Working on a project, writing about architecture, or know a story that deserves more attention? Send it our way — we review every submission.</p>
+    <h2 class="info-h">Got a story worth sharing?</h2>
+    <p class="info-p" style="margin-bottom:20px">Working on a project, writing about architecture, or know a story that deserves attention? Send it our way — we review every submission.</p>
     <div style="margin-bottom:12px">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Story URL or Description</div>
-      <input id="sub-story" type="text" placeholder="https://... or describe the story" style="width:100%;background:var(--surface);border:1px solid var(--border);padding:10px 12px;font-family:var(--sans);font-size:13px;outline:none;color:var(--ink)"/>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">Story URL or Description</div>
+      <input id="sub-url" type="text" placeholder="https://... or describe the story" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:10px 12px;font-family:var(--sans);font-size:13px;outline:none;color:var(--ink);border-radius:5px"/>
     </div>
     <div style="margin-bottom:18px">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">Your Email (optional)</div>
-      <input id="sub-email" type="email" placeholder="your@email.com" style="width:100%;background:var(--surface);border:1px solid var(--border);padding:10px 12px;font-family:var(--sans);font-size:13px;outline:none;color:var(--ink)"/>
+      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px">Your Email (optional)</div>
+      <input id="sub-email" type="email" placeholder="your@email.com" style="width:100%;background:var(--bg);border:1px solid var(--border);padding:10px 12px;font-family:var(--sans);font-size:13px;outline:none;color:var(--ink);border-radius:5px"/>
     </div>
-    <button onclick="submitStory()" class="nl-btn" style="width:100%">Submit Story →</button>
+    <button onclick="doSubmit()" class="modal-link" style="border:none;cursor:pointer;width:100%;justify-content:center">Submit Story →</button>
   </div>
 </div>
 
 <!-- ADVERTISE MODAL -->
-<div class="modal-bg" id="modal-advertise" onclick="if(event.target===this)closeAllModals()">
-  <div class="modal" style="max-width:540px">
-    <button class="modal-x" onclick="closeAllModals()">✕</button>
-    <div class="modal-tag">Advertise with ARCHNEWS</div>
-    <h2 class="modal-title" style="font-size:24px">Reach architects who are paying attention.</h2>
-    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:14px">ARCHNEWS readers are practicing architects, designers, developers, and students who actively seek out industry news. They specify materials, hire consultants, and recommend software.</p>
-    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:20px">If your product or service serves architecture and construction — this is your audience.</p>
-    <div style="background:var(--surface);border:1px solid var(--border);padding:18px;margin-bottom:20px">
-      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px">Opportunities</div>
+<div class="modal-bg" id="modal-advertise" onclick="if(event.target===this)closeModals()">
+  <div class="info-modal">
+    <button class="modal-x" onclick="closeModals()">✕</button>
+    <div class="modal-tag">Advertise</div>
+    <h2 class="info-h">Reach architects who are paying attention.</h2>
+    <p class="info-p">ARCHNEWS readers are practicing architects, designers, developers, and students who actively seek out industry news. They specify materials, hire consultants, and recommend software.</p>
+    <p class="info-p" style="margin-bottom:16px">If your product serves architecture and construction — this is your audience.</p>
+    <div style="background:var(--bg);border:1px solid var(--border);padding:16px;border-radius:6px;margin-bottom:18px">
+      <div style="font-family:var(--mono);font-size:8px;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px">Opportunities</div>
       <div style="font-size:13px;color:var(--text2);line-height:2">
         Newsletter Sponsor — from $100/issue<br>
         Website Banner — from $200/month<br>
@@ -669,24 +452,23 @@ footer{background:var(--ink);border-top:4px solid var(--red);margin-top:48px;pad
         Custom Partnership — let's talk
       </div>
     </div>
-    <a class="btn-read" href="/cdn-cgi/l/email-protection#c2a3b0a1aaabb6a7a1b6adacb5adb0a9b182a5afa3abaeeca1adaffdb1b7a0a8a7a1b6ff8390818a8c879591e283a6b4a7b0b6abb1abaca5" style="display:flex;justify-content:center">Email to Discuss →</a>
+    <a class="modal-link" href="mailto:architectonworks@gmail.com?subject=ARCHNEWS Advertising" style="display:flex;justify-content:center">Email to Discuss →</a>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ═══════ CONFIG ═══════
-const SRC = {
-  archdaily:  { name:'ArchDaily',   color:'#bf2d0a', domain:'archdaily.com' },
-  dezeen:     { name:'Dezeen',      color:'#0a4fb8', domain:'dezeen.com' },
-  archinect:  { name:'Archinect',   color:'#0a8a35', domain:'archinect.com' },
-  metropolis: { name:'Metropolis',  color:'#6b08a8', domain:'metropolismag.com' },
-  archrecord: { name:'Arch Record', color:'#b87008', domain:'architecturalrecord.com' },
-  designboom: { name:'Designboom',  color:'#a80875', domain:'designboom.com' },
-  archpaper:  { name:'Arch Paper',  color:'#087ab8', domain:'archpaper.com' },
-  domus:      { name:'Domus',       color:'#5a5a3a', domain:'domusweb.it' }
+<script>
+// ── CONFIG ──
+const SRCS = {
+  archdaily:  {name:'ArchDaily',  color:'#c0300a', domain:'archdaily.com'},
+  dezeen:     {name:'Dezeen',     color:'#0a4fb8', domain:'dezeen.com'},
+  archinect:  {name:'Archinect',  color:'#0a8a35', domain:'archinect.com'},
+  metropolis: {name:'Metropolis', color:'#6b08a8', domain:'metropolismag.com'},
+  archrecord: {name:'Arch Record',color:'#b87008', domain:'architecturalrecord.com'},
+  designboom: {name:'Designboom', color:'#a80875', domain:'designboom.com'},
+  archpaper:  {name:'Arch Paper', color:'#087ab8', domain:'archpaper.com'},
+  domus:      {name:'Domus',      color:'#5a5a3a', domain:'domusweb.it'},
 };
-// Source-branded fallback images — architecture-specific per publication
-const SOURCE_FB = {
+const FB = {
   archdaily:  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&q=80',
   dezeen:     'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
   archinect:  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
@@ -696,473 +478,314 @@ const SOURCE_FB = {
   archpaper:  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
   domus:      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
 };
-const FB_IMGS = Object.values(SOURCE_FB);
-function fb(i){ return FB_IMGS[i % FB_IMGS.length]; }
-function fbSrc(sourceId){ return SOURCE_FB[sourceId] || FB_IMGS[0]; }
-
-// ═══════ STATE ═══════
-let stories = [], filter = 'all', srcStats = {};
-let votes = {};
-try { votes = JSON.parse(localStorage.getItem('an_v3') || '{}'); } catch(e){}
-
-// ═══════ DATE ═══════
-document.getElementById('hdr-date').textContent =
-  new Date().toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'}).toUpperCase();
-
-// ═══════ LOADER ═══════
-const ldBar = document.getElementById('ld-bar');
-const ldTxt = document.getElementById('ld-txt');
-const MSGS = ['Connecting to feeds...','Fetching latest stories...','Almost ready...'];
-let ldStep = 0;
-const ldTimer = setInterval(() => {
-  ldStep = Math.min(ldStep+1, MSGS.length-1);
-  ldBar.style.width = ((ldStep+1)/MSGS.length * 80) + '%';
-  ldTxt.textContent = MSGS[ldStep];
-}, 1200);
-
-// Nuclear kill — site always shows after 9s
-const ldKill = setTimeout(() => {
-  hideLoader();
-  if (!stories.length) {
-    document.getElementById('err-area').innerHTML =
-      '<div class="err-banner">Fetching stories — <a href="javascript:location.reload()">reload if this persists →</a></div>';
-    render();
-  }
-}, 9000);
-
-function hideLoader() {
-  clearInterval(ldTimer);
-  clearTimeout(ldKill);
-  ldBar.style.width = '100%';
-  setTimeout(() => document.getElementById('loader').classList.add('out'), 300);
-}
-
-// ═══════ CLIENT RSS SOURCES (Google News — no CORS issues) ═══════
-const CLIENT_SOURCES = [
-  { id:'archdaily',  name:'ArchDaily',   color:'#bf2d0a', url:'https://news.google.com/rss/search?q=site:archdaily.com+architecture&hl=en-US&gl=US&ceid=US:en' },
-  { id:'dezeen',     name:'Dezeen',      color:'#0a4fb8', url:'https://news.google.com/rss/search?q=site:dezeen.com+architecture&hl=en-US&gl=US&ceid=US:en' },
-  { id:'archinect',  name:'Archinect',   color:'#0a8a35', url:'https://news.google.com/rss/search?q=site:archinect.com&hl=en-US&gl=US&ceid=US:en' },
-  { id:'metropolis', name:'Metropolis',  color:'#6b08a8', url:'https://news.google.com/rss/search?q=site:metropolismag.com+architecture&hl=en-US&gl=US&ceid=US:en' },
-  { id:'archrecord', name:'Arch Record', color:'#b87008', url:'https://news.google.com/rss/search?q=site:architecturalrecord.com&hl=en-US&gl=US&ceid=US:en' },
-  { id:'designboom', name:'Designboom',  color:'#a80875', url:'https://news.google.com/rss/search?q=site:designboom.com+architecture&hl=en-US&gl=US&ceid=US:en' },
-  { id:'archpaper',  name:'Arch Paper',  color:'#087ab8', url:'https://news.google.com/rss/search?q=site:archpaper.com&hl=en-US&gl=US&ceid=US:en' },
-  { id:'domus',      name:'Domus',       color:'#5a5a3a', url:'https://news.google.com/rss/search?q=site:domusweb.it+architecture&hl=en-US&gl=US&ceid=US:en' }
+const GNEWS = [
+  {id:'archdaily',  url:'https://news.google.com/rss/search?q=site:archdaily.com+architecture&hl=en-US&gl=US&ceid=US:en'},
+  {id:'dezeen',     url:'https://news.google.com/rss/search?q=site:dezeen.com+architecture&hl=en-US&gl=US&ceid=US:en'},
+  {id:'archinect',  url:'https://news.google.com/rss/search?q=site:archinect.com&hl=en-US&gl=US&ceid=US:en'},
+  {id:'metropolis', url:'https://news.google.com/rss/search?q=site:metropolismag.com+architecture&hl=en-US&gl=US&ceid=US:en'},
+  {id:'archrecord', url:'https://news.google.com/rss/search?q=site:architecturalrecord.com&hl=en-US&gl=US&ceid=US:en'},
+  {id:'designboom', url:'https://news.google.com/rss/search?q=site:designboom.com+architecture&hl=en-US&gl=US&ceid=US:en'},
+  {id:'archpaper',  url:'https://news.google.com/rss/search?q=site:archpaper.com&hl=en-US&gl=US&ceid=US:en'},
+  {id:'domus',      url:'https://news.google.com/rss/search?q=site:domusweb.it+architecture&hl=en-US&gl=US&ceid=US:en'},
 ];
 
-// Decode HTML entities (Google News encodes images inside descriptions)
-function decodeHTML(s) {
+let stories=[], tab='all', shown=8;
+
+// ── LOADER ──
+const lbar=document.getElementById('lbar'), ltxt=document.getElementById('ltxt');
+let lp=0;
+const lt=setInterval(()=>{lp=Math.min(lp+15,80);lbar.style.width=lp+'%';},600);
+const lkill=setTimeout(()=>{hideLoader();if(!stories.length){showErr('Feed loading slowly — <a href="javascript:location.reload()">reload →</a>');render();}},9000);
+function hideLoader(){
+  clearInterval(lt);clearTimeout(lkill);
+  lbar.style.width='100%';
+  setTimeout(()=>document.getElementById('loader').classList.add('out'),300);
+}
+
+// ── RSS PARSER ──
+function dH(s){
   return (s||'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')
     .replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
     .replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(n));
 }
-
-function parseRSS(xml, src) {
-  const items = [];
-  let m;
-  const rx = /<item[\s>]([\s\S]*?)<\/item>/gi;
-  while ((m = rx.exec(xml)) !== null) items.push(m[1]);
-
-  function getTag(chunk, tag) {
-    const cd = chunk.match(new RegExp('<'+tag+'[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/'+tag+'>','i'));
-    if (cd) return cd[1].trim();
-    const pl = chunk.match(new RegExp('<'+tag+'[^>]*>([\\s\\S]*?)<\\/'+tag+'>','i'));
-    return pl ? pl[1].replace(/<[^>]+>/g,'').trim() : '';
-  }
-  function clean(s) {
-    return (s||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-      .replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'')
-      .replace(/&quot;/g,'"').replace(/\s+/g,' ').trim();
-  }
-  function getImg(chunk, rawDesc) {
-    // 1. media tags
-    const med = chunk.match(/<media:(?:content|thumbnail)[^>]+url=["']([^"']+)["']/i);
-    if (med && med[1].startsWith('http')) return med[1];
-    // 2. enclosure
-    const enc = chunk.match(/<enclosure[^>]+url=["']([^"']+\.(?:jpg|jpeg|png|webp))[^>]*/i);
-    if (enc && enc[1].startsWith('http')) return enc[1];
-    // 3. img tag in raw chunk
-    const imgRaw = chunk.match(/<img[^>]+src=["']([^"']+)["']/i);
-    if (imgRaw && imgRaw[1].startsWith('http')) return imgRaw[1];
-    // 4. DECODE HTML entities in description — Google News hides images here
-    const decoded = decodeHTML(rawDesc||'');
-    const imgDec = decoded.match(/<img[^>]+src=["']([^"']+)["']/i);
-    if (imgDec && imgDec[1].startsWith('http')) return imgDec[1];
-    // 5. Any image URL in decoded text
-    const anyImg = decoded.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^\s"'<>]*)?/i);
-    if (anyImg) return anyImg[0];
-    return null;
-  }
-
-  return items.slice(0, 10).map((item, i) => {
-    const title = clean(getTag(item,'title'));
-    let link = clean(getTag(item,'link')).replace(/&amp;/g,'&');
-    if (!link.startsWith('http')) {
-      const lm = item.match(/<link[^>]+href=["']([^"']+)["']/i);
-      if (lm) link = lm[1];
-    }
-    const pub = getTag(item,'pubDate') || '';
-    const ts = pub ? (new Date(pub).getTime() || Date.now()-i*3600000) : Date.now()-i*3600000;
-    const rawDesc = getTag(item,'description') || '';
-    const desc = clean(rawDesc).slice(0,280);
-    return {
-      id: src.id+'-'+i+'-'+ts,
-      sourceId: src.id, sourceName: src.name, sourceColor: src.color,
-      title, link, excerpt: desc, image: getImg(item, rawDesc),
-      pubDate: pub || new Date().toISOString(), timestamp: ts
+function clean(s){
+  return (s||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<')
+    .replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'')
+    .replace(/\s+/g,' ').trim();
+}
+function getTag(c,t){
+  const cd=c.match(new RegExp('<'+t+'[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/'+t+'>','i'));
+  if(cd)return cd[1].trim();
+  const pl=c.match(new RegExp('<'+t+'[^>]*>([\\s\\S]*?)<\\/'+t+'>','i'));
+  return pl?pl[1].replace(/<[^>]+>/g,'').trim():'';
+}
+function getImg(chunk,rawDesc){
+  const pats=[
+    /<media:(?:content|thumbnail)[^>]+url=["']([^"']+)["']/i,
+    /<enclosure[^>]+url=["']([^"']+\.(?:jpg|jpeg|png|webp))[^>]*/i,
+    /<img[^>]+src=["']([^"']+)["']/i,
+  ];
+  for(const rx of pats){const m=chunk.match(rx);if(m&&m[1].startsWith('http'))return m[1];}
+  const dec=dH(rawDesc||'');
+  const dm=dec.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if(dm&&dm[1].startsWith('http'))return dm[1];
+  const am=dec.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^\s"'<>]*)?/i);
+  if(am)return am[0];
+  return null;
+}
+function parseRSS(xml,srcId){
+  const items=[];let m;
+  const rx=/<item[\s>]([\s\S]*?)<\/item>/gi;
+  while((m=rx.exec(xml))!==null)items.push(m[1]);
+  const src=SRCS[srcId]||{name:srcId,color:'#555',domain:''};
+  return items.slice(0,10).map((item,i)=>{
+    const title=clean(getTag(item,'title'));
+    let link=clean(getTag(item,'link')).replace(/&amp;/g,'&');
+    if(!link.startsWith('http')){const lm=item.match(/<link[^>]+href=["']([^"']+)["']/i);if(lm)link=lm[1];}
+    const pub=getTag(item,'pubDate')||'';
+    const ts=pub?(new Date(pub).getTime()||Date.now()-i*3600000):Date.now()-i*3600000;
+    const rawDesc=getTag(item,'description')||'';
+    return{
+      id:srcId+'-'+i+'-'+ts, sourceId:srcId,
+      sourceName:src.name, sourceColor:src.color,
+      title, link, excerpt:clean(rawDesc).slice(0,240),
+      image:getImg(item,rawDesc), timestamp:ts,
     };
-  }).filter(s => s.title && s.link && s.link.startsWith('http'));
+  }).filter(s=>s.title&&s.link.startsWith('http'));
 }
 
-async function fetchClientSource(src) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 8000);
-  try {
-    const r = await fetch(src.url, { signal: ctrl });
+// ── FETCH ──
+async function fetchOne(src){
+  // NOTE: Always use .signal not the controller object itself
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),8000);
+  try{
+    const r=await fetch(src.url,{signal:ctrl.signal});
     clearTimeout(t);
-    if (!r.ok) return [];
-    const xml = await r.text();
-    return parseRSS(xml, src);
-  } catch(e) {
+    if(!r.ok)return[];
+    return parseRSS(await r.text(),src.id);
+  }catch(e){
     clearTimeout(t);
-    // Fallback: allorigins proxy
-    try {
-      const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(src.url);
-      const r2 = await fetch(proxy);
-      if (!r2.ok) return [];
-      const d = await r2.json();
-      const xml = d.contents || '';
-      return parseRSS(xml, src);
-    } catch(e2) { return []; }
+    try{
+      const proxy='https://api.allorigins.win/get?url='+encodeURIComponent(src.url);
+      const r2=await fetch(proxy);
+      if(!r2.ok)return[];
+      const d=await r2.json();
+      return parseRSS(d.contents||'',src.id);
+    }catch(e2){return[];}
   }
 }
 
-// ═══════ LOAD FEED ═══════
-async function loadFeed() {
-  // Try 1: Vercel API (fast when cached)
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 7000);
-    const r = await fetch('/api/feed', { signal: ctrl });
+async function loadFeed(){
+  // Try 1: Vercel API
+  try{
+    const ctrl=new AbortController();
+    const t=setTimeout(()=>ctrl.abort(),7000);
+    const r=await fetch('/api/feed',{signal:ctrl.signal});
     clearTimeout(t);
-    if (r.ok) {
-      const d = await r.json();
-      if (d.stories && d.stories.length > 0) {
-        stories = d.stories;
-        srcStats = d.sources || {};
-        document.getElementById('upd-time').textContent =
+    if(r.ok){
+      const d=await r.json();
+      if(d.stories&&d.stories.length>0){
+        stories=d.stories;
+        document.getElementById('upd').textContent=
           new Date(d.updatedAt).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-        document.getElementById('s-status').textContent = 'Live';
-        hideLoader();
-        render();
-        return;
+        hideLoader();render();return;
       }
     }
-  } catch(e) {}
+  }catch(e){}
 
-  // Try 2: Google News client-side (works for all 8 sources)
-  ldTxt.textContent = 'Loading from sources...';
-  try {
-    const results = await Promise.allSettled(CLIENT_SOURCES.map(fetchClientSource));
-    let all = [];
-    const stats = {};
-    results.forEach((res, i) => {
-      const src = CLIENT_SOURCES[i];
-      if (res.status === 'fulfilled' && res.value.length > 0) {
-        all = all.concat(res.value);
-        stats[src.id] = res.value.length;
-      } else { stats[src.id] = 0; }
+  // Try 2: Google News direct (all 8 sources, no CORS issues)
+  ltxt.textContent='Loading from sources...';
+  try{
+    const results=await Promise.allSettled(GNEWS.map(fetchOne));
+    let all=[];
+    results.forEach((res,i)=>{
+      if(res.status==='fulfilled')all=all.concat(res.value);
     });
-    all.sort((a,b) => b.timestamp - a.timestamp);
-    const seen = new Set();
-    all = all.filter(s => {
-      const k = s.title.slice(0,45).toLowerCase();
-      if (seen.has(k)) return false;
-      seen.add(k); return true;
+    all.sort((a,b)=>b.timestamp-a.timestamp);
+    const seen=new Set();
+    all=all.filter(s=>{
+      const k=s.title.slice(0,45).toLowerCase();
+      if(seen.has(k))return false;seen.add(k);return true;
     });
-    if (all.length > 0) {
-      stories = all;
-      srcStats = stats;
-      document.getElementById('s-status').textContent = 'Live';
-      document.getElementById('upd-time').textContent =
+    if(all.length>0){
+      stories=all;
+      document.getElementById('upd').textContent=
         new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-      hideLoader();
-      render();
-      // Background: enrich missing images via allorigins OG scrape (non-blocking)
-      enrichImages(all).then(() => render());
+      hideLoader();render();
+      enrichImages(all).then(()=>render());
       return;
     }
-  } catch(e) {}
+  }catch(e){}
 
-  // Try 3: Nothing worked
+  // Try 3: show error
   hideLoader();
-  document.getElementById('err-area').innerHTML =
-    '<div class="err-banner">Feed unavailable — <a href="javascript:location.reload()">tap to reload →</a></div>';
+  showErr('Feed unavailable — <a href="javascript:location.reload()">tap to reload →</a>');
   render();
 }
 
-// ═══════ TIME ═══════
-function ago(ts) {
-  const s = Math.floor((Date.now()-ts)/1000);
-  if (s < 60) return s+'s ago';
-  if (s < 3600) return Math.floor(s/60)+'m ago';
-  if (s < 86400) return Math.floor(s/3600)+'h ago';
-  return Math.floor(s/86400)+'d ago';
-}
-
-// ═══════ RENDER ═══════
-function render() {
-  const list = filter === 'all' ? stories : stories.filter(s => s.sourceId === filter);
-  if (!list.length) {
-    document.getElementById('cards').innerHTML = '';
-    document.getElementById('list').innerHTML =
-      '<p style="padding:48px 0;text-align:center;font-family:var(--mono);font-size:11px;color:#999">No stories available.</p>';
-    renderSidebar([]);
-    return;
-  }
-
-  // HERO
-  const h = list[0];
-  const hs = SRC[h.sourceId] || { name:h.sourceName, color:'#555', domain:'' };
-  const hImg = document.getElementById('h-img');
-  hImg.src = h.image || fbSrc(h.sourceId);
-  hImg.onerror = () => { hImg.src = fbSrc(h.sourceId); };
-  document.getElementById('h-badge').textContent = hs.name;
-  document.getElementById('h-badge').style.background = hs.color;
-  document.getElementById('h-src').textContent = hs.name;
-  document.getElementById('h-ktime').textContent = ago(h.timestamp);
-  document.getElementById('h-title').textContent = h.title;
-  document.getElementById('h-exc').textContent = h.excerpt || '';
-  document.getElementById('h-link').href = h.link;
-  document.getElementById('h-link').textContent = 'Read on ' + (hs.domain || 'site') + ' ↗';
-  document.getElementById('h-vn').textContent = 48 + (votes[h.id]||0);
-  document.getElementById('h-vbtn').className = 'vote-btn' + (votes[h.id] ? ' on' : '');
-  document.getElementById('h-age').textContent = ago(h.timestamp);
-  document.getElementById('hero').onclick = () => openStoryModal(h);
-
-  // CARDS (items 2–10)
-  document.getElementById('cards').innerHTML = list.slice(1,10).map((s,i) => {
-    const sm = SRC[s.sourceId] || { name:s.sourceName, color:'#555', domain:'' };
-    const v = 25 + (votes[s.id]||0);
-    const d = encodeURIComponent(JSON.stringify(s));
-    return `<div class="card" style="animation-delay:${i*.05}s" onclick="openStoryModalById('${s.id}')">
-      <div class="card-img-wrap">
-        <img class="card-img" src="${s.image || fbSrc(s.sourceId)}" alt="" onerror="this.src='${fbSrc(s.sourceId)}'" loading="lazy"/>
-      </div>
-      <div class="card-meta">
-        <span class="badge" style="background:${sm.color}">${sm.name}</span>
-        <span class="card-age">${ago(s.timestamp)}</span>
-      </div>
-      <div class="card-title">${s.title}</div>
-      <p class="card-excerpt">${s.excerpt||''}</p>
-      <div class="card-foot">
-        <a class="card-src" href="${s.link}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${sm.domain} ↗</a>
-        <div class="mini-votes">
-          <button class="mini-btn ${votes[s.id]?'on':''}" onclick="event.stopPropagation();doVote('${s.id}',this)">▲</button>
-          <span class="mini-n" id="vc-${s.id}">${v}</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // LIST (items 11+)
-  document.getElementById('list').innerHTML = list.slice(10).map((s,i) => {
-    const sm = SRC[s.sourceId] || { name:s.sourceName, color:'#555', domain:'' };
-    const v = 18 + (votes[s.id]||0);
-    return `<div class="list-item" style="animation-delay:${i*.025}s" onclick="openStoryModalById('${s.id}')">
-      <span class="li-num">${i+11}</span>
-      <div class="li-body">
-        <div class="li-meta">
-          <span class="badge" style="background:${sm.color}">${sm.name}</span>
-          <span class="li-age">${ago(s.timestamp)}</span>
-          <div class="li-votes">
-            <button class="mini-btn ${votes[s.id]?'on':''}" onclick="event.stopPropagation();doVote('${s.id}',this)">▲</button>
-            <span class="mini-n" id="vc-${s.id}">${v}</span>
-          </div>
-        </div>
-        <div class="li-title">${s.title}</div>
-        <div class="li-exc">${s.excerpt||''}</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // STATS
-  document.getElementById('s-count').textContent = list.length;
-  document.getElementById('s-src').textContent = Object.values(srcStats).filter(v=>v>0).length || 8;
-  document.getElementById('s-votes').textContent = Object.keys(votes).length;
-
-  renderSidebar(list);
-}
-
-function renderSidebar(list) {
-  // Trending
-  const top5 = [...list].slice(0,5);
-  document.getElementById('sb-trending').innerHTML = top5.length ? top5.map((s,i) => {
-    const sm = SRC[s.sourceId] || { name:s.sourceName, color:'#555' };
-    return `<div class="trend-item" onclick="openStoryModalById('${s.id}')">
-      <div class="trend-n">${String(i+1).padStart(2,'0')}</div>
-      <div>
-        <div class="trend-title">${s.title}</div>
-        <div class="trend-src" style="color:${sm.color}">${sm.name}</div>
-      </div>
-    </div>`;
-  }).join('') : '<p style="font-family:var(--mono);font-size:10px;color:#999;padding:12px 0">Loading...</p>';
-
-  // Sources
-  const allSrcs = Object.values(SRC);
-  document.getElementById('sb-sources').innerHTML = allSrcs.map(s => {
-    const count = srcStats[Object.keys(SRC).find(k => SRC[k]===s)] || 0;
-    return `<div class="src-item">
-      <div class="src-left">
-        <div class="src-dot" style="background:${s.color}"></div>
-        <span class="src-name">${s.name}</span>
-      </div>
-      <div class="src-right">
-        ${count > 0
-          ? `<span class="src-live">Live</span><span class="src-count">${count}</span>`
-          : `<span class="src-dead">○ — 0</span>`}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ═══════ STORY MODAL ═══════
-function openStoryModalById(id) {
-  const s = stories.find(x => x.id === id);
-  if (s) openStoryModal(s);
-}
-function openStoryModal(s) {
-  const sm = SRC[s.sourceId] || { name:s.sourceName, color:'#555', domain:'' };
-  document.getElementById('ms-src').textContent = sm.name.toUpperCase() + ' — ' + ago(s.timestamp);
-  const img = document.getElementById('ms-img');
-  img.style.display = s.image ? 'block' : 'none';
-  if (s.image) img.src = s.image;
-  document.getElementById('ms-title').textContent = s.title;
-  document.getElementById('ms-exc').textContent = s.excerpt || '';
-  document.getElementById('ms-link').href = s.link;
-  document.getElementById('ms-link').textContent = 'Read Full Article on ' + (sm.domain||'site') + ' ↗';
-  document.getElementById('modal-story').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-// ═══════ MODALS ═══════
-function openModal(type) {
-  closeAllModals();
-  const el = document.getElementById('modal-'+type);
-  if (el) { el.classList.add('open'); document.body.style.overflow='hidden'; }
-}
-function closeAllModals() {
-  document.querySelectorAll('.modal-bg').forEach(m => m.classList.remove('open'));
-  document.body.style.overflow = '';
-}
-document.addEventListener('keydown', e => { if (e.key==='Escape') closeAllModals(); });
-
-// ═══════ VOTES ═══════
-function doVote(id, btn) {
-  if (votes[id]) return;
-  votes[id] = 1;
-  btn.classList.add('on');
-  document.querySelectorAll('#vc-'+id).forEach(el => {
-    el.textContent = parseInt(el.textContent) + 1;
-  });
-  document.getElementById('s-votes').textContent = Object.keys(votes).length;
-  try { localStorage.setItem('an_v3', JSON.stringify(votes)); } catch(e){}
-}
-function heroVote() {
-  const list = filter==='all' ? stories : stories.filter(s=>s.sourceId===filter);
-  if (!list[0] || votes[list[0].id]) return;
-  const h = list[0];
-  votes[h.id] = 1;
-  document.getElementById('h-vbtn').classList.add('on');
-  document.getElementById('h-vn').textContent = 49;
-  document.getElementById('s-votes').textContent = Object.keys(votes).length;
-  try { localStorage.setItem('an_v3', JSON.stringify(votes)); } catch(e){}
-}
-
-// ═══════ FILTER ═══════
-function setFilter(f, btn) {
-  filter = f;
-  document.querySelectorAll('.nav-tab,.mob-tab').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  render();
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
-// ═══════ TOPIC FILTER ═══════
-function topicFilter(keyword) {
-  const filtered = stories.filter(s =>
-    (s.title+' '+s.excerpt).toLowerCase().includes(keyword.toLowerCase())
-  );
-  const orig = stories;
-  if (filtered.length) {
-    stories = filtered;
-    render();
-    stories = orig;
-  }
-  const banner = document.getElementById('topic-banner');
-  banner.style.display = 'block';
-  banner.innerHTML = 'TOPIC: '+keyword.toUpperCase()+' &nbsp;·&nbsp; <span onclick="clearTopic()" style="color:var(--red);cursor:pointer">Clear ✕</span>';
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-function clearTopic() {
-  document.getElementById('topic-banner').style.display = 'none';
-  render();
-}
-
-// ═══════ BURGER ═══════
-function toggleBurger() {
-  document.getElementById('mob-drawer').classList.toggle('open');
-  document.body.style.overflow = document.getElementById('mob-drawer').classList.contains('open') ? 'hidden' : '';
-}
-
-// ═══════ NEWSLETTER ═══════
-function nlSub() {
-  const email = document.getElementById('nl-email').value.trim();
-  if (!email || !email.includes('@')) {
-    document.getElementById('nl-email').style.borderColor = 'var(--red)';
-    return;
-  }
-  window.open('https://archnews.beehiiv.com/subscribe?email='+encodeURIComponent(email), '_blank');
-  document.getElementById('nl-btxt').textContent = 'Subscribed! ✓';
-  document.getElementById('nl-email').value = '';
-  setTimeout(() => { document.getElementById('nl-btxt').textContent = 'Subscribe Free →'; }, 3000);
-}
-
-// ═══════ SUBMIT STORY ═══════
-function submitStory() {
-  const story = document.getElementById('sub-story').value.trim();
-  const email = document.getElementById('sub-email').value.trim();
-  if (!story) { document.getElementById('sub-story').style.borderColor='var(--red)'; return; }
-  window.location.href = 'mailto:architectonworks@gmail.com?subject=ARCHNEWS Story Submission&body=Story: '+encodeURIComponent(story)+'%0D%0AFrom: '+encodeURIComponent(email||'Anonymous');
-  closeAllModals();
-}
-
-// ═══════ OG IMAGE ENRICHMENT (background, non-blocking) ═══════
-async function enrichImages(list) {
-  const noImg = list.filter(s => !s.image).slice(0, 6);
-  await Promise.allSettled(noImg.map(async s => {
-    try {
-      const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(s.link);
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), 5000);
-      const r = await fetch(proxy, { signal: ctrl });
+// ── ENRICH IMAGES (background, non-blocking) ──
+async function enrichImages(list){
+  const noImg=list.filter(s=>!s.image).slice(0,5);
+  await Promise.allSettled(noImg.map(async s=>{
+    try{
+      const proxy='https://api.allorigins.win/get?url='+encodeURIComponent(s.link);
+      const ctrl=new AbortController();
+      const t=setTimeout(()=>ctrl.abort(),5000);
+      const r=await fetch(proxy,{signal:ctrl.signal});
       clearTimeout(t);
-      if (!r.ok) return;
-      const d = await r.json();
-      const html = d.contents || '';
-      const og = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-               || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i)
-               || html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i);
-      if (og && og[1] && og[1].startsWith('http')) {
-        s.image = og[1];
-      }
-    } catch(e) {}
+      if(!r.ok)return;
+      const d=await r.json();
+      const html=d.contents||'';
+      const og=html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+             ||html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+      if(og&&og[1]&&og[1].startsWith('http'))s.image=og[1];
+    }catch(e){}
   }));
 }
 
-// ═══════ START ═══════
-loadFeed();
-setInterval(loadFeed, 900000); // auto-refresh every 15 min
+// ── TIME ──
+function ago(ts){
+  const s=Math.floor((Date.now()-ts)/1000);
+  if(s<60)return s+'s ago';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
 
+// ── RENDER ──
+function render(){
+  const list=tab==='all'?stories:stories.filter(s=>s.sourceId===tab);
+  shown=Math.min(shown,list.length);
+
+  // Featured (first story)
+  const fw=document.getElementById('featured-wrap');
+  if(list.length>0){
+    const h=list[0];
+    const hs=SRCS[h.sourceId]||{name:h.sourceName,color:'#555',domain:''};
+    fw.innerHTML=`
+      <div class="featured" onclick="openStory('${h.id}')">
+        <img class="feat-img" src="${h.image||FB[h.sourceId]||''}" alt=""
+          onerror="this.src='${FB[h.sourceId]||''}'"/>
+        <div class="feat-body">
+          <div class="feat-top">
+            <span class="feat-src" style="color:${hs.color}">${hs.name}</span>
+            <span class="feat-time">${ago(h.timestamp)}</span>
+          </div>
+          <div class="feat-title">${h.title}</div>
+          <p class="feat-exc">${h.excerpt||''}</p>
+          <a class="feat-btn" href="${h.link}" target="_blank" rel="noopener"
+            onclick="event.stopPropagation()">Read on ${hs.domain} ↗</a>
+        </div>
+      </div>`;
+  } else { fw.innerHTML=''; }
+
+  // Grid cards (2–shown)
+  const sl=document.getElementById('sec-label');
+  const grid=document.getElementById('grid');
+  if(list.length>1){
+    sl.style.display='flex';
+    grid.innerHTML=list.slice(1,shown+1).map((s,i)=>{
+      const sm=SRCS[s.sourceId]||{name:s.sourceName,color:'#555',domain:''};
+      return `<div class="card" style="animation-delay:${i*.04}s" onclick="openStory('${s.id}')">
+        <img class="card-img" src="${s.image||FB[s.sourceId]||''}" alt=""
+          onerror="this.src='${FB[s.sourceId]||''}'"/>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="src-pill" style="background:${sm.color}">${sm.name}</span>
+            <span class="card-time">${ago(s.timestamp)}</span>
+          </div>
+          <div class="card-title">${s.title}</div>
+          <p class="card-exc">${s.excerpt||''}</p>
+          <div class="card-foot">
+            <span class="card-domain">${sm.domain}</span>
+            <span class="card-action">Read →</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    sl.style.display='none';
+    grid.innerHTML='';
+  }
+
+  // Load more
+  const mw=document.getElementById('more-wrap');
+  mw.style.display=(list.length>shown+1)?'block':'none';
+}
+
+function loadMore(){
+  shown=Math.min(shown+8, stories.length);
+  render();
+  window.scrollBy({top:200,behavior:'smooth'});
+}
+
+// ── STORY MODAL ──
+function openStory(id){
+  const s=stories.find(x=>x.id===id);if(!s)return;
+  const sm=SRCS[s.sourceId]||{name:s.sourceName,color:'#555',domain:''};
+  document.getElementById('ms-tag').textContent=sm.name.toUpperCase()+' · '+ago(s.timestamp);
+  const img=document.getElementById('ms-img');
+  if(s.image){img.src=s.image;img.style.display='block';}else{img.style.display='none';}
+  document.getElementById('ms-ttl').textContent=s.title;
+  document.getElementById('ms-exc').textContent=s.excerpt||'';
+  document.getElementById('ms-link').href=s.link;
+  document.getElementById('ms-link').textContent='Read Full Article on '+sm.domain+' ↗';
+  document.getElementById('modal-story').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+// ── INFO MODALS ──
+function showInfo(type){
+  closeModals();
+  const el=document.getElementById('modal-'+type);
+  if(el){el.classList.add('open');document.body.style.overflow='hidden';}
+}
+function closeModals(){
+  document.querySelectorAll('.modal-bg').forEach(m=>m.classList.remove('open'));
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();});
+
+// ── TAB FILTER ──
+function setTab(f,btn){
+  tab=f;shown=8;
+  document.querySelectorAll('.tab,.mob-tab').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── TOPIC FILTER ──
+function topicFilter(kw){
+  const orig=stories;
+  const filtered=stories.filter(s=>(s.title+' '+s.excerpt).toLowerCase().includes(kw.toLowerCase()));
+  if(filtered.length){stories=filtered;shown=8;render();stories=orig;}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── BURGER ──
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden';}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';}
+
+// ── SUBMIT ──
+function doSubmit(){
+  const url=document.getElementById('sub-url').value.trim();
+  const email=document.getElementById('sub-email').value.trim();
+  if(!url){document.getElementById('sub-url').style.borderColor='var(--red)';return;}
+  window.location.href='mailto:architectonworks@gmail.com?subject=ARCHNEWS Story Submission&body=Story: '+encodeURIComponent(url)+'%0D%0AFrom: '+encodeURIComponent(email||'Anonymous');
+  closeModals();
+}
+
+// ── ERROR ──
+function showErr(html){
+  const el=document.getElementById('err');
+  el.innerHTML=html;el.classList.add('show');
+}
+
+// ── START ──
+loadFeed();
+setInterval(loadFeed,900000);
 </script>
 </body>
 </html>
