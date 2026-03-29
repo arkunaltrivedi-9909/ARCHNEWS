@@ -125,11 +125,12 @@ header{
   border-radius:10px;overflow:hidden;cursor:pointer;
   transition:transform .15s,box-shadow .15s;
   animation:up .35s ease both;
+  display:flex;flex-direction:column;
 }
 .card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.08)}
 @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .card-img{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--border)}
-.card-body{padding:14px}
+.card-body{padding:14px;flex:1;display:flex;flex-direction:column}
 .card-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .src-pill{
   font-family:var(--mono);font-size:7px;letter-spacing:0.1em;text-transform:uppercase;
@@ -143,7 +144,7 @@ header{
 }
 .card:hover .card-title{color:var(--red)}
 .card-exc{
-  font-size:12px;color:var(--text2);line-height:1.6;margin-top:6px;
+  font-size:12px;color:var(--text2);line-height:1.6;margin-top:6px;flex:1;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
 .card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
@@ -468,16 +469,46 @@ const SRCS = {
   archpaper:  {name:'Arch Paper', color:'#087ab8', domain:'archpaper.com'},
   domus:      {name:'Domus',      color:'#5a5a3a', domain:'domusweb.it'},
 };
-const FB = {
-  archdaily:  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&q=80',
-  dezeen:     'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
-  archinect:  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
-  metropolis: 'https://images.unsplash.com/photo-1460574283810-2aab119d8511?w=800&q=80',
-  archrecord: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80',
-  designboom: 'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=800&q=80',
-  archpaper:  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
-  domus:      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
-};
+// Pool of 20 varied architecture images — each story gets a different one by index
+const FB_POOL = [
+  'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&q=80',
+  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
+  'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80',
+  'https://images.unsplash.com/photo-1460574283810-2aab119d8511?w=800&q=80',
+  'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=800&q=80',
+  'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
+  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+  'https://images.unsplash.com/photo-1431576901776-e539bd916ba2?w=800&q=80',
+  'https://images.unsplash.com/photo-1470723710355-95304d8aece4?w=800&q=80',
+  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+  'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800&q=80',
+  'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&q=80',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+  'https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?w=800&q=80',
+  'https://images.unsplash.com/photo-1520583457224-aee11bad5112?w=800&q=80',
+  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
+  'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80',
+  'https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=800&q=80',
+  'https://images.unsplash.com/photo-1502005097973-6a7082348e28?w=800&q=80',
+];
+// FB kept for compatibility — unused now
+const FB = {};
+// Known garbage images (Google News generic app icon — NOT article images)
+const BAD_IMGS = [
+  'lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc',
+  'news.google.com',
+];
+function isBadImg(url){
+  if(!url) return true;
+  return BAD_IMGS.some(b => url.includes(b));
+}
+// Get varied fallback by story index — never repeat same image per row
+function getImg(story, idx){
+  if(story.image && !isBadImg(story.image)) return story.image;
+  return FB_POOL[(idx||0) % FB_POOL.length];
+}
+
 const GNEWS = [
   {id:'archdaily',  url:'https://news.google.com/rss/search?q=site:archdaily.com+architecture&hl=en-US&gl=US&ceid=US:en'},
   {id:'dezeen',     url:'https://news.google.com/rss/search?q=site:dezeen.com+architecture&hl=en-US&gl=US&ceid=US:en'},
@@ -665,8 +696,8 @@ function render(){
     const hs=SRCS[h.sourceId]||{name:h.sourceName,color:'#555',domain:''};
     fw.innerHTML=`
       <div class="featured" onclick="openStory('${h.id}')">
-        <img class="feat-img" src="${h.image||FB[h.sourceId]||''}" alt=""
-          onerror="this.src='${FB[h.sourceId]||''}'"/>
+        <img class="feat-img" src="${getImg(h,0)}" alt=""
+          onerror="this.src='${FB_POOL[0]}'"/>
         <div class="feat-body">
           <div class="feat-top">
             <span class="feat-src" style="color:${hs.color}">${hs.name}</span>
@@ -688,8 +719,8 @@ function render(){
     grid.innerHTML=list.slice(1,shown+1).map((s,i)=>{
       const sm=SRCS[s.sourceId]||{name:s.sourceName,color:'#555',domain:''};
       return `<div class="card" style="animation-delay:${i*.04}s" onclick="openStory('${s.id}')">
-        <img class="card-img" src="${s.image||FB[s.sourceId]||''}" alt=""
-          onerror="this.src='${FB[s.sourceId]||''}'"/>
+        <img class="card-img" src="${getImg(s,i+1)}" alt=""
+          onerror="this.src='${FB_POOL[(i+1)%FB_POOL.length]}'"/>
         <div class="card-body">
           <div class="card-top">
             <span class="src-pill" style="background:${sm.color}">${sm.name}</span>
@@ -726,7 +757,8 @@ function openStory(id){
   const sm=SRCS[s.sourceId]||{name:s.sourceName,color:'#555',domain:''};
   document.getElementById('ms-tag').textContent=sm.name.toUpperCase()+' · '+ago(s.timestamp);
   const img=document.getElementById('ms-img');
-  if(s.image){img.src=s.image;img.style.display='block';}else{img.style.display='none';}
+  const modalImgUrl = (!s.image || isBadImg(s.image)) ? null : s.image;
+  if(modalImgUrl){img.src=modalImgUrl;img.style.display='block';}else{img.style.display='none';}
   document.getElementById('ms-ttl').textContent=s.title;
   document.getElementById('ms-exc').textContent=s.excerpt||'';
   document.getElementById('ms-link').href=s.link;
