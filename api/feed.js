@@ -194,6 +194,33 @@ module.exports = async function handler(req, res) {
       seen.add(k); return true;
     });
 
+    // Filter 1: Remove stories older than 90 days
+    const NINETY_DAYS = 90 * 24 * 60 * 60 * 1000;
+    const cutoff = Date.now() - NINETY_DAYS;
+    allStories = allStories.filter(s => s.timestamp >= cutoff);
+
+    // Filter 2: Remove junk/paywall/login titles
+    const JUNK_TITLES = ['log in', 'sign in', 'subscribe', 'create account', 'register to', 'login to'];
+    allStories = allStories.filter(s => {
+      const t = (s.title || '').toLowerCase();
+      return !JUNK_TITLES.some(j => t.startsWith(j));
+    });
+
+    // Filter 3: Remove known garbage images (Google News app icon)
+    const GARBAGE_IMGS = [
+      'lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc',
+    ];
+    allStories = allStories.map(s => {
+      if (s.image && GARBAGE_IMGS.some(g => s.image.includes(g))) {
+        s.image = null;
+      }
+      // Also null out dezeen low-res square thumbnails (411x411)
+      if (s.image && s.image.includes('-411x411')) {
+        s.image = null;
+      }
+      return s;
+    });
+
     // Enrich missing images with OG scraping (fast, parallel, 3s timeout each)
     allStories = await enrichWithOGImages(allStories);
 
