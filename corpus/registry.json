@@ -1,0 +1,166 @@
+{
+  "_README": [
+    "This file is a SHOPPING LIST, not a source of truth.",
+    "It records which official documents the app is meant to serve and where they",
+    "were published. It contains NO regulation text and NO clause numbers.",
+    "",
+    "The truth always comes from the ingested PDF itself: tools/ingest.py reads the",
+    "real file, extracts verbatim text page by page, and records a sha256 of the",
+    "exact file it read. If a document is not ingested, the app shows it as NOT",
+    "LOADED and refuses to answer from it rather than guessing.",
+    "",
+    "url_reachable=false on every entry below means: the build sandbox could not",
+    "reach these hosts (blocked by network egress policy), so the URLs come from a",
+    "web search and were NOT opened or confirmed. Verify each URL and, more",
+    "importantly, verify you have the CURRENT amendment before ingesting."
+  ],
+
+  "_copyright_notice": [
+    "CGDCR and Development Plan documents are Government of Gujarat notifications,",
+    "published for public use.",
+    "The National Building Code of India 2016 is copyright Bureau of Indian",
+    "Standards and is SOLD, not freely licensed. Obtain a licensed copy. Do NOT",
+    "commit extracted NBC full text to a public repository — keep corpus/docs/nbc-*",
+    "out of version control or keep the repository private. See corpus/.gitignore."
+  ],
+
+  "documents": [
+    {
+      "doc_id": "cgdcr-2017-part1",
+      "title": "Comprehensive General Development Control Regulations 2017 — Part I, Procedure Regulations",
+      "short": "CGDCR 2017 Part I",
+      "authority": "Urban Development & Urban Housing Department, Government of Gujarat",
+      "jurisdiction": ["Gujarat"],
+      "edition": "2017",
+      "covers": ["permissions", "applications", "development permission procedure"],
+      "sources": [
+        "https://townplanning.gujarat.gov.in/Documents/Final%20Notification%20CGDCR-2017%20PART-I%20PROCEDURE%20REGULATIONS.pdf",
+        "https://ghtc-india.gov.in/Content/GUJ/CGDCR-2017-PART-I-PROCEDURE-REGULATIONS.pdf"
+      ],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "cgdcr-2017-part2",
+      "title": "Comprehensive General Development Control Regulations 2017 — Part II, Planning Regulations",
+      "short": "CGDCR 2017 Part II",
+      "authority": "Urban Development & Urban Housing Department, Government of Gujarat",
+      "jurisdiction": ["Gujarat"],
+      "edition": "2017",
+      "covers": ["FSI", "margins", "common plot", "parking", "height", "zoning use", "density"],
+      "priority": "highest — most feasibility questions resolve here",
+      "sources": [
+        "https://www.rmc.gov.in/rmcwebsite/docs/All_TPS/TP_35/CGDCR_2017_PART_2_PLANNING_REGULATIONS.pdf"
+      ],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "cgdcr-2017-part3",
+      "title": "Comprehensive General Development Control Regulations 2017 — Part III, Performance Regulations",
+      "short": "CGDCR 2017 Part III",
+      "authority": "Urban Development & Urban Housing Department, Government of Gujarat",
+      "jurisdiction": ["Gujarat"],
+      "edition": "2017",
+      "covers": ["fire safety", "structural", "services", "materials"],
+      "sources": [
+        "https://www.auda.org.in/uploads/Assets/rdp/test02142019031949715.pdf"
+      ],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "cgdcr-2017-consolidated",
+      "title": "Comprehensive General Development Control Regulations 2017 — consolidated notification",
+      "short": "CGDCR 2017 consolidated",
+      "authority": "Urban Development & Urban Housing Department, Government of Gujarat",
+      "jurisdiction": ["Gujarat"],
+      "edition": "2017 (dated 12-10-2017)",
+      "note": "Single-file consolidated version. Useful cross-check against the three parts.",
+      "sources": [
+        "https://vmc.gov.in/pdf/Final%20Comprehensive%20General%20Development%20Control%20Regulation-2017%20dt%2012%2010%2017.pdf"
+      ],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "cgdcr-amendments",
+      "title": "CGDCR 2017 — amendment notifications",
+      "short": "CGDCR amendments",
+      "authority": "Urban Development & Urban Housing Department, Government of Gujarat",
+      "jurisdiction": ["Gujarat"],
+      "edition": "rolling",
+      "critical": true,
+      "note": [
+        "CGDCR has been amended repeatedly since 2017. An unamended base text will",
+        "give WRONG answers on FSI and height. Collect every amendment notification",
+        "and ingest each as its own doc_id (cgdcr-amend-YYYY-MM). The app shows",
+        "amendment coverage on every citation so you can see what it does not know."
+      ],
+      "sources": [
+        "https://townplanning.gujarat.gov.in/act-legislation/common_gdcr.aspx"
+      ],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "nbc-2016-part4",
+      "title": "National Building Code of India 2016 — Part 4, Fire and Life Safety",
+      "short": "NBC 2016 Part 4",
+      "authority": "Bureau of Indian Standards",
+      "jurisdiction": ["India"],
+      "edition": "2016",
+      "copyright": "BIS — licensed copy required, do not publish extracted text",
+      "sources": ["https://www.bis.gov.in/"],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "nbc-2016-part3",
+      "title": "National Building Code of India 2016 — Part 3, Development Control Rules and General Building Requirements",
+      "short": "NBC 2016 Part 3",
+      "authority": "Bureau of Indian Standards",
+      "jurisdiction": ["India"],
+      "edition": "2016",
+      "copyright": "BIS — licensed copy required, do not publish extracted text",
+      "sources": ["https://www.bis.gov.in/"],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "nbc-2016-part8",
+      "title": "National Building Code of India 2016 — Part 8, Building Services",
+      "short": "NBC 2016 Part 8",
+      "authority": "Bureau of Indian Standards",
+      "jurisdiction": ["India"],
+      "edition": "2016",
+      "copyright": "BIS — licensed copy required, do not publish extracted text",
+      "sources": ["https://www.bis.gov.in/"],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "auda-dp-2021",
+      "title": "AUDA Revised Development Plan — Ahmedabad",
+      "short": "AUDA DP",
+      "authority": "Ahmedabad Urban Development Authority",
+      "jurisdiction": ["Ahmedabad"],
+      "phase": 2,
+      "note": "Zoning and reservations. Map/GIS layers are NOT text and need separate handling.",
+      "sources": ["https://www.auda.org.in/"],
+      "url_reachable": false,
+      "status": "not_loaded"
+    },
+    {
+      "doc_id": "guda-dp",
+      "title": "GUDA Development Plan — Gandhinagar",
+      "short": "GUDA DP",
+      "authority": "Gandhinagar Urban Development Authority",
+      "jurisdiction": ["Gandhinagar"],
+      "phase": 2,
+      "sources": [],
+      "url_reachable": false,
+      "status": "not_loaded"
+    }
+  ]
+}

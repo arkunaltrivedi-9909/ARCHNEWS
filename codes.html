@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CODEX — Gujarat Building Regulation Reference</title>
+<meta name="description" content="Clause-level reference for CGDCR, NBC and Ahmedabad/Gandhinagar development regulations. Every answer cites document, clause and page."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit;color:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+
+:root{
+  --bg:#f5f2ee; --card:#ffffff; --ink:#111111; --red:#c0300a;
+  --border:#e2ddd6; --t2:#5c5650; --t3:#9c9690;
+  --amber:#8a5a00; --amber-bg:#fdf4e3;
+  --green:#1c6b3c; --green-bg:#eaf5ee;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --disp:'Bebas Neue',sans-serif;
+}
+html,body{height:100%}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+
+/* ---------- HEADER ---------- */
+header{background:#111;border-bottom:2px solid var(--red);flex-shrink:0}
+.hdr{max-width:1600px;margin:0 auto;padding:0 20px;display:flex;align-items:center;height:52px;gap:18px}
+.logo{font-family:var(--disp);font-size:27px;letter-spacing:.05em;color:#fff;flex-shrink:0}
+.logo em{color:var(--red);font-style:normal}
+.logo small{font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:#666;margin-left:8px;text-transform:uppercase}
+.hdr-tabs{display:flex;gap:2px;margin-left:8px}
+.htab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;color:#666;border:1px solid transparent;border-radius:2px}
+.htab:hover{color:#aaa}
+.htab.on{color:#fff;background:#1e1e1e;border-color:#2e2e2e}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.corpus-pill{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#777;border:1px solid #262626;padding:5px 9px;border-radius:2px}
+.corpus-pill b{color:var(--red);font-weight:500}
+
+/* ---------- GLOBAL WARNING STRIP ---------- */
+#fixtureStrip{display:none;background:var(--red);color:#fff;font-family:var(--mono);font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:6px 16px;flex-shrink:0}
+#fixtureStrip.show{display:block}
+
+/* ---------- LAYOUT ---------- */
+main{flex:1;min-height:0;max-width:1600px;width:100%;margin:0 auto;padding:0 20px;display:flex;gap:0}
+.pane{display:none;flex:1;min-height:0;width:100%}
+.pane.on{display:flex}
+
+/* ---------- SIDEBAR ---------- */
+aside{width:330px;flex-shrink:0;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:0}
+.side-head{padding:14px 16px 10px;border-bottom:1px solid var(--border)}
+.side-lbl{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.doc-select{width:100%;padding:8px 10px;border:1px solid var(--border);background:var(--card);font-size:12px;border-radius:2px}
+.tree-filter{width:100%;padding:7px 10px;border:1px solid var(--border);background:var(--card);font-size:12px;margin-top:8px;border-radius:2px}
+.tree{flex:1;overflow-y:auto;padding:8px 0 40px}
+.tnode{display:flex;align-items:flex-start;gap:6px;padding:5px 16px 5px 0;font-size:12.5px;line-height:1.35;cursor:pointer;border-left:2px solid transparent}
+.tnode:hover{background:#ece8e2}
+.tnode.on{background:#fff;border-left-color:var(--red)}
+.tnode .tw{font-family:var(--mono);font-size:10.5px;color:var(--red);flex-shrink:0;min-width:52px}
+.tnode .tt{color:var(--t2)}
+.tnode.on .tt{color:var(--ink);font-weight:500}
+.tnode .caret{width:12px;flex-shrink:0;font-size:9px;color:var(--t3);user-select:none;padding-top:2px}
+.tnode.d0{font-weight:600}
+.tnode.d0 .tt{color:var(--ink)}
+
+/* ---------- READER ---------- */
+.reader{flex:1;min-height:0;overflow-y:auto;padding:26px 40px 80px}
+.reader-inner{max-width:820px}
+.crumb{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+.crumb span+span::before{content:" / ";color:var(--border)}
+.sec-num{font-family:var(--mono);font-size:13px;color:var(--red);margin-bottom:4px}
+.sec-title{font-size:26px;font-weight:600;line-height:1.2;margin-bottom:16px;letter-spacing:-.01em}
+
+/* citation bar — the trust surface */
+.cite{border:1px solid var(--border);background:var(--card);border-left:3px solid var(--red);padding:12px 14px;margin-bottom:22px;border-radius:2px}
+.cite-row{display:flex;flex-wrap:wrap;gap:5px 20px;font-family:var(--mono);font-size:10px;color:var(--t2);line-height:1.7}
+.cite-row b{color:var(--ink);font-weight:500}
+.cite-k{color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+.cite-actions{margin-top:9px;padding-top:9px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
+.cbtn{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border:1px solid var(--border);border-radius:2px;color:var(--t2)}
+.cbtn:hover{border-color:var(--red);color:var(--red)}
+
+.sec-body{font-size:15px;line-height:1.75;white-space:pre-wrap;word-wrap:break-word;color:#1a1a1a}
+.sec-body .xref{color:var(--red);border-bottom:1px dotted var(--red);cursor:pointer}
+.verbatim-note{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.06em;margin-top:22px;padding-top:12px;border-top:1px solid var(--border)}
+.kids{margin-top:28px;padding-top:16px;border-top:1px solid var(--border)}
+.kids h4{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.kid{display:block;padding:7px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.kid:hover{color:var(--red)}
+.kid b{font-family:var(--mono);font-size:11px;color:var(--red);font-weight:500;margin-right:8px}
+
+/* ---------- EMPTY / NOT LOADED ---------- */
+.empty{max-width:640px;margin:40px auto;text-align:left}
+.empty h2{font-family:var(--disp);font-size:34px;letter-spacing:.02em;margin-bottom:14px}
+.empty p{font-size:14px;line-height:1.7;color:var(--t2);margin-bottom:14px}
+.empty code,code.inline{font-family:var(--mono);font-size:12px;background:#e9e5df;padding:2px 6px;border-radius:2px}
+.empty pre{font-family:var(--mono);font-size:11.5px;background:#111;color:#ddd;padding:16px;border-radius:3px;overflow-x:auto;line-height:1.7;margin-bottom:16px}
+.empty pre .c{color:#777}
+.notice{border-left:3px solid var(--amber);background:var(--amber-bg);padding:13px 15px;margin-bottom:18px;font-size:13px;line-height:1.65;border-radius:2px}
+.notice b{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:5px}
+
+/* ---------- SEARCH ---------- */
+.search-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:22px 0 0}
+.search-bar{display:flex;gap:8px;margin-bottom:6px}
+.search-bar input{flex:1;padding:13px 15px;border:1px solid var(--border);background:var(--card);font-size:15px;border-radius:2px}
+.search-bar input:focus{outline:none;border-color:var(--red)}
+.search-bar button{padding:0 22px;background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border-radius:2px}
+.search-meta{font-family:var(--mono);font-size:9.5px;color:var(--t3);letter-spacing:.06em;margin-bottom:16px}
+.results{flex:1;overflow-y:auto;padding-bottom:60px}
+.res{display:block;padding:15px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.res:hover .res-t{color:var(--red)}
+.res-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:5px}
+.res-n{font-family:var(--mono);font-size:11px;color:var(--red)}
+.res-t{font-size:15px;font-weight:600}
+.res-src{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.06em;margin-left:auto;text-transform:uppercase}
+.res-snip{font-size:13px;line-height:1.65;color:var(--t2)}
+.res-snip mark{background:#ffe9b8;color:var(--ink);padding:0 1px}
+
+/* ---------- ASK ---------- */
+.ask-wrap{flex:1;min-height:0;display:flex;flex-direction:column;padding:22px 0 0;max-width:900px;margin:0 auto;width:100%}
+.ask-log{flex:1;overflow-y:auto;padding-bottom:20px}
+.msg{margin-bottom:26px}
+.msg-q{font-size:16px;font-weight:600;line-height:1.5;padding-left:13px;border-left:3px solid var(--ink)}
+.msg-a{margin-top:13px;font-size:14.5px;line-height:1.75}
+.msg-a p{margin-bottom:12px}
+.answer-box{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:18px 20px}
+.refusal{border-left:3px solid var(--amber);background:var(--amber-bg)}
+.cite-chip{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;background:#f0ece6;border:1px solid var(--border);
+  padding:2px 7px;border-radius:2px;color:var(--t2);cursor:pointer;margin:0 2px;vertical-align:baseline}
+.cite-chip:hover{border-color:var(--red);color:var(--red)}
+.cite-chip b{color:var(--red);font-weight:500}
+.sources{margin-top:16px;padding-top:13px;border-top:1px solid var(--border)}
+.sources h5{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--t3);margin-bottom:9px}
+.src-item{display:block;padding:8px 10px;background:#faf8f5;border:1px solid var(--border);border-radius:2px;margin-bottom:6px;cursor:pointer}
+.src-item:hover{border-color:var(--red)}
+.src-item .si-h{font-family:var(--mono);font-size:10px;color:var(--red);margin-bottom:3px}
+.src-item .si-t{font-size:12px;color:var(--t2);line-height:1.5;max-height:44px;overflow:hidden}
+.ask-form{flex-shrink:0;border-top:1px solid var(--border);padding:14px 0 20px;background:var(--bg)}
+.ask-form textarea{width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--card);font-size:14px;resize:none;height:64px;border-radius:2px;line-height:1.5}
+.ask-form textarea:focus{outline:none;border-color:var(--red)}
+.ask-actions{display:flex;align-items:center;gap:12px;margin-top:8px}
+.ask-actions button{padding:10px 24px;background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border-radius:2px}
+.ask-actions button:disabled{background:#c9c4bd;cursor:not-allowed}
+.ask-hint{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.05em;line-height:1.6}
+
+/* ---------- FEASIBILITY ---------- */
+.feas{flex:1;min-height:0;overflow-y:auto;padding:24px 0 80px;width:100%}
+.feas-grid{display:grid;grid-template-columns:340px 1fr;gap:34px;align-items:start}
+.fcard{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:18px}
+.fcard h3{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:14px}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-size:11px;color:var(--t2);margin-bottom:4px;font-weight:500}
+.fld input,.fld select{width:100%;padding:8px 10px;border:1px solid var(--border);font-size:13px;border-radius:2px;background:#fff}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--red)}
+.frun{width:100%;padding:11px;background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border-radius:2px;margin-top:4px}
+.out-row{background:var(--card);border:1px solid var(--border);border-radius:3px;padding:15px 17px;margin-bottom:11px}
+.out-row.blocked{border-left:3px solid var(--amber);background:var(--amber-bg)}
+.out-row.ok{border-left:3px solid var(--green)}
+.out-head{display:flex;align-items:baseline;gap:12px;margin-bottom:7px}
+.out-name{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--t2)}
+.out-val{font-family:var(--mono);font-size:22px;color:var(--ink);margin-left:auto;font-weight:500}
+.out-val.none{font-size:11px;color:var(--amber);letter-spacing:.08em;text-transform:uppercase}
+.out-why{font-size:12.5px;line-height:1.6;color:var(--t2)}
+.out-why a{color:var(--red);border-bottom:1px dotted var(--red);cursor:pointer}
+
+.spin{display:inline-block;width:11px;height:11px;border:2px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-1px}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+@media(max-width:1000px){
+  aside{display:none}
+  .reader{padding:20px 0}
+  .feas-grid{grid-template-columns:1fr;gap:20px}
+  .hdr{gap:8px}
+  .hdr-tabs{margin-left:0}
+  .htab{padding:7px 8px}
+  .corpus-pill{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <div class="logo">COD<em>EX</em><small>Gujarat</small></div>
+    <nav class="hdr-tabs">
+      <button class="htab on" data-pane="browse">Browse</button>
+      <button class="htab" data-pane="search">Search</button>
+      <button class="htab" data-pane="ask">Ask</button>
+      <button class="htab" data-pane="feas">Feasibility</button>
+    </nav>
+    <div class="hdr-right">
+      <div class="corpus-pill" id="corpusPill">Loading corpus…</div>
+    </div>
+  </div>
+</header>
+
+<div id="fixtureStrip">⚠ Fixture data loaded — invented content, not law. Do not use for any real project.</div>
+
+<main>
+  <!-- BROWSE -->
+  <section class="pane on" id="pane-browse">
+    <aside>
+      <div class="side-head">
+        <div class="side-lbl">Document</div>
+        <select class="doc-select" id="docSelect"></select>
+        <input class="tree-filter" id="treeFilter" placeholder="Filter clauses…"/>
+      </div>
+      <div class="tree" id="tree"></div>
+    </aside>
+    <div class="reader" id="reader"></div>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="pane" id="pane-search">
+    <div class="search-wrap">
+      <div class="search-bar">
+        <input id="q" placeholder="Search loaded regulations — e.g. common plot, parking, 12.4"/>
+        <button id="qBtn">Search</button>
+      </div>
+      <div class="search-meta" id="searchMeta"></div>
+      <div class="results" id="results"></div>
+    </div>
+  </section>
+
+  <!-- ASK -->
+  <section class="pane" id="pane-ask">
+    <div class="ask-wrap">
+      <div class="ask-log" id="askLog"></div>
+      <div class="ask-form">
+        <textarea id="askInput" placeholder="Ask a question. Answers come only from loaded documents, with clause and page."></textarea>
+        <div class="ask-actions">
+          <button id="askBtn">Ask</button>
+          <div class="ask-hint" id="askHint"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEASIBILITY -->
+  <section class="pane" id="pane-feas">
+    <div class="feas">
+      <div class="feas-grid">
+        <div class="fcard">
+          <h3>Plot inputs</h3>
+          <div class="fld"><label>City / authority</label>
+            <select id="f_city"><option value="ahmedabad">Ahmedabad (AMC / AUDA)</option><option value="gandhinagar">Gandhinagar (GUDA)</option></select></div>
+          <div class="fld"><label>Plot area (sq m)</label><input id="f_area" type="number" value="1000" min="1"/></div>
+          <div class="fld"><label>Abutting road width (m)</label><input id="f_road" type="number" value="12" min="0" step="0.5"/></div>
+          <div class="fld"><label>Zone</label>
+            <select id="f_zone">
+              <option value="R1">Residential R1</option><option value="R2">Residential R2</option>
+              <option value="C">Commercial</option><option value="I">Industrial</option>
+            </select></div>
+          <div class="fld"><label>Proposed use</label>
+            <select id="f_use">
+              <option value="residential">Residential</option><option value="commercial">Commercial</option>
+              <option value="mixed">Mixed use</option><option value="institutional">Institutional</option>
+            </select></div>
+          <button class="frun" id="fRun">Run feasibility</button>
+        </div>
+        <div id="feasOut"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+'use strict';
+
+/* ============================================================
+   CODEX — clause-level regulation reference.
+
+   Non-negotiable rule this file enforces:
+   nothing is displayed as regulation unless it came out of an
+   ingested PDF and carries a document + clause + page. There is
+   no fallback copy, no "typical value", no remembered clause.
+   When the corpus cannot answer, the UI says so.
+   ============================================================ */
+
+const state = {
+  docs: [],            // manifests from corpus/index.json
+  sections: {},        // doc_id -> [section]
+  current: null,       // doc_id in the browser
+  currentSection: null,
+  collapsed: {},       // section id -> bool
+  rules: null
+};
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+/* ---------- page citation formatting ---------- */
+// A citation must never imply precision we don't have. If the printed page
+// number could not be established during ingest, we say PDF page only.
+function pageLabel(sec, doc){
+  if (sec.printed_page != null) return `p. ${sec.printed_page} (PDF p. ${sec.pdf_page})`;
+  return `PDF p. ${sec.pdf_page}`;
+}
+function shortCite(sec, doc){
+  const d = doc || docById(sec.doc_id) || {};
+  const p = sec.printed_page != null ? `p.${sec.printed_page}` : `PDF p.${sec.pdf_page}`;
+  return `${d.short || d.title || sec.doc_id} § ${sec.number}, ${p}`;
+}
+const docById = id => state.docs.find(d => d.doc_id === id);
+
+/* ---------- boot ---------- */
+async function boot(){
+  let index = null;
+  try {
+    const r = await fetch('/corpus/index.json', {cache:'no-store'});
+    if (r.ok) index = await r.json();
+  } catch(e){ /* corpus absent — handled below */ }
+
+  state.docs = (index && index.documents) ? index.documents : [];
+  const anyFixture = state.docs.some(d => d.fixture);
+  if (anyFixture) $('fixtureStrip').classList.add('show');
+
+  const real = state.docs.filter(d => !d.fixture).length;
+  $('corpusPill').innerHTML = state.docs.length
+    ? `Corpus <b>${real}</b> official${anyFixture ? ` + ${state.docs.length-real} fixture` : ''}`
+    : `Corpus <b>empty</b>`;
+
+  const sel = $('docSelect');
+  sel.innerHTML = state.docs.map(d =>
+    `<option value="${esc(d.doc_id)}">${d.fixture ? '⚠ ' : ''}${esc(d.short || d.title)}</option>`).join('');
+
+  if (!state.docs.length){ renderEmptyCorpus(); updateAskAvailability(); return; }
+
+  sel.onchange = () => selectDoc(sel.value);
+  await selectDoc(state.docs[0].doc_id);
+  updateAskAvailability();
+  routeFromHash();
+}
+
+/* ---------- corpus-empty state: tells you exactly what to do ---------- */
+function renderEmptyCorpus(){
+  $('reader').innerHTML = `
+  <div class="empty">
+    <h2>No documents loaded</h2>
+    <div class="notice"><b>Why this is empty on purpose</b>
+      This tool answers only from regulation PDFs you load. It ships with no
+      regulation text, because text written from memory — clause numbers, page
+      numbers, FSI values — is exactly the kind of confident error that gets a
+      drawing rejected. Load the documents and everything below becomes citable.
+    </div>
+    <p><b>1.</b> Put the official PDFs in <code>corpus/inbox/</code>, named by document id:</p>
+    <pre><span class="c"># Gujarat — public government notifications</span>
+corpus/inbox/cgdcr-2017-part1.pdf
+corpus/inbox/cgdcr-2017-part2.pdf   <span class="c"># FSI, margins, parking</span>
+corpus/inbox/cgdcr-2017-part3.pdf
+<span class="c"># plus every amendment notification since 2017</span>
+corpus/inbox/cgdcr-amend-2023-05.pdf</pre>
+    <p><b>2.</b> Ingest them:</p>
+    <pre>pip install pypdf
+python3 tools/ingest.py --all</pre>
+    <p><b>3.</b> Check what actually landed — page coverage, OCR gaps, clause counts:</p>
+    <pre>python3 tools/verify.py</pre>
+    <p><b>4.</b> Commit <code>corpus/docs/</code> and redeploy. The document list, search,
+       Q&amp;A and the feasibility calculator all populate from it.</p>
+    <div class="notice"><b>Scanned PDFs</b>
+      Many Indian government PDFs are page images with no text layer. Ingest will
+      report those as OCR gaps. Run <code>ocrmypdf --force-ocr in.pdf out.pdf</code>
+      and re-ingest, or those pages will be silently missing — and a missing page
+      must never be mistaken for an absent rule.
+    </div>
+    <div class="notice"><b>NBC 2016 is copyright BIS</b>
+      It is sold, not freely licensed. Use a licensed copy, and keep the extracted
+      text out of a public repository (<code>corpus/.gitignore</code> already excludes it).
+    </div>
+  </div>`;
+}
+
+/* ---------- document + tree ---------- */
+async function selectDoc(docId){
+  state.current = docId;
+  $('docSelect').value = docId;
+  if (!state.sections[docId]){
+    $('tree').innerHTML = '<div style="padding:16px;font-size:12px;color:#9c9690">Loading…</div>';
+    try {
+      const r = await fetch(`/corpus/docs/${encodeURIComponent(docId)}/sections.json`, {cache:'no-store'});
+      const j = await r.json();
+      state.sections[docId] = (j.sections || []).map(s => ({...s, doc_id: docId}));
+    } catch(e){
+      state.sections[docId] = [];
+      $('tree').innerHTML = '<div style="padding:16px;font-size:12px;color:#c0300a">Failed to load sections.</div>';
+      return;
+    }
+  }
+  renderTree();
+  const secs = state.sections[docId];
+  if (secs.length) showSection(secs[0]);
+}
+
+function renderTree(){
+  const secs = state.sections[state.current] || [];
+  const filter = ($('treeFilter').value || '').trim().toLowerCase();
+  const hiddenUnder = new Set();
+  const rows = [];
+
+  for (const s of secs){
+    if (filter){
+      const hay = (s.number + ' ' + s.title).toLowerCase();
+      if (!hay.includes(filter)) continue;
+    } else {
+      // collapse: hide any node whose ancestor chain contains a collapsed node
+      let p = s.parent, hide = false;
+      while (p){
+        if (state.collapsed[p]) { hide = true; break; }
+        const pn = secs.find(x => x.id === p);
+        p = pn ? pn.parent : null;
+      }
+      if (hide) continue;
+    }
+    const hasKids = secs.some(x => x.parent === s.id);
+    const isOpen = !state.collapsed[s.id];
+    rows.push(`<div class="tnode d${Math.min(s.depth,3)}${state.currentSection && state.currentSection.id===s.id?' on':''}"
+        data-id="${esc(s.id)}" style="padding-left:${8 + Math.min(s.depth,4)*13}px">
+      <span class="caret" data-caret="${esc(s.id)}">${hasKids && !filter ? (isOpen?'▾':'▸') : ''}</span>
+      <span class="tw">${esc(s.number)}</span>
+      <span class="tt">${esc(s.title)}</span>
+    </div>`);
+  }
+  $('tree').innerHTML = rows.join('') ||
+    '<div style="padding:16px;font-size:12px;color:#9c9690">No clauses match.</div>';
+}
+
+$('tree').addEventListener('click', e => {
+  const caret = e.target.closest('[data-caret]');
+  if (caret){
+    const id = caret.getAttribute('data-caret');
+    state.collapsed[id] = !state.collapsed[id];
+    renderTree();
+    return;
+  }
+  const node = e.target.closest('.tnode');
+  if (!node) return;
+  const sec = (state.sections[state.current]||[]).find(s => s.id === node.dataset.id);
+  if (sec) showSection(sec);
+});
+$('treeFilter').addEventListener('input', renderTree);
+
+/* ---------- section reader ---------- */
+function showSection(sec){
+  state.currentSection = sec;
+  const doc = docById(sec.doc_id) || {};
+  const secs = state.sections[sec.doc_id] || [];
+  const kids = secs.filter(s => s.parent === sec.id);
+
+  const ancestors = [];
+  let p = sec.parent;
+  while (p){
+    const pn = secs.find(x => x.id === p);
+    if (!pn) break;
+    ancestors.unshift(pn);
+    p = pn.parent;
+  }
+
+  const gap = (doc.ocr_gap_pages || []).includes(sec.pdf_page);
+
+  $('reader').innerHTML = `<div class="reader-inner">
+    <div class="crumb"><span>${esc(doc.short || doc.title || sec.doc_id)}</span>${
+      ancestors.map(a => `<span>${esc(a.number)}</span>`).join('')}</div>
+    ${doc.fixture ? `<div class="notice"><b>Fixture document</b>This text is invented test data, not law.</div>` : ''}
+    ${gap ? `<div class="notice"><b>OCR gap on this page</b>This page produced no extractable text during ingest, so the clause body may be incomplete. Re-run ingest after OCR before relying on it.</div>` : ''}
+    <div class="sec-num">${esc(sec.number)}</div>
+    <h1 class="sec-title">${esc(sec.title)}</h1>
+
+    <div class="cite">
+      <div class="cite-row">
+        <span><span class="cite-k">Document</span> <b>${esc(doc.title || sec.doc_id)}</b></span>
+      </div>
+      <div class="cite-row">
+        <span><span class="cite-k">Clause</span> <b>${esc(sec.number)}</b></span>
+        <span><span class="cite-k">Page</span> <b>${esc(pageLabel(sec, doc))}</b></span>
+        ${doc.edition ? `<span><span class="cite-k">Edition</span> <b>${esc(doc.edition)}</b></span>` : ''}
+        ${doc.authority ? `<span><span class="cite-k">Authority</span> <b>${esc(doc.authority)}</b></span>` : ''}
+      </div>
+      <div class="cite-row">
+        ${doc.sha256 ? `<span><span class="cite-k">Source SHA-256</span> <b>${esc(doc.sha256.slice(0,16))}…</b></span>` : ''}
+        ${doc.ingested_at ? `<span><span class="cite-k">Ingested</span> <b>${esc(doc.ingested_at.slice(0,10))}</b></span>` : ''}
+      </div>
+      <div class="cite-actions">
+        <button class="cbtn" data-act="copycite">Copy citation</button>
+        <button class="cbtn" data-act="permalink">Permalink</button>
+        <button class="cbtn" data-act="asksec">Ask about this clause</button>
+      </div>
+    </div>
+
+    <div class="sec-body">${linkXrefs(sec.text)}</div>
+    <div class="verbatim-note">
+      Text reproduced verbatim from the ingested PDF, ${esc(pageLabel(sec, doc))}.
+      Not paraphrased, not summarised. Verify against the source document before submission.
+    </div>
+
+    ${kids.length ? `<div class="kids"><h4>Sub-clauses</h4>${
+      kids.map(k => `<a class="kid" data-goto="${esc(k.id)}"><b>${esc(k.number)}</b>${esc(k.title)}</a>`).join('')
+    }</div>` : ''}
+  </div>`;
+
+  $('reader').scrollTop = 0;
+  renderTree();
+  history.replaceState(null, '', `#${encodeURIComponent(sec.doc_id)}/${encodeURIComponent(sec.number)}`);
+}
+
+// Turn "see 12.4" / "Table 4.1" inside clause text into working links.
+function linkXrefs(text){
+  const secs = state.sections[state.current] || [];
+  const known = new Set(secs.map(s => s.number));
+  return esc(text).replace(/\b(\d{1,3}(?:\.\d{1,3}){1,3})\b/g, (m) =>
+    known.has(m) ? `<span class="xref" data-xref="${m}">${m}</span>` : m);
+}
+
+$('reader').addEventListener('click', e => {
+  const x = e.target.closest('[data-xref]');
+  if (x){
+    const s = (state.sections[state.current]||[]).find(v => v.number === x.dataset.xref);
+    if (s) showSection(s);
+    return;
+  }
+  const g = e.target.closest('[data-goto]');
+  if (g){
+    const s = (state.sections[state.current]||[]).find(v => v.id === g.dataset.goto);
+    if (s) showSection(s);
+    return;
+  }
+  const a = e.target.closest('[data-act]');
+  if (!a || !state.currentSection) return;
+  const sec = state.currentSection, doc = docById(sec.doc_id) || {};
+  if (a.dataset.act === 'copycite'){
+    const t = `${doc.title || sec.doc_id}, Clause ${sec.number} "${sec.title}", ${pageLabel(sec, doc)}`;
+    navigator.clipboard?.writeText(t);
+    a.textContent = 'Copied'; setTimeout(()=>a.textContent='Copy citation', 1400);
+  } else if (a.dataset.act === 'permalink'){
+    navigator.clipboard?.writeText(location.href);
+    a.textContent = 'Copied'; setTimeout(()=>a.textContent='Permalink', 1400);
+  } else if (a.dataset.act === 'asksec'){
+    switchPane('ask');
+    $('askInput').value = `Explain ${sec.number} ${sec.title}`;
+    $('askInput').focus();
+  }
+});
+
+function routeFromHash(){
+  const h = decodeURIComponent(location.hash.replace(/^#/,''));
+  if (!h.includes('/')) return;
+  const [docId, num] = h.split('/');
+  if (!docById(docId)) return;
+  selectDoc(docId).then(() => {
+    const s = (state.sections[docId]||[]).find(v => v.number === num);
+    if (s) showSection(s);
+  });
+}
+
+/* ============================================================
+   SEARCH — BM25 over ingested clauses. Fully deterministic and
+   inspectable; no model involved in deciding what matches.
+   ============================================================ */
+function tokenize(s){
+  // Keep dotted numerals intact: "12.4" and "1.8" are meaningful here.
+  return (s.toLowerCase().match(/[a-z]+|\d+(?:\.\d+)*/g) || []);
+}
+
+let bm25 = null;
+function buildIndex(){
+  const docsAll = [];
+  for (const d of state.docs){
+    for (const s of (state.sections[d.doc_id] || [])){
+      docsAll.push(s);
+    }
+  }
+  const N = docsAll.length;
+  const df = new Map();
+  const tfs = docsAll.map(s => {
+    const toks = tokenize(`${s.number} ${s.title} ${s.text}`);
+    const tf = new Map();
+    for (const t of toks) tf.set(t, (tf.get(t)||0)+1);
+    for (const t of tf.keys()) df.set(t, (df.get(t)||0)+1);
+    return {tf, len: toks.length};
+  });
+  const avg = tfs.reduce((a,b)=>a+b.len,0) / (N||1);
+  bm25 = {docsAll, tfs, df, N, avg};
+}
+
+function search(query, limit=60){
+  if (!bm25) buildIndex();
+  if (!bm25.N) return [];
+  const qt = tokenize(query);
+  if (!qt.length) return [];
+  const k1=1.5, b=0.75;
+  const scored = [];
+  for (let i=0;i<bm25.N;i++){
+    const {tf, len} = bm25.tfs[i];
+    let score = 0;
+    for (const t of qt){
+      const f = tf.get(t); if (!f) continue;
+      const n = bm25.df.get(t) || 0;
+      const idf = Math.log(1 + (bm25.N - n + 0.5)/(n + 0.5));
+      score += idf * (f*(k1+1)) / (f + k1*(1 - b + b*len/bm25.avg));
+    }
+    if (score <= 0) continue;
+    const s = bm25.docsAll[i];
+    // Exact clause-number query ("12.4") should surface that clause first.
+    if (qt.length === 1 && s.number.toLowerCase() === qt[0]) score += 1000;
+    if (s.title.toLowerCase().includes(query.trim().toLowerCase())) score += 5;
+    if (docById(s.doc_id)?.fixture) score -= 0.001; // fixtures never outrank real law
+    scored.push({s, score});
+  }
+  scored.sort((a,b)=>b.score-a.score);
+  return scored.slice(0, limit);
+}
+
+function snippet(text, query, len=260){
+  const qt = tokenize(query);
+  const low = text.toLowerCase();
+  let at = -1;
+  for (const t of qt){ const i = low.indexOf(t); if (i>=0 && (at<0 || i<at)) at = i; }
+  const start = at < 0 ? 0 : Math.max(0, at - 70);
+  let out = text.slice(start, start + len).replace(/\s+/g,' ').trim();
+  if (start > 0) out = '… ' + out;
+  if (start + len < text.length) out += ' …';
+  let html = esc(out);
+  for (const t of new Set(qt)){
+    if (t.length < 2) continue;
+    html = html.replace(new RegExp(`\\b(${t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'), '<mark>$1</mark>');
+  }
+  return html;
+}
+
+async function ensureAllSections(){
+  await Promise.all(state.docs.map(async d => {
+    if (state.sections[d.doc_id]) return;
+    try {
+      const r = await fetch(`/corpus/docs/${encodeURIComponent(d.doc_id)}/sections.json`, {cache:'no-store'});
+      const j = await r.json();
+      state.sections[d.doc_id] = (j.sections||[]).map(s => ({...s, doc_id: d.doc_id}));
+    } catch(e){ state.sections[d.doc_id] = []; }
+  }));
+  bm25 = null;
+}
+
+async function runSearch(){
+  const q = $('q').value.trim();
+  if (!q) return;
+  if (!state.docs.length){
+    $('searchMeta').textContent = '';
+    $('results').innerHTML = `<div class="notice"><b>Corpus empty</b>No documents are loaded, so there is nothing to search. See the Browse tab for the load procedure.</div>`;
+    return;
+  }
+  $('searchMeta').innerHTML = '<span class="spin"></span> searching…';
+  await ensureAllSections();
+  const hits = search(q);
+  $('searchMeta').textContent =
+    `${hits.length} clause${hits.length===1?'':'s'} across ${state.docs.length} document${state.docs.length===1?'':'s'} · ranked by BM25 · deterministic, no model involved`;
+  if (!hits.length){
+    $('results').innerHTML = `<div class="notice"><b>No match in loaded documents</b>
+      This means the loaded corpus does not contain those words — not that the rule does not exist.
+      The relevant document may simply not be ingested yet.</div>`;
+    return;
+  }
+  $('results').innerHTML = hits.map(({s}) => {
+    const d = docById(s.doc_id) || {};
+    return `<a class="res" data-doc="${esc(s.doc_id)}" data-num="${esc(s.number)}">
+      <div class="res-top">
+        <span class="res-n">${esc(s.number)}</span>
+        <span class="res-t">${esc(s.title)}</span>
+        <span class="res-src">${d.fixture?'⚠ ':''}${esc(d.short||s.doc_id)} · ${esc(pageLabel(s,d))}</span>
+      </div>
+      <div class="res-snip">${snippet(s.text, q)}</div>
+    </a>`;
+  }).join('');
+}
+
+$('qBtn').onclick = runSearch;
+$('q').addEventListener('keydown', e => { if (e.key==='Enter') runSearch(); });
+$('results').addEventListener('click', async e => {
+  const r = e.target.closest('.res'); if (!r) return;
+  switchPane('browse');
+  await selectDoc(r.dataset.doc);
+  const s = (state.sections[r.dataset.doc]||[]).find(v => v.number === r.dataset.num);
+  if (s) showSection(s);
+});
+
+/* ============================================================
+   ASK — retrieval is done here (deterministic); the model only
+   phrases what retrieval found and must cite it. If retrieval
+   returns nothing, we refuse locally and never call the model.
+   ============================================================ */
+function updateAskAvailability(){
+  const ok = state.docs.length > 0;
+  $('askBtn').disabled = !ok;
+  $('askHint').innerHTML = ok
+    ? 'Answers are drawn only from loaded documents and carry clause + page. Verify before submission.'
+    : 'No documents loaded — nothing to answer from. See Browse for the load procedure.';
+}
+
+async function ask(){
+  const q = $('askInput').value.trim();
+  if (!q || !state.docs.length) return;
+  $('askInput').value = '';
+  $('askBtn').disabled = true;
+
+  const id = 'm' + Date.now();
+  $('askLog').insertAdjacentHTML('beforeend',
+    `<div class="msg" id="${id}"><div class="msg-q">${esc(q)}</div>
+     <div class="msg-a"><div class="answer-box"><span class="spin"></span> Retrieving clauses…</div></div></div>`);
+  $('askLog').scrollTop = $('askLog').scrollHeight;
+
+  await ensureAllSections();
+  const hits = search(q, 12).filter(h => !(docById(h.s.doc_id)||{}).fixture || state.docs.every(d=>d.fixture));
+  const target = document.getElementById(id).querySelector('.msg-a');
+
+  if (!hits.length){
+    target.innerHTML = `<div class="answer-box refusal">
+      <b>Not answerable from the loaded corpus.</b><br><br>
+      Retrieval found no clause matching that question in the documents currently loaded.
+      This is a refusal, not an answer — the rule may well exist in a document that has not
+      been ingested yet. Check the Browse tab for what is loaded.</div>`;
+    $('askBtn').disabled = false;
+    return;
+  }
+
+  target.innerHTML = `<div class="answer-box"><span class="spin"></span> ${hits.length} clauses retrieved — composing cited answer…</div>`;
+
+  const passages = hits.map(({s}) => {
+    const d = docById(s.doc_id) || {};
+    return {
+      id: s.id, doc_id: s.doc_id, doc_title: d.title || s.doc_id, doc_short: d.short || s.doc_id,
+      edition: d.edition || null, number: s.number, title: s.title,
+      pdf_page: s.pdf_page, printed_page: s.printed_page,
+      cite: shortCite(s, d),
+      text: s.text.slice(0, 4000)
+    };
+  });
+
+  let data;
+  try {
+    const r = await fetch('/api/code/ask', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({question:q, passages})
+    });
+    data = await r.json();
+  } catch(e){
+    data = {ok:false, error:'Network error contacting the answer service.'};
+  }
+
+  if (!data.ok){
+    target.innerHTML = `<div class="answer-box refusal">
+      <b>No answer produced.</b><br><br>${esc(data.error || 'Unknown error.')}
+      <br><br>The retrieved clauses are listed below — read them directly.</div>
+      ${sourcesHtml(passages)}`;
+    $('askBtn').disabled = false;
+    return;
+  }
+
+  target.innerHTML = `<div class="answer-box${data.refused?' refusal':''}">
+      ${renderAnswer(data.answer, passages)}
+    </div>${sourcesHtml(data.cited_ids ? passages.filter(p=>data.cited_ids.includes(p.id)) : passages)}`;
+  $('askBtn').disabled = false;
+  $('askLog').scrollTop = $('askLog').scrollHeight;
+}
+
+// Convert [[cite:<section id>]] markers from the API into clickable chips.
+function renderAnswer(text, passages){
+  const byId = Object.fromEntries(passages.map(p => [p.id, p]));
+  let html = esc(text).replace(/\[\[cite:([^\]]+)\]\]/g, (m, sid) => {
+    const p = byId[sid];
+    if (!p) return '';
+    return `<span class="cite-chip" data-doc="${esc(p.doc_id)}" data-num="${esc(p.number)}">
+      <b>§${esc(p.number)}</b> ${esc(p.printed_page!=null?('p.'+p.printed_page):('PDF p.'+p.pdf_page))}</span>`;
+  });
+  return html.split(/\n{2,}/).map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+}
+
+function sourcesHtml(passages){
+  if (!passages.length) return '';
+  return `<div class="sources"><h5>Source clauses — read these, not the summary</h5>${
+    passages.map(p => `<a class="src-item" data-doc="${esc(p.doc_id)}" data-num="${esc(p.number)}">
+      <div class="si-h">${esc(p.doc_short)} § ${esc(p.number)} — ${esc(p.title)} · ${esc(p.printed_page!=null?('p. '+p.printed_page):('PDF p. '+p.pdf_page))}</div>
+      <div class="si-t">${esc(p.text.slice(0,240).replace(/\s+/g,' '))}…</div>
+    </a>`).join('')}</div>`;
+}
+
+$('askLog').addEventListener('click', async e => {
+  const t = e.target.closest('[data-doc][data-num]');
+  if (!t) return;
+  switchPane('browse');
+  await selectDoc(t.dataset.doc);
+  const s = (state.sections[t.dataset.doc]||[]).find(v => v.number === t.dataset.num);
+  if (s) showSection(s);
+});
+$('askBtn').onclick = ask;
+$('askInput').addEventListener('keydown', e => {
+  if (e.key==='Enter' && (e.metaKey||e.ctrlKey)) ask();
+});
+
+/* ============================================================
+   FEASIBILITY — every output number must trace to a loaded clause.
+   A rule with no citation is not applied; the field reports
+   NOT DERIVABLE instead of guessing a "typical" value.
+   ============================================================ */
+const OUTPUTS = [
+  {key:'base_fsi',     name:'Base FSI'},
+  {key:'chargeable_fsi',name:'Chargeable / premium FSI'},
+  {key:'max_height',   name:'Maximum height'},
+  {key:'front_margin', name:'Front margin'},
+  {key:'side_margin',  name:'Side margin'},
+  {key:'rear_margin',  name:'Rear margin'},
+  {key:'common_plot',  name:'Common plot'},
+  {key:'parking',      name:'Parking'},
+  {key:'ground_coverage', name:'Ground coverage'}
+];
+
+async function loadRules(){
+  if (state.rules) return state.rules;
+  try {
+    const r = await fetch('/corpus/rules.json', {cache:'no-store'});
+    state.rules = r.ok ? await r.json() : {rules:[]};
+  } catch(e){ state.rules = {rules:[]}; }
+  return state.rules;
+}
+
+function ruleApplies(rule, input){
+  const w = rule.when || {};
+  if (w.city && w.city !== input.city) return false;
+  if (w.zone && w.zone !== input.zone) return false;
+  if (w.use  && w.use  !== input.use)  return false;
+  if (w.min_plot_area != null && input.area <  w.min_plot_area) return false;
+  if (w.max_plot_area != null && input.area >  w.max_plot_area) return false;
+  if (w.min_road_width != null && input.road < w.min_road_width) return false;
+  if (w.max_road_width != null && input.road > w.max_road_width) return false;
+  return true;
+}
+
+async function runFeasibility(){
+  const input = {
+    city: $('f_city').value, area: parseFloat($('f_area').value)||0,
+    road: parseFloat($('f_road').value)||0, zone: $('f_zone').value, use: $('f_use').value
+  };
+  const {rules} = await loadRules();
+  await ensureAllSections();
+
+  const head = `<div class="notice"><b>How to read this</b>
+    Each row is produced only if a rule loaded from an ingested clause matches these
+    inputs. Rows marked NOT DERIVABLE mean no such rule is loaded — never that the
+    requirement is zero or unrestricted. Verify every citation against the source
+    before using this on a submission.</div>`;
+
+  if (!rules || !rules.length){
+    $('feasOut').innerHTML = head + `<div class="notice"><b>No rules loaded</b>
+      <code class="inline">corpus/rules.json</code> is empty, so nothing can be computed.
+      Rules are authored from ingested clauses — each one must name the document, clause
+      and page it comes from, and the calculator rejects any rule missing a citation.
+      See <code class="inline">corpus/rules.README.md</code> for the format and workflow.</div>`
+      + OUTPUTS.map(o => outRow(o, null)).join('');
+    return;
+  }
+
+  $('feasOut').innerHTML = head + OUTPUTS.map(o => {
+    const matches = rules.filter(r => r.output === o.key && ruleApplies(r, input));
+    // A rule without a resolvable citation is inadmissible, full stop.
+    const admissible = matches.filter(r => r.citation && r.citation.doc_id && r.citation.number);
+    return outRow(o, admissible, matches.length - admissible.length);
+  }).join('');
+}
+
+function outRow(o, matches, rejected){
+  if (!matches || !matches.length){
+    return `<div class="out-row blocked">
+      <div class="out-head"><span class="out-name">${esc(o.name)}</span>
+        <span class="out-val none">Not derivable</span></div>
+      <div class="out-why">No cited rule loaded for this input combination.
+        ${rejected ? `<b>${rejected} rule(s) were rejected for missing a citation.</b> ` : ''}
+        Find the governing clause in <a data-jump="${esc(o.name)}">Search</a> and add it to
+        <code class="inline">corpus/rules.json</code> with its clause and page.</div>
+    </div>`;
+  }
+  // Most specific rule wins; ties are surfaced rather than silently resolved.
+  const best = matches.slice().sort((a,b) => specificity(b) - specificity(a))[0];
+  const c = best.citation;
+  const tied = matches.filter(m => specificity(m) === specificity(best));
+  return `<div class="out-row ok">
+    <div class="out-head"><span class="out-name">${esc(o.name)}</span>
+      <span class="out-val">${esc(best.value)}${best.unit?' '+esc(best.unit):''}</span></div>
+    <div class="out-why">
+      ${best.note ? esc(best.note)+'<br>' : ''}
+      <span class="cite-chip" data-doc="${esc(c.doc_id)}" data-num="${esc(c.number)}">
+        <b>§${esc(c.number)}</b> ${esc(c.page_label || '')}</span>
+      ${best.verified === false ? ' <b style="color:#8a5a00">UNVERIFIED — confirm against the page</b>' : ''}
+      ${tied.length>1 ? `<br><b style="color:#8a5a00">${tied.length} equally specific rules matched — resolve manually.</b>` : ''}
+    </div>
+  </div>`;
+}
+
+function specificity(r){
+  const w = r.when || {};
+  return ['city','zone','use','min_plot_area','max_plot_area','min_road_width','max_road_width']
+    .reduce((n,k) => n + (w[k]!=null?1:0), 0);
+}
+
+$('fRun').onclick = runFeasibility;
+$('feasOut').addEventListener('click', async e => {
+  const j = e.target.closest('[data-jump]');
+  if (j){ switchPane('search'); $('q').value = j.dataset.jump; runSearch(); return; }
+  const t = e.target.closest('[data-doc][data-num]');
+  if (!t) return;
+  switchPane('browse');
+  await selectDoc(t.dataset.doc);
+  const s = (state.sections[t.dataset.doc]||[]).find(v => v.number === t.dataset.num);
+  if (s) showSection(s);
+});
+
+/* ---------- panes ---------- */
+function switchPane(name){
+  document.querySelectorAll('.pane').forEach(p => p.classList.toggle('on', p.id === 'pane-'+name));
+  document.querySelectorAll('.htab').forEach(t => t.classList.toggle('on', t.dataset.pane === name));
+  if (name === 'feas' && !$('feasOut').innerHTML) runFeasibility();
+}
+document.querySelectorAll('.htab').forEach(t => t.onclick = () => switchPane(t.dataset.pane));
+
+boot();
+</script>
+</body>
+</html>

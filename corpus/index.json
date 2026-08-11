@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-08-11T11:31:52.649226+00:00",
+  "documents": [
+    {
+      "doc_id": "fixture-sample",
+      "title": "FIXTURE — Sample Regulations (NOT LAW)",
+      "authority": "Synthetic test data",
+      "edition": "fixture",
+      "source_file": "sample-regulations-FIXTURE.pdf",
+      "sha256": "8a77282c15b0019e942b0b7543da97db5b7bd8efbc3a9b1a1b409c094a6abd22",
+      "pdf_pages": 6,
+      "sections": 12,
+      "printed_page_offset": -2,
+      "printed_page_offset_confidence": 1.0,
+      "ocr_gap_pages": [],
+      "ocr_gap_count": 0,
+      "coverage": 1.0,
+      "ingested_at": "2026-08-11T11:19:17.045627+00:00",
+      "pipeline": "tools/ingest.py",
+      "fixture": true
+    }
+  ]
+}

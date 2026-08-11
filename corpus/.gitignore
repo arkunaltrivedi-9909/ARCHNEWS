@@ -1,0 +1,6 @@
+# Source PDFs — large, and NBC is BIS-copyright. Never commit the originals.
+inbox/
+
+# NBC extracted text is BIS copyright. Do not publish it from a public repo.
+# Delete these two lines only if this repository is private and you hold a licence.
+docs/nbc-*/
