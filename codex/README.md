@@ -96,6 +96,20 @@ python3 tools/ingest_amendment.py \
 `--amends` is what links edits to the base document. Without it the edits are
 listed but cannot overlay the clauses they change, and `verify.py` warns.
 
+### Deploying what you loaded
+
+`corpus/index.json` is a **generated file** — every ingest rewrites it from
+whatever is in `corpus/docs/`. It is committed empty here because no corpus
+document is in version control. Once you ingest real documents, commit both:
+
+```bash
+git add corpus/docs corpus/index.json && git commit -m "load CGDCR Part II"
+```
+
+If `corpus/docs/` and `corpus/index.json` disagree, the app will list a document
+it cannot fetch. `tools/verify.py` catches that; so does re-running
+`python3 tools/ingest.py --reindex` before you commit.
+
 ### Verify before trusting
 
 ```bash
