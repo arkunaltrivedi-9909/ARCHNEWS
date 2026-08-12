@@ -68,6 +68,8 @@ def main():
         flag = ""
         if man.get("fixture"):
             flag = f"  {RED}FIXTURE — NOT LAW{OFF}"
+        elif man.get("ocr_recovered_pages"):
+            flag = f"  {YEL}{len(man['ocr_recovered_pages'])} page(s) via OCR{OFF}"
         elif man.get("type") == "amendment":
             flag = f"  {YEL}AMENDMENT — {man.get('amendment_items', 0)} edit(s)"
             flag += f" → {man.get('amends_doc') or 'unlinked'}{OFF}"
@@ -76,6 +78,14 @@ def main():
               f"{colour}{cov*100:>9.1f}%{OFF}"
               f"{(f'{offset:+d}' if offset is not None else 'unknown'):>12}{flag}")
 
+        ocr_recovered = man.get("ocr_recovered_pages") or []
+        if ocr_recovered:
+            warnings.append(
+                f"{doc_id}: {len(ocr_recovered)} page(s) were recovered by OCR "
+                f"(lang={man.get('ocr_lang')}). OCR misreads digits — clause numbers "
+                f"and dimensions on those pages are UNCONFIRMED and are flagged as such "
+                f"in the reader. Pages: {ocr_recovered[:12]}"
+                f"{' …' if len(ocr_recovered) > 12 else ''}")
         if gaps:
             warnings.append(
                 f"{doc_id}: {gaps} page(s) yielded no text — likely scanned. "

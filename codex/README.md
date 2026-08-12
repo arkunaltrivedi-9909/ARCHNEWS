@@ -214,7 +214,26 @@ is a short public errata document, not the code itself.
 | App | Built, tested, deployable — 82 tests passing |
 | GDCR Part II (Planning) | **Loaded** — 151 clauses, 67 pages, FSI / margins / parking / common plot |
 | GDCR Part III (Performance) | **Loaded** — 139 clauses, 56 pages |
+| Corporate Office / Hotel / Mixed-Use 2024 | **Loaded** — 9 clauses, entirely OCR-recovered, every page flagged |
 | GDCR Part I (Procedure) | Not loaded |
 | CGDCR amendments | **None loaded** — the base text alone may be out of date |
 | NBC | Amendment No. 1 parses locally; excluded from this public repo (BIS copyright) |
+
+## OCR
+
+Scanned pages have no text layer, and an invisible page looks exactly like an
+absent rule. `--ocr` recovers them with tesseract:
+
+```bash
+sudo apt-get install tesseract-ocr tesseract-ocr-guj
+python3 tools/ingest.py --doc <id> --pdf <file> --ocr --ocr-lang eng+guj
+```
+
+**OCR text is not equivalent to extracted text and is never presented as
+though it were.** It misreads precisely what matters: during this build, clause
+numbers in a left margin came back as `aL0` for 3.10 and `Sud` for 3.17. Every
+page recovered this way is recorded in the manifest, reported by `verify.py`,
+and carries a warning in the reader telling you to confirm each figure against
+the source page. Use `eng+guj` for Gujarat notifications — the English model
+alone turns Gujarati script into noise.
 | Phase 2 | AUDA/GUDA DP zoning + TP schemes — spatial data, different approach |

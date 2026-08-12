@@ -68,6 +68,68 @@ def extract_pages(pdf_path):
     return pages
 
 
+def ocr_missing_pages(pdf_path, pages, lang="eng"):
+    """
+    Recover text for pages that have no text layer, by running tesseract over
+    the page's embedded image.
+
+    OCR is a genuine downgrade in trustworthiness and is recorded as such. It
+    misreads exactly the things that matter here: in testing, clause numbers in
+    the left margin came back as 'aL0' for 3.10 and 'Sud' for 3.17, and digits
+    inside dimensions are equally vulnerable. Pages recovered this way are
+    flagged all the way through to the reader, who must check them against the
+    source before relying on any figure.
+
+    Returns the number of pages recovered.
+    """
+    import shutil
+    import subprocess
+    import tempfile
+
+    if not shutil.which("tesseract"):
+        print("  ! tesseract not installed — cannot OCR. "
+              "Install tesseract-ocr (and a language pack) and re-run with --ocr.")
+        return 0
+
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        return 0
+
+    reader = PdfReader(pdf_path)
+    recovered = 0
+    for pg in pages:
+        if len(pg["text"].strip()) >= 20:
+            continue
+        page_obj = reader.pages[pg["pdf_page"] - 1]
+        try:
+            images = list(page_obj.images)
+        except Exception:
+            images = []
+        if not images:
+            continue
+        chunks = []
+        for img in images:
+            with tempfile.NamedTemporaryFile(suffix=os.path.splitext(img.name)[1] or ".png",
+                                             delete=False) as fh:
+                fh.write(img.data)
+                tmp = fh.name
+            try:
+                out = subprocess.run(["tesseract", tmp, "stdout", "-l", lang],
+                                     capture_output=True, text=True, timeout=180)
+                if out.returncode == 0 and out.stdout.strip():
+                    chunks.append(out.stdout)
+            except Exception as exc:
+                print(f"  ! OCR failed on page {pg['pdf_page']}: {exc}")
+            finally:
+                os.unlink(tmp)
+        if chunks:
+            pg["text"] = "\n".join(chunks)
+            pg["ocr"] = True          # provenance: this text was not in the file
+            recovered += 1
+    return recovered
+
+
 def detect_printed_offset(pages, probe=40):
     """
     Infer printed_number - pdf_page by looking for a stable integer in the
@@ -111,9 +173,12 @@ def detect_printed_offset(pages, probe=40):
 # "12.4.2  Parking Requirements"  /  "5. GENERAL"
 NUMBERED = re.compile(r"^\s{0,8}(\d{1,3}(?:\.\d{1,3}){0,4})\.?\s+(\S.{0,150})$")
 # "CHAPTER 5 - ..." / "PART II ..." / "TABLE 4.1 ..." / "ANNEXURE A"
+# The identifier must be a number, a roman numeral, or a single letter. Allowing
+# arbitrary letters turns ordinary prose — "PART OF any notified water body" —
+# into a heading.
 STRUCTURAL = re.compile(
     r"^\s{0,8}((?:CHAPTER|PART|SCHEDULE|ANNEXURE|APPENDIX|TABLE)\s+"
-    r"[IVXLC0-9A-Z]{1,6}(?:\.\d{1,3}){0,3})\b\.?[\s\-:]*(.{0,150})$",
+    r"(?:\d{1,3}(?:\.\d{1,3}){0,3}|[IVXLC]{1,6}|[A-Z]))\b\.?[\s\-:]*(.{0,150})$",
     re.IGNORECASE,
 )
 # Table-of-contents lines: "12.4 Parking .......... 87" or trailing bare page no.
@@ -308,7 +373,8 @@ def build_sections(pages, doc_id, offset):
     return sections
 
 
-def ingest(doc_id, pdf_path, title=None, authority=None, edition=None):
+def ingest(doc_id, pdf_path, title=None, authority=None, edition=None,
+           ocr=False, ocr_lang="eng"):
     if not os.path.isfile(pdf_path):
         sys.exit(f"not found: {pdf_path}")
 
@@ -317,6 +383,12 @@ def ingest(doc_id, pdf_path, title=None, authority=None, edition=None):
     if not pages:
         sys.exit("  ! no pages extracted")
 
+    if ocr:
+        n = ocr_missing_pages(pdf_path, pages, ocr_lang)
+        if n:
+            print(f"  OCR recovered {n} page(s) — flagged as lower confidence")
+
+    ocr_pages_list = [p["pdf_page"] for p in pages if p.get("ocr")]
     empty = [p["pdf_page"] for p in pages if len(p["text"].strip()) < 20]
     offset, confidence = detect_printed_offset(pages)
     sections = build_sections(pages, doc_id, offset if confidence >= 0.5 else 0)
@@ -337,6 +409,8 @@ def ingest(doc_id, pdf_path, title=None, authority=None, edition=None):
         "printed_page_offset_confidence": confidence,
         "ocr_gap_pages": empty,
         "ocr_gap_count": len(empty),
+        "ocr_recovered_pages": ocr_pages_list,
+        "ocr_lang": ocr_lang if ocr_pages_list else None,
         "coverage": round(1 - len(empty) / len(pages), 4),
         "ingested_at": datetime.now(timezone.utc).isoformat(),
         "pipeline": "tools/ingest.py",
@@ -345,6 +419,11 @@ def ingest(doc_id, pdf_path, title=None, authority=None, edition=None):
         # treat it as authority. Never remove it from a synthetic document.
         "fixture": doc_id.startswith("fixture-"),
     }
+
+    ocr_set = set(ocr_pages_list)
+    for sec in sections:
+        if sec["pdf_page"] in ocr_set:
+            sec["ocr"] = True
 
     for name, payload in (
         ("pages.json", {"doc_id": doc_id, "pages": pages}),
@@ -406,6 +485,11 @@ def main():
     ap.add_argument("--all", action="store_true",
                     help="ingest every PDF in corpus/inbox/ using registry.json")
     ap.add_argument("--reindex", action="store_true", help="rebuild corpus/index.json only")
+    ap.add_argument("--ocr", action="store_true",
+                    help="OCR pages that have no text layer (requires tesseract). "
+                         "Recovered text is flagged as lower confidence throughout.")
+    ap.add_argument("--ocr-lang", default="eng",
+                    help="tesseract language(s), e.g. eng or eng+guj (default: eng)")
     args = ap.parse_args()
 
     if args.reindex:
@@ -428,12 +512,14 @@ def main():
             doc_id = os.path.splitext(fn)[0]
             meta = registry.get(doc_id, {})
             ingest(doc_id, os.path.join(inbox, fn), meta.get("title"),
-                   meta.get("authority"), meta.get("edition"))
+                   meta.get("authority"), meta.get("edition"),
+                   args.ocr, args.ocr_lang)
         return
 
     if not args.doc or not args.pdf:
         ap.error("--doc and --pdf are required (or use --all)")
-    ingest(args.doc, args.pdf, args.title, args.authority, args.edition)
+    ingest(args.doc, args.pdf, args.title, args.authority, args.edition,
+           args.ocr, args.ocr_lang)
 
 
 if __name__ == "__main__":

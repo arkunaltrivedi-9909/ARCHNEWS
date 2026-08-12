@@ -240,6 +240,31 @@
       "sources": [],
       "url_reachable": true,
       "status": "loaded"
+    },
+    {
+      "doc_id": "guj-corporate-hotel-mixeduse-2024",
+      "title": "Regulations for Corporate Office, Hotel & Mixed Used Development, 2024",
+      "short": "Corporate/Hotel/Mixed-Use 2024",
+      "authority": "Urban Development & Urban Housing Department, Government of Gujarat",
+      "jurisdiction": [
+        "Gujarat"
+      ],
+      "edition": "2024",
+      "role": "primary",
+      "status": "loaded",
+      "url_reachable": true,
+      "covers": [
+        "corporate office",
+        "hotel",
+        "mixed use development",
+        "FSI",
+        "refuge area",
+        "parking"
+      ],
+      "note": "Supplied from an official copy. SCANNED — no text layer; all 9 pages recovered by OCR (eng+guj) and flagged as unconfirmed in the reader. Postdates CGDCR 2017 and may modify it for these building types.",
+      "sources": [
+        "supplied directly from an official copy; not downloaded by the build"
+      ]
     }
   ]
 }

@@ -576,6 +576,11 @@ function showSection(sec){
       ancestors.map(a => `<span>${esc(a.number)}</span>`).join('')}</div>
     ${doc.fixture ? `<div class="notice"><b>Fixture document</b>This text is invented test data, not law.</div>` : ''}
     ${gap ? `<div class="notice"><b>OCR gap on this page</b>This page produced no extractable text during ingest, so the clause body may be incomplete. Re-run ingest after OCR before relying on it.</div>` : ''}
+    ${sec.ocr ? `<div class="notice"><b>Recovered by OCR — figures not reliable</b>
+      This page is a scan with no text layer. The text below was read by OCR, which
+      misreads digits: clause numbers and dimensions are the most vulnerable part.
+      Treat every number here as unconfirmed and check it against the source page
+      before using it.</div>` : ''}
     ${amendmentAlert(sec)}
     <div class="sec-num">${esc(sec.number)}</div>
     <h1 class="sec-title">${esc(sec.title)}</h1>
