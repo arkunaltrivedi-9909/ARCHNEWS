@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CODEX — regulation ingestion pipeline.
+BYCODES — regulation ingestion pipeline.
 
 Converts an official regulation PDF into the corpus format the app serves:
 
@@ -316,6 +316,13 @@ def build_sections(pages, doc_id, offset):
             head = None if front_matter else looks_like_heading(line, chapters)
             if head:
                 num, title = head
+                # A table spanning several pages reprints its header on each one.
+                # Those are continuations, not new nodes: without this the tree
+                # shows "TABLE 6.2" four times and the table's rows are split
+                # across four fragments, none of which holds the whole rule.
+                if current is not None and num == current["number"]:
+                    current["text"] += line + "\n"
+                    continue
                 # A table or annex belongs to the clause it interrupts. Without
                 # this it floats to the root of the tree, detached from the rule
                 # it actually carries — and in these regulations the table IS
@@ -374,7 +381,7 @@ def build_sections(pages, doc_id, offset):
 
 
 def ingest(doc_id, pdf_path, title=None, authority=None, edition=None,
-           ocr=False, ocr_lang="eng"):
+           ocr=False, ocr_lang="eng", state=None, scope=None):
     if not os.path.isfile(pdf_path):
         sys.exit(f"not found: {pdf_path}")
 
@@ -401,6 +408,11 @@ def ingest(doc_id, pdf_path, title=None, authority=None, edition=None,
         "title": title or doc_id,
         "authority": authority,
         "edition": edition,
+        # Jurisdiction. BYCODES is built to hold every Indian state, so a
+        # document that does not say where it applies is unusable: the reader
+        # must never be shown Gujarat's FSI while working on a Maharashtra plot.
+        "state": state,          # "Gujarat", "Maharashtra", … or "India"
+        "scope": scope,          # national | state | authority | city
         "source_file": os.path.basename(pdf_path),
         "sha256": sha256_of(pdf_path),
         "pdf_pages": len(pages),
@@ -499,6 +511,9 @@ def main():
                          "Recovered text is flagged as lower confidence throughout.")
     ap.add_argument("--ocr-lang", default="eng",
                     help="tesseract language(s), e.g. eng or eng+guj (default: eng)")
+    ap.add_argument("--state", help='jurisdiction, e.g. "Gujarat" or "India"')
+    ap.add_argument("--scope", choices=["national", "state", "authority", "city"],
+                    help="how widely the document applies")
     args = ap.parse_args()
 
     if args.reindex:
@@ -522,13 +537,14 @@ def main():
             meta = registry.get(doc_id, {})
             ingest(doc_id, os.path.join(inbox, fn), meta.get("title"),
                    meta.get("authority"), meta.get("edition"),
-                   args.ocr, args.ocr_lang)
+                   args.ocr, args.ocr_lang,
+                   args.state or meta.get("state"), args.scope or meta.get("scope"))
         return
 
     if not args.doc or not args.pdf:
         ap.error("--doc and --pdf are required (or use --all)")
     ingest(args.doc, args.pdf, args.title, args.authority, args.edition,
-           args.ocr, args.ocr_lang)
+           args.ocr, args.ocr_lang, args.state, args.scope)
 
 
 if __name__ == "__main__":

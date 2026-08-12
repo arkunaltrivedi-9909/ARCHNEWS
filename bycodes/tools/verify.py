@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CODEX — corpus integrity check.
+BYCODES — corpus integrity check.
 
 Answers the question "what does this tool actually know, and where is it lying
 by omission?" Run it after every ingest and before every deploy.

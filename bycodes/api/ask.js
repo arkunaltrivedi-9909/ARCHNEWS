@@ -1,4 +1,4 @@
-// CODEX — cited answer service.
+// BYCODES — cited answer service.
 //
 // This endpoint deliberately does very little thinking. Retrieval already
 // happened on the client, deterministically, over text extracted verbatim from
@@ -12,7 +12,7 @@
 // of the service: a wrong FSI figure with a confident tone is the failure mode
 // this tool exists to prevent.
 
-const MODEL = process.env.CODEX_MODEL || 'claude-opus-5';
+const MODEL = process.env.BYCODES_MODEL || 'claude-opus-5';
 const MAX_PASSAGES = 14;
 const MAX_PASSAGE_CHARS = 4000;
 

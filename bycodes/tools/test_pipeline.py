@@ -40,7 +40,7 @@ def check(label, cond, detail=""):
 
 
 def main():
-    tmp = tempfile.mkdtemp(prefix="codex-test-")
+    tmp = tempfile.mkdtemp(prefix="bycodes-test-")
     pdf = os.path.join(tmp, "fixture.pdf")
     make_fixture.build_pdf(make_fixture.PAGES, pdf)
 

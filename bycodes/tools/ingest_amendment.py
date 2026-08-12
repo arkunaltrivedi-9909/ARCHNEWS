@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CODEX — amendment ingestion.
+BYCODES — amendment ingestion.
 
 Amendment notifications are a different animal from regulation documents. They
 contain almost no regulation text; they contain *instructions to change* text
@@ -187,7 +187,8 @@ def detect_header(pages):
     return info
 
 
-def ingest_amendment(doc_id, pdf_path, amends=None, title=None, authority=None):
+def ingest_amendment(doc_id, pdf_path, amends=None, title=None, authority=None,
+                     state=None, scope=None):
     if not os.path.isfile(pdf_path):
         sys.exit(f"not found: {pdf_path}")
 
@@ -212,6 +213,8 @@ def ingest_amendment(doc_id, pdf_path, amends=None, title=None, authority=None):
         ),
         "short": f"Amd {header.get('amendment_number','?')} ({header.get('issued','')})".strip(),
         "authority": authority or "Bureau of Indian Standards",
+        "state": state,
+        "scope": scope,
         "edition": header.get("issued"),
         "amends_doc": amends,
         "amends_title": header.get("amends_title"),
@@ -264,8 +267,11 @@ def main():
     ap.add_argument("--amends", help="doc_id of the base document these edits apply to")
     ap.add_argument("--title")
     ap.add_argument("--authority")
+    ap.add_argument("--state", help='jurisdiction, e.g. "Gujarat" or "India"')
+    ap.add_argument("--scope", choices=["national", "state", "authority", "city"])
     args = ap.parse_args()
-    ingest_amendment(args.doc, args.pdf, args.amends, args.title, args.authority)
+    ingest_amendment(args.doc, args.pdf, args.amends, args.title, args.authority,
+                     args.state, args.scope)
 
 
 if __name__ == "__main__":

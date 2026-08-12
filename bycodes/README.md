@@ -1,12 +1,21 @@
-# CODEX — Gujarat building regulation reference
+# BYCODES — building regulation for India
 
 Clause browser, cited Q&A, amendment tracking and feasibility calculator for
-**GDCR** (primary), with **NBC** as back-end reference, for Ahmedabad and
-Gandhinagar work.
+Indian building regulation, one state at a time.
+
+**Gujarat is live** — CGDCR 2017 Parts II and III plus the 2024 Corporate
+Office / Hotel / Mixed-Use regulation, 289 clauses, every one page-cited. Other
+states are declared in `corpus/jurisdictions.json` as planned and are **not
+answerable** until their documents are actually ingested. Nothing ships as a
+placeholder.
+
+The goal is BYCODES for all of India. The constraint that makes it worth using
+is that a state only counts as covered when its real PDFs are loaded and every
+clause can be traced to a page.
 
 **Standalone.** This folder shares nothing with the ARCHNEWS news site — its own
 `index.html`, its own `api/`, its own `vercel.json`. Deploy it as a separate
-Vercel project with **Root Directory = `codex`**. Nothing here can affect the
+Vercel project with **Root Directory = `bycodes`**. Nothing here can affect the
 news site, and nothing there can affect this.
 
 ---
@@ -40,7 +49,7 @@ ingested during development — 19 edits, all parsed. One of them reads:
 
 Ask any model from memory and you get **115 mm**, because that is what the 2016
 base text says and that is what the training data is full of. It has been wrong
-since March 2021. CODEX shows the change, the clause, the base page, and — once
+since March 2021. BYCODES shows the change, the clause, the base page, and — once
 NBC Part 4 is loaded — flags it directly on the clause you are reading.
 
 CGDCR has been amended repeatedly since 2017. This is not an edge case.
@@ -168,7 +177,7 @@ Ask retrieves clauses with or without an API key; the key only adds narration.
 
 ```
 ANTHROPIC_API_KEY=sk-ant-...      # Vercel project env vars
-CODEX_MODEL=claude-opus-5         # optional
+BYCODES_MODEL=claude-opus-5         # optional
 ```
 
 `api/ask.js` enforces, **after** the model responds: citation markers pointing at
@@ -211,13 +220,27 @@ is a short public errata document, not the code itself.
 
 | | |
 |---|---|
-| App | Built, tested, deployable — 82 tests passing |
-| GDCR Part II (Planning) | **Loaded** — 151 clauses, 67 pages, FSI / margins / parking / common plot |
-| GDCR Part III (Performance) | **Loaded** — 139 clauses, 56 pages |
-| Corporate Office / Hotel / Mixed-Use 2024 | **Loaded** — 9 clauses, entirely OCR-recovered, every page flagged |
+| App | Built, tested, deployable — 89 tests passing |
+| **Gujarat** | **Live** — CGDCR 2017 Part II (142 clauses), Part III (138), Corporate/Hotel/Mixed-Use 2024 (9) |
+| Other states | Declared in `corpus/jurisdictions.json`, **none loaded** — planned, not answerable |
 | GDCR Part I (Procedure) | Not loaded |
 | CGDCR amendments | **None loaded** — the base text alone may be out of date |
 | NBC | Amendment No. 1 parses locally; excluded from this public repo (BIS copyright) |
+
+## Adding a state
+
+1. Get the state's real development control regulations as PDFs.
+2. Ingest with the jurisdiction tagged:
+   `python3 tools/ingest.py --doc <id> --pdf <file> --state Maharashtra --scope state`
+3. `python3 tools/verify.py`, then commit `corpus/docs/` and `corpus/index.json` together.
+
+The state appears in the Library and the jurisdiction switcher automatically —
+status is derived from what is actually ingested, never asserted. Until then it
+shows as *planned, not answerable*.
+
+The `code_hint` under each planned state in `corpus/jurisdictions.json` is an
+**unverified pointer** for sourcing, not a statement of what is in force. Several
+states have replaced or renamed their rules.
 
 ## OCR
 

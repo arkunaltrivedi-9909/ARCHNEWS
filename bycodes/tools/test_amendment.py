@@ -52,7 +52,7 @@ SYNTHETIC = [[
 
 
 def main():
-    tmp = tempfile.mkdtemp(prefix="codex-amd-")
+    tmp = tempfile.mkdtemp(prefix="bycodes-amd-")
 
     # ---- synthetic notification -------------------------------------------
     pdf = os.path.join(tmp, "amd.pdf")

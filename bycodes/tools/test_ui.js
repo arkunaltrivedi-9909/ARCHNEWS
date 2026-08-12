@@ -94,6 +94,33 @@ function teardownFixture() {
   check('fixture warning strip is shown when fixture data is loaded',
     await page.isVisible('#fixtureStrip'));
 
+  // ---- library: the multi-state front door --------------------------------
+  const lib = (await page.textContent('#libOut')).replace(/\s+/g, ' ');
+  check('library lists a live jurisdiction with its documents',
+    /Live/.test(lib) && /Gujarat/.test(lib), lib.slice(0, 200));
+  check('library lists states that are planned but not loaded',
+    /Planned/.test(lib) && /Maharashtra/.test(lib));
+  check('library marks planned code names as unverified pointers',
+    /unverified pointer/i.test(lib));
+  check('library says planned states are not answerable',
+    /not loaded, not answerable/i.test(lib), lib.slice(0, 300));
+
+  const liveCards = await page.$$('.state-card.live');
+  check('at least one state renders as live', liveCards.length >= 1, `got ${liveCards.length}`);
+
+  // A code row in the library opens that document in the reader.
+  await page.click('.code-row');
+  await page.waitForSelector('.sec-title', { timeout: 5000 });
+  check('clicking a library code opens it in the reader',
+    (await page.$$('.sec-title')).length === 1);
+
+  // Jurisdiction switcher exists and offers the loaded states.
+  const juris = await page.$$eval('#stateSelect option', o => o.map(x => x.value));
+  check('jurisdiction switcher offers loaded states',
+    juris.includes('all') || juris.includes('Gujarat'), juris.join(','));
+
+  // Library is the landing pane now; the clause tree lives under Browse.
+  await page.click('.tab[data-pane="browse"]');
   // Real documents may also be loaded and would open by default, so select the
   // fixture explicitly before asserting on its clauses.
   await page.selectOption('#docSelect', FIXTURE_ID);
@@ -117,7 +144,7 @@ function teardownFixture() {
   check('reader states the text is verbatim, not paraphrased', /verbatim/i.test(note));
 
   // Search is deterministic and finds the clause.
-  await page.click('.htab[data-pane="search"]');
+  await page.click('.tab[data-pane="search"]');
   await page.fill('#q', 'chargeable FSI');
   await page.click('#qBtn');
   await page.waitForSelector('.res', { timeout: 5000 });
@@ -134,7 +161,7 @@ function teardownFixture() {
   check('exact clause-number search ranks that clause first', first.trim() === '3.1', first);
 
   // Feasibility must refuse, not guess, with no rules loaded.
-  await page.click('.htab[data-pane="feas"]');
+  await page.click('.tab[data-pane="feas"]');
   await page.waitForSelector('.out-row', { timeout: 5000 });
   const outs = await page.$$eval('.out-val', e => e.map(x => x.textContent.trim()));
   check('every feasibility output refuses when no rules are loaded',
@@ -171,8 +198,9 @@ function teardownFixture() {
     }, null, 2));
 
     await page.reload({ waitUntil: 'networkidle' });
+    await page.click('.tab[data-pane="browse"]');
     await page.selectOption('#docSelect', FIXTURE_ID);
-    await page.click('.htab[data-pane="feas"]');
+    await page.click('.tab[data-pane="feas"]');
     await page.waitForSelector('.out-row', { timeout: 5000 });
     const rows = await page.$$eval('.out-row', els => els.map(e => e.textContent.replace(/\s+/g, ' ')));
 
@@ -204,7 +232,7 @@ function teardownFixture() {
   await page.reload({ waitUntil: 'networkidle' });
 
   // Ask must refuse locally when retrieval finds nothing — no model call at all.
-  await page.click('.htab[data-pane="ask"]');
+  await page.click('.tab[data-pane="ask"]');
   await page.fill('#askInput', 'xyzzy zzzqqq plugh');
   await page.click('#askBtn');
   await page.waitForSelector('.refusal', { timeout: 8000 });
@@ -240,7 +268,7 @@ function teardownFixture() {
       execFileSync('python3', [path.join(__dirname, 'ingest.py'), '--reindex'], { cwd: ROOT });
       await page.reload({ waitUntil: 'networkidle' });
     }
-    await page.click('.htab[data-pane="ask"]');
+    await page.click('.tab[data-pane="ask"]');
     await page.fill('#askInput', 'chargeable FSI');
     await page.click('#askBtn');
     await page.waitForSelector('.sources', { timeout: 8000 });
@@ -258,7 +286,7 @@ function teardownFixture() {
   }
 
   // ---- amendments (synthetic fixture) ------------------------------------
-  await page.click('.htab[data-pane="amd"]');
+  await page.click('.tab[data-pane="amd"]');
   await page.waitForSelector('.amd', { timeout: 5000 });
   // Scope the count to the fixture's own block: a real notification may also be
   // present locally and would otherwise inflate the total.
@@ -278,7 +306,7 @@ function teardownFixture() {
     /subject to prior approval/.test(amdText));
 
   // ---- amendment overlay on the base clause it changes --------------------
-  await page.click('.htab[data-pane="browse"]');
+  await page.click('.tab[data-pane="browse"]');
   await page.selectOption('#docSelect', FIXTURE_ID);
   await page.click('.tnode:has-text("Base Floor Space Index")');
   await page.waitForSelector('.amd-alert', { timeout: 5000 });

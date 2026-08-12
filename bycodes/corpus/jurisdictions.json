@@ -1,0 +1,84 @@
+{
+  "_README": [
+    "The jurisdiction roadmap: which states BYCODES covers, and which are next.",
+    "",
+    "IMPORTANT — the code_hint field is NOT authoritative. Those names come from",
+    "general knowledge, not from a verified source, and some are certainly out of",
+    "date; several states have replaced or renamed their rules since. Treat every",
+    "code_hint as a starting point for sourcing the real document, never as a fact",
+    "to repeat to a client. Nothing in this file is ever shown as regulation.",
+    "",
+    "A state only becomes 'live' when actual PDFs are ingested into corpus/docs/",
+    "and tagged with --state. Status here is derived from that, not asserted."
+  ],
+
+  "vision": {
+    "goal": "Clause-level, page-cited building regulation for every Indian state",
+    "sequence": "Gujarat first and deep, then state by state",
+    "rule": "A state ships only when its documents are ingested and verifiable — never as a placeholder"
+  },
+
+  "states": [
+    {
+      "state": "Gujarat",
+      "status": "live",
+      "priority": 1,
+      "authorities": ["AUDA — Ahmedabad", "AMC — Ahmedabad", "GUDA — Gandhinagar", "SUDA", "VUDA", "RUDA"],
+      "code_hint": "CGDCR 2017 (Comprehensive General Development Control Regulations)",
+      "next": [
+        "CGDCR Part I (Procedure Regulations)",
+        "All CGDCR amendment notifications since 2017",
+        "AUDA / GUDA Development Plan zoning",
+        "TP scheme final plot data (spatial — needs a different approach)"
+      ]
+    },
+    { "state": "Maharashtra",   "status": "planned", "priority": 2,
+      "code_hint": "UDCPR 2020 (Unified Development Control and Promotion Regulations)",
+      "authorities": ["MCGM — Mumbai", "PMC — Pune", "NMMC — Navi Mumbai"] },
+    { "state": "Karnataka",     "status": "planned", "priority": 3,
+      "code_hint": "Karnataka building bye-laws / zoning regulations",
+      "authorities": ["BBMP / BDA — Bengaluru"] },
+    { "state": "Tamil Nadu",    "status": "planned", "priority": 4,
+      "code_hint": "Combined Development and Building Rules 2019",
+      "authorities": ["CMDA — Chennai"] },
+    { "state": "Delhi (NCT)",   "status": "planned", "priority": 5,
+      "code_hint": "Delhi Building Bye-laws / Master Plan for Delhi",
+      "authorities": ["DDA", "MCD"] },
+    { "state": "Telangana",     "status": "planned", "priority": 6,
+      "code_hint": "Telangana building rules",
+      "authorities": ["GHMC — Hyderabad", "HMDA"] },
+    { "state": "Rajasthan",     "status": "planned", "priority": 7,
+      "code_hint": "Rajasthan building bye-laws", "authorities": ["JDA — Jaipur"] },
+    { "state": "Uttar Pradesh", "status": "planned", "priority": 8,
+      "code_hint": "UP building bye-laws", "authorities": ["LDA — Lucknow", "Noida", "GDA"] },
+    { "state": "Kerala",        "status": "planned", "priority": 9,
+      "code_hint": "Kerala Municipality Building Rules", "authorities": [] },
+    { "state": "West Bengal",   "status": "planned", "priority": 10,
+      "code_hint": "WB municipal building rules", "authorities": ["KMC — Kolkata"] },
+    { "state": "Madhya Pradesh","status": "planned", "priority": 11,
+      "code_hint": "MP Bhumi Vikas Niyam", "authorities": [] },
+    { "state": "Haryana",       "status": "planned", "priority": 12,
+      "code_hint": "Haryana building code", "authorities": ["DTCP", "GMDA — Gurugram"] },
+    { "state": "Punjab",        "status": "planned", "priority": 13, "code_hint": "Punjab building rules", "authorities": [] },
+    { "state": "Andhra Pradesh","status": "planned", "priority": 14, "code_hint": "AP building rules", "authorities": [] },
+    { "state": "Odisha",        "status": "planned", "priority": 15, "code_hint": "Odisha planning and building standards", "authorities": ["BDA — Bhubaneswar"] },
+    { "state": "Bihar",         "status": "planned", "priority": 16, "code_hint": "Bihar building bye-laws", "authorities": [] },
+    { "state": "Assam",         "status": "planned", "priority": 17, "code_hint": "Assam building bye-laws", "authorities": ["GMDA — Guwahati"] },
+    { "state": "Chhattisgarh",  "status": "planned", "priority": 18, "code_hint": "Chhattisgarh Bhumi Vikas Niyam", "authorities": [] },
+    { "state": "Jharkhand",     "status": "planned", "priority": 19, "code_hint": "Jharkhand building bye-laws", "authorities": [] },
+    { "state": "Uttarakhand",   "status": "planned", "priority": 20, "code_hint": "Uttarakhand building bye-laws", "authorities": [] },
+    { "state": "Himachal Pradesh","status": "planned", "priority": 21, "code_hint": "HP town and country planning rules", "authorities": [] },
+    { "state": "Goa",           "status": "planned", "priority": 22, "code_hint": "Goa land development and building construction regulations", "authorities": [] }
+  ],
+
+  "national": {
+    "state": "India",
+    "status": "planned",
+    "note": "Applies across every state and is consulted where a state code points to it or is silent.",
+    "documents": [
+      { "code_hint": "National Building Code of India 2016 (SP 7)", "note": "BIS copyright — licensed copy required" },
+      { "code_hint": "Energy Conservation Building Code", "note": "adopted state by state" },
+      { "code_hint": "Harmonised Guidelines for Accessibility", "note": "" }
+    ]
+  }
+}
