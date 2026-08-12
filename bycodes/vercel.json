@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/ask.js": { "memory": 512, "maxDuration": 60 }
+  },
+  "cleanUrls": true
+}

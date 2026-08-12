@@ -1,0 +1,16 @@
+{
+  "_README": [
+    "Feasibility rules. INTENTIONALLY EMPTY.",
+    "",
+    "Every rule here must be transcribed by a human from a clause that is already",
+    "ingested in corpus/docs/, and must carry the doc_id, clause number and page it",
+    "came from. The calculator discards any rule missing a citation, and reports",
+    "NOT DERIVABLE rather than substituting a remembered or 'typical' value.",
+    "",
+    "This file is empty because no regulation PDF has been ingested yet. Populating",
+    "it from memory would defeat the entire purpose of the tool.",
+    "",
+    "See rules.README.md for the format and the recommended workflow."
+  ],
+  "rules": []
+}

@@ -1,0 +1,8 @@
+# Source PDFs — large, and NBC is BIS-copyright. Never commit the originals.
+inbox/
+
+# NBC extracted text is BIS copyright, and this repository is PUBLIC.
+# This excludes the ingested NBC amendment as well as any NBC code parts.
+# Re-ingest locally (see README) — or delete this line once the repository is
+# private and you hold a licence, and the data will deploy with the app.
+docs/nbc-*/
