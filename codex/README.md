@@ -212,6 +212,9 @@ is a short public errata document, not the code itself.
 | | |
 |---|---|
 | App | Built, tested, deployable — 82 tests passing |
-| Corpus | **Empty in git** — NBC amendment ingests locally, excluded from this public repo |
-| GDCR | **Not loaded** — needs the PDFs |
+| GDCR Part II (Planning) | **Loaded** — 151 clauses, 67 pages, FSI / margins / parking / common plot |
+| GDCR Part III (Performance) | **Loaded** — 139 clauses, 56 pages |
+| GDCR Part I (Procedure) | Not loaded |
+| CGDCR amendments | **None loaded** — the base text alone may be out of date |
+| NBC | Amendment No. 1 parses locally; excluded from this public repo (BIS copyright) |
 | Phase 2 | AUDA/GUDA DP zoning + TP schemes — spatial data, different approach |

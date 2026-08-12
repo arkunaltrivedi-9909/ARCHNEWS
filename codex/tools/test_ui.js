@@ -94,6 +94,11 @@ function teardownFixture() {
   check('fixture warning strip is shown when fixture data is loaded',
     await page.isVisible('#fixtureStrip'));
 
+  // Real documents may also be loaded and would open by default, so select the
+  // fixture explicitly before asserting on its clauses.
+  await page.selectOption('#docSelect', FIXTURE_ID);
+  await page.waitForTimeout(300);
+
   // Tree renders clauses from the ingested corpus.
   const nodes = await page.$$eval('.tnode .tw', els => els.map(e => e.textContent.trim()));
   check('clause tree renders ingested clauses', nodes.includes('2.1'), nodes.join(','));
@@ -166,6 +171,7 @@ function teardownFixture() {
     }, null, 2));
 
     await page.reload({ waitUntil: 'networkidle' });
+    await page.selectOption('#docSelect', FIXTURE_ID);
     await page.click('.htab[data-pane="feas"]');
     await page.waitForSelector('.out-row', { timeout: 5000 });
     const rows = await page.$$eval('.out-row', els => els.map(e => e.textContent.replace(/\s+/g, ' ')));

@@ -69,11 +69,12 @@
       ],
       "priority": "highest — most feasibility questions resolve here",
       "sources": [
-        "https://www.rmc.gov.in/rmcwebsite/docs/All_TPS/TP_35/CGDCR_2017_PART_2_PLANNING_REGULATIONS.pdf"
+        "supplied directly from an official copy; not downloaded by the build"
       ],
-      "url_reachable": false,
-      "status": "not_loaded",
-      "role": "primary"
+      "url_reachable": true,
+      "status": "loaded",
+      "role": "primary",
+      "note": "Planning Regulations — LOADED and committed"
     },
     {
       "doc_id": "cgdcr-2017-part3",
@@ -91,11 +92,12 @@
         "materials"
       ],
       "sources": [
-        "https://www.auda.org.in/uploads/Assets/rdp/test02142019031949715.pdf"
+        "supplied directly from an official copy; not downloaded by the build"
       ],
-      "url_reachable": false,
-      "status": "not_loaded",
-      "role": "primary"
+      "url_reachable": true,
+      "status": "loaded",
+      "role": "primary",
+      "note": "Performance Regulations — LOADED and committed"
     },
     {
       "doc_id": "cgdcr-2017-consolidated",

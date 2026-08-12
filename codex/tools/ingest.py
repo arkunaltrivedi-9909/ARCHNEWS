@@ -82,13 +82,22 @@ def detect_printed_offset(pages, probe=40):
         if not lines:
             continue
         checked += 1
+        seen = set()
         for cand in (lines[:2] + lines[-2:]):
-            m = re.fullmatch(r"[^\d]{0,12}?(\d{1,4})[^\d]{0,12}?", cand)
+            # Two shapes, both common: the number alone on its own line, and the
+            # number trailing a running header ("…Govt. of Gujarat      19").
+            m = (re.fullmatch(r"[^\d]{0,12}?(\d{1,4})[^\d]{0,12}?", cand)
+                 or re.search(r"(?:^|\s)(\d{1,4})\s*$", cand))
             if not m:
                 continue
             printed = int(m.group(1))
-            if 0 < printed < 5000:
-                votes[printed - pg["pdf_page"]] = votes.get(printed - pg["pdf_page"], 0) + 1
+            if not 0 < printed < 5000:
+                continue
+            delta = printed - pg["pdf_page"]
+            if delta in seen:      # one vote per page, not per matching line
+                continue
+            seen.add(delta)
+            votes[delta] = votes.get(delta, 0) + 1
     if not votes or not checked:
         return 0, 0.0
     offset, count = max(votes.items(), key=lambda kv: kv[1])
@@ -111,8 +120,15 @@ STRUCTURAL = re.compile(
 TOC_LINE = re.compile(r"(\.\s*){4,}\s*\d{1,4}\s*$|\s{4,}\d{1,4}\s*$")
 
 
-def looks_like_heading(line):
-    """Return (number, title) if the line opens a clause, else None."""
+def looks_like_heading(line, chapters=None):
+    """
+    Return (number, title) if the line opens a clause, else None.
+
+    `chapters` is the set of top-level chapter numbers actually found in this
+    document. When supplied, a dotted number is only accepted if it belongs to a
+    real chapter — which is what separates clause 6.3.1 from the FSI value "1.8"
+    sitting at the start of a table row.
+    """
     raw = line.rstrip()
     if not raw.strip() or len(raw) > 200:
         return None
@@ -135,11 +151,56 @@ def looks_like_heading(line):
         # A clause heading is a label, not prose. Reject sentence-shaped tails.
         if title.endswith((".", ";", ",")) and len(title.split()) > 12:
             return None
-        # "1.5 m" / "2.5 metres" are dimensions inside prose, not headings.
-        if re.match(r"^(m|mm|cm|metre|meter|sq|m2|%|to|and|or|of)\b", title, re.I):
+        # "1.5 m" / "2.5 metres" / "9.0 mts" are dimensions inside prose or table
+        # cells, not headings.
+        if re.match(r"^(m|mm|cm|mt|mts|mtr|mtrs|metre|meter|metres|meters|"
+                    r"sq|sqm|sqmt|m2|no|nos|%|to|and|or|of)\b", title, re.I):
             return None
+        # Table rows open with a serial number and are mostly figures:
+        #   "1 Gamtal GM 2.0 Nil 2.0"   "1. Dwelling-1 0.1 5% 8mts"
+        # Two or more standalone numeric tokens means tabular data, not a heading.
+        if len(re.findall(r"(?<![\w.])\d+(?:\.\d+)?(?![\w.])", title)) >= 2:
+            return None
+        # A heading's title is words. Table debris ("*", "& Maximum", "(for RAH1",
+        # "3.6**") starts with punctuation or a figure.
+        if not title[:1].isalpha():
+            return None
+        # A dotted number must belong to a chapter this document actually has.
+        # Without this, every decimal at the start of a table row ("1.8", "13.0")
+        # is indistinguishable from a clause number.
+        if "." in num and chapters:
+            if num.split(".", 1)[0] not in chapters:
+                return None
+        # A bare top-level number is only a heading when it introduces a chapter,
+        # and chapters shout: "6 GENERAL PLANNING AND DEVELOPMENT REGULATIONS".
+        # Numbered list items inside a clause ("1. No development shall be…")
+        # are prose and must stay with their parent clause.
+        if "." not in num:
+            letters = [c for c in title if c.isalpha()]
+            if not letters:
+                return None
+            upper_ratio = sum(c.isupper() for c in letters) / len(letters)
+            if upper_ratio < 0.6:
+                return None
+            # Once the real chapters are known, a capitalised list item that is
+            # not one of them stays inside its parent clause.
+            if chapters and num not in chapters:
+                return None
         return num, title
     return None
+
+
+def is_contents_page(text):
+    """
+    Front matter (contents, list of tables/figures) is full of clause numbers
+    that are references, not the clauses themselves. Detect those pages and skip
+    heading extraction on them; the text still lands in pages.json.
+    """
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    if len(lines) < 5:
+        return False
+    hits = sum(1 for ln in lines if TOC_LINE.search(ln))
+    return hits >= 5 or hits / len(lines) > 0.5
 
 
 def build_sections(pages, doc_id, offset):
@@ -147,6 +208,32 @@ def build_sections(pages, doc_id, offset):
     Walk pages in order, cut at headings, attach verbatim body text.
     Every section records the page it starts on -- that is the citation.
     """
+    # Pass 1: establish which chapters this document actually contains.
+    #
+    # An ALL-CAPS bare integer is only a candidate — regulations are full of
+    # capitalised numbered list items ("4. LANDUSE ZONING IN HAZARD PRONE AREAS")
+    # that look identical to a chapter heading. A real chapter is corroborated by
+    # having at least one dotted clause beneath it.
+    candidates = set()
+    dotted_children = {}
+    for pg in pages:
+        if is_contents_page(pg["text"]):
+            continue
+        for line in pg["text"].splitlines():
+            head = looks_like_heading(line)
+            if not head:
+                continue
+            num = head[0]
+            if "." not in num and num.isdigit():
+                candidates.add(num)
+            elif "." in num:
+                prefix = num.split(".", 1)[0]
+                if prefix.isdigit():
+                    dotted_children.setdefault(prefix, set()).add(num)
+    chapters = {c for c in candidates if dotted_children.get(c)}
+    if not chapters:
+        chapters = candidates   # flat document with no sub-clauses
+
     sections = []
     current = None
 
@@ -159,11 +246,17 @@ def build_sections(pages, doc_id, offset):
 
     for pg in pages:
         pdf_page = pg["pdf_page"]
+        front_matter = is_contents_page(pg["text"])
         for line in pg["text"].splitlines():
-            head = looks_like_heading(line)
+            head = None if front_matter else looks_like_heading(line, chapters)
             if head:
-                close(current, pdf_page)
                 num, title = head
+                # A table or annex belongs to the clause it interrupts. Without
+                # this it floats to the root of the tree, detached from the rule
+                # it actually carries — and in these regulations the table IS
+                # the rule (Table 6.49 holds the common plot percentages).
+                under = current["id"] if (current and not num[:1].isdigit()) else None
+                close(current, pdf_page)
                 current = {
                     "id": f"{doc_id}::{num}",
                     "number": num,
@@ -172,6 +265,7 @@ def build_sections(pages, doc_id, offset):
                     "printed_page": pdf_page + offset if offset else None,
                     "depth": num.count(".") if num[0].isdigit() else 0,
                     "text": "",
+                    "_under": under,
                 }
             elif current is not None:
                 current["text"] += line + "\n"
@@ -183,14 +277,22 @@ def build_sections(pages, doc_id, offset):
     by_number = {}
     for s in sections:
         by_number.setdefault(s["number"], s)
+    by_id = {s["id"]: s for s in sections}
     for s in sections:
         num = s["number"]
         parent = None
-        if "." in num:
+        if "." in num and num[:1].isdigit():
             head = num.rsplit(".", 1)[0]
             if head in by_number:
                 parent = by_number[head]["id"]
+        if parent is None:
+            parent = s.get("_under")
         s["parent"] = parent
+        s.pop("_under", None)
+    # Indent tables and annexes one level below the clause they sit under.
+    for s in sections:
+        if not s["number"][:1].isdigit() and s["parent"] in by_id:
+            s["depth"] = by_id[s["parent"]]["depth"] + 1
 
     # Duplicate clause numbers (reprinted headers, amendment reprints) get
     # suffixed so permalinks stay unique and resolvable.
