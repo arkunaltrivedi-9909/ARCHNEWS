@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- One codebase, three runtimes. The configuration name selects the TFM and the
+       Revit install to reference against; nothing else in the tree is version-aware
+       except the few #if REVIT20xx blocks. -->
+  <PropertyGroup>
+    <Configurations>Debug R2025;Debug R2026;Debug R2027;Release R2025;Release R2026;Release R2027</Configurations>
+    <AssemblyName>KTA.SmartySheets</AssemblyName>
+    <RootNamespace>KTA.SmartySheets</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Company>Kunal Trivedi Atelier</Company>
+    <Product>KTA Smarty Sheets</Product>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- CS1591: XML doc coverage is deliberately partial; only API-thread-bound
+         members carry a doc line, per CLAUDE.md section 8. -->
+    <NoWarn>$(NoWarn);CS1591;NETSDK1086</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.Contains('R2025'))">
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RevitVersion>2025</RevitVersion>
+    <DefineConstants>$(DefineConstants);REVIT2025</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.Contains('R2026'))">
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RevitVersion>2026</RevitVersion>
+    <DefineConstants>$(DefineConstants);REVIT2026</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Revit 2027 is .NET 10. Autodesk require add-ins to be built with the .NET 10 SDK. -->
+  <PropertyGroup Condition="$(Configuration.Contains('R2027'))">
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RevitVersion>2027</RevitVersion>
+    <DefineConstants>$(DefineConstants);REVIT2027</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.StartsWith('Debug'))">
+    <DebugType>portable</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.StartsWith('Release'))">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RevitApiDir Condition="'$(RevitApiDir)' == ''">C:\Program Files\Autodesk\Revit $(RevitVersion)</RevitApiDir>
+  </PropertyGroup>
+
+  <!-- Private=False is not cosmetic. A RevitAPI.dll sitting next to the add-in is the
+       classic cause of a silent load failure: Revit loads its own copy first and the
+       type identities no longer match. build.ps1 asserts this after every build. -->
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>$(RevitApiDir)\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(RevitApiDir)\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="WarnMissingRevit" BeforeTargets="BeforeBuild"
+          Condition="!Exists('$(RevitApiDir)\RevitAPI.dll')">
+    <Error Text="RevitAPI.dll not found at $(RevitApiDir). Install Revit $(RevitVersion) or pass -p:RevitApiDir=&lt;path&gt;." />
+  </Target>
+
+</Project>

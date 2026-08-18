@@ -1,0 +1,121 @@
+<Window x:Class="KTA.SmartySheets.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:KTA.SmartySheets.UI"
+        Title="KTA Smarty Sheets"
+        Height="680" Width="1120" MinHeight="480" MinWidth="820"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        FontFamily="Segoe UI" FontSize="12">
+
+    <Window.Resources>
+        <local:StateBrushConverter x:Key="StateBrush" />
+        <Style TargetType="Label">
+            <Setter Property="Padding" Value="0,0,6,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="14,5" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="MinWidth" Value="88" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="4,3" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- The output folder is the unit of memory: the tool remembers what it last sent here. -->
+        <Grid Grid.Row="0" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Output folder" />
+            <TextBox Grid.Column="1" x:Name="FolderBox" TextChanged="OnFolderChanged" />
+            <Button Grid.Column="2" Content="Browse…" Click="OnBrowse" Margin="8,0,0,0" />
+            <Button Grid.Column="3" Content="Open" Click="OnOpenFolder" Margin="0" MinWidth="60" />
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,0,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Name template" />
+            <TextBox Grid.Column="1" x:Name="TemplateBox" />
+            <Button Grid.Column="2" Content="Tokens…" Click="OnShowTokens" Margin="8,0,0,0" />
+        </Grid>
+
+        <WrapPanel Grid.Row="2" Margin="0,0,0,10">
+            <CheckBox x:Name="PdfBox" Content="PDF" VerticalAlignment="Center" Margin="0,0,14,0" />
+            <CheckBox x:Name="DwgBox" Content="DWG" VerticalAlignment="Center" Margin="0,0,20,0" />
+            <CheckBox x:Name="DeepScanBox" VerticalAlignment="Center" Margin="0,0,20,0"
+                      Content="Deep scan"
+                      ToolTip="Enumerates the visible elements of every placed view, so a moved wall is attributed to exactly the sheets that show it. Accurate, and slower on very large models." />
+            <Label Content="Paper format" />
+            <ComboBox x:Name="PaperFormatBox" Width="150" VerticalAlignment="Center" Margin="0,0,20,0"
+                      ToolTip="Leave at Default unless exports come out empty. Revit is documented to do nothing silently when Default is combined with other layout options." />
+            <Label Content="Batch size" />
+            <TextBox x:Name="BatchBox" Width="46" Margin="0,0,20,0"
+                     ToolTip="Sheets exported per pass before control returns to Revit. Smaller keeps Revit responsive and makes Cancel react faster." />
+        </WrapPanel>
+
+        <DataGrid Grid.Row="3" x:Name="SheetGrid"
+                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                  IsReadOnly="False" SelectionMode="Extended" GridLinesVisibility="Horizontal"
+                  HeadersVisibility="Column" RowHeaderWidth="0" AlternatingRowBackground="#F7F8FA"
+                  EnableRowVirtualization="True" VerticalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="" Width="34"
+                                        Binding="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DataGridTextColumn Header="Sheet" Width="110" IsReadOnly="True" Binding="{Binding SheetNumber}" />
+                <DataGridTextColumn Header="Name" Width="220" IsReadOnly="True" Binding="{Binding SheetName}" />
+                <DataGridTextColumn Header="State" Width="120" IsReadOnly="True" Binding="{Binding State}">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Foreground" Value="{Binding State, Converter={StaticResource StateBrush}}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Why" Width="*" IsReadOnly="True" Binding="{Binding Why}" />
+                <DataGridTextColumn Header="File" Width="210" IsReadOnly="True" Binding="{Binding TargetName}" />
+                <DataGridTextColumn Header="Result" Width="170" IsReadOnly="True" Binding="{Binding Result}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="4" Margin="0,10,0,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ProgressBar Grid.Column="0" x:Name="Progress" Height="6" Minimum="0" Maximum="1" Value="0" />
+            <TextBlock Grid.Column="1" x:Name="StatusText" Margin="12,0,0,0" VerticalAlignment="Center"
+                       Text="Choose a folder, then Analyse." />
+        </Grid>
+
+        <DockPanel Grid.Row="5" LastChildFill="False">
+            <Button DockPanel.Dock="Left" Content="Analyse" Click="OnAnalyse" x:Name="AnalyseButton" />
+            <Button DockPanel.Dock="Left" Content="Export" Click="OnExport" x:Name="ExportButton" IsEnabled="False" />
+            <Button DockPanel.Dock="Left" Content="Cancel" Click="OnCancel" x:Name="CancelButton" IsEnabled="False" />
+            <Button DockPanel.Dock="Left" Content="Select changed" Click="OnSelectChanged" MinWidth="110" />
+            <Button DockPanel.Dock="Left" Content="Select none" Click="OnSelectNone" MinWidth="96" />
+            <Button DockPanel.Dock="Right" Content="Close" Click="OnClose" Margin="0" />
+            <Button DockPanel.Dock="Right" Content="Log" Click="OnOpenLog" MinWidth="60" />
+        </DockPanel>
+    </Grid>
+</Window>
