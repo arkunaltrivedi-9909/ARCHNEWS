@@ -86,6 +86,14 @@ module.exports = async function handler(req, res) {
   const custom = req.query && req.query.u;
   if (custom) {
     const list = Array.isArray(custom) ? custom : [custom];
+    if (req.query.head) {
+      res.status(200).json(await Promise.all(list.map(async u => {
+        try { const r = await fetch(u, { headers: { 'User-Agent': ua, 'Accept': 'image/avif,image/webp,image/*,*/*;q=0.8' } });
+          const b = await r.arrayBuffer(); return { u: u.slice(0, 140), status: r.status, type: r.headers.get('content-type'), kb: Math.round(b.byteLength / 1024) }; }
+        catch (e) { return { u: u.slice(0, 140), error: String(e) }; }
+      })));
+      return;
+    }
     if (req.query.full) {
       const r = await fetch(list[0], { headers: { 'User-Agent': ua, 'Accept': 'text/html,application/xml,*/*' } });
       const t = await r.text();

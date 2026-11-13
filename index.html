@@ -36,6 +36,14 @@ body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-
 .ld-fill{height:100%;background:var(--red);width:0;transition:width .4s ease}
 .ld-msg{font-family:var(--mono);font-size:9px;color:#444;letter-spacing:.2em;text-transform:uppercase}
 
+/* ARCHSHORTS link */
+.shorts-link{margin-left:auto;font-family:var(--disp);font-size:19px;letter-spacing:.06em;color:#fff;display:flex;align-items:center;gap:10px;border:1px solid #333;padding:5px 12px;border-radius:3px}
+.shorts-link em{font-style:normal;color:var(--red)}
+.shorts-link span{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#888}
+.shorts-link:hover{border-color:var(--red)}
+.shorts-link + .burger{margin-left:0}
+@media(max-width:480px){.shorts-link span{display:none}}
+
 /* HEADER */
 header{background:#111;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--red)}
 .hdr{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;height:56px;gap:16px}
@@ -194,6 +202,7 @@ footer{background:#111;border-top:3px solid var(--red);padding:40px 24px 24px}
   <div class="hdr">
     <a class="logo" href="#" onclick="doTab('all');return false">ARCH<em>NEWS</em></a>
     <div class="live"><span class="live-dot"></span>Live Feed</div>
+    <a class="shorts-link" href="/shorts/">ARCH<em>SHORTS</em><span>60-word edition →</span></a>
     <button class="burger" id="burg" onclick="openDrw()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -217,6 +226,7 @@ footer{background:#111;border-top:3px solid var(--red);padding:40px 24px 24px}
 
 <div class="drawer" id="drw">
   <button class="drawer-close" onclick="closeDrw()">✕ Close</button>
+  <a class="dtab" href="/shorts/" style="color:#ff5a2e;display:block">ARCHSHORTS — 60-word edition →</a>
   <button class="dtab on" onclick="doTab('all',this);closeDrw()">All Sources</button>
   <button class="dtab" onclick="doTab('archdaily',this);closeDrw()">ArchDaily</button>
   <button class="dtab" onclick="doTab('dezeen',this);closeDrw()">Dezeen</button>
@@ -360,184 +370,34 @@ const SRCS = {
   domus:      {name:'Domus',       color:'#5a5a3a', domain:'domusweb.it'},
 };
 
-// Known GARBAGE image URLs (not real article images)
-const GARBAGE_IMG_PATTERNS = [
-  'lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc',
-  'news.google.com',
-];
-
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 function isRealImage(url) {
-  if (!url || typeof url !== 'string') return false;
-  if (!url.startsWith('http')) return false;
-  for (const p of GARBAGE_IMG_PATTERNS) {
-    if (url.includes(p)) return false;
-  }
-  return true;
+  return typeof url === 'string' && /^https:\/\//.test(url) && !/googleusercontent\.com|news\.google\.com/.test(url);
 }
 
-// Pool of 20 varied architecture photos — indexed by story position
-// so adjacent cards NEVER show the same photo
-const PHOTO_POOL = [
-  'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
-  'https://images.unsplash.com/photo-1431576901776-e539bd916ba2?w=800&q=80',
-  'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80',
-  'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800&q=80',
-  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-  'https://images.unsplash.com/photo-1460574283810-2aab119d8511?w=800&q=80',
-  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
-  'https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a?w=800&q=80',
-  'https://images.unsplash.com/photo-1520583457224-aee11bad5112?w=800&q=80',
-  'https://images.unsplash.com/photo-1470723710355-95304d8aece4?w=800&q=80',
-  'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&q=80',
-  'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=800&q=80',
-  'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&q=80',
-  'https://images.unsplash.com/photo-1519999482648-25049ddd37b1?w=800&q=80',
-  'https://images.unsplash.com/photo-1502005097973-6a7082348e28?w=800&q=80',
-  'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&q=80',
-  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
-  'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80',
-  'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
-];
-
-// Get display image for a story
-// Returns: { type: 'photo', url } or { type: 'placeholder' }
-function resolveImg(story, slotIndex) {
+// A story shows its own image or a labelled panel in the publication's colour.
+// It never shows a stock photo: a picture of the wrong building is worse than no picture.
+function phHTML(sourceId, cls) {
+  const src = SRCS[sourceId] || {name: sourceId || '', color:'#555'};
+  return `<div class="${cls}" style="background:linear-gradient(135deg,${src.color}dd,${src.color}88)"><span class="ph-src">${esc(src.name.toUpperCase())}</span><div class="ph-line"></div></div>`;
+}
+function imgFail(el, sourceId, cls) {
+  el.insertAdjacentHTML('afterend', phHTML(sourceId, cls));
+  el.remove();
+}
+function cardImgHTML(story) {
   if (isRealImage(story.image)) {
-    return { type: 'photo', url: story.image };
+    return `<div class="card-img-wrap"><img class="card-img" src="${esc(story.image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="imgFail(this,'${story.sourceId}','card-img-ph')"/></div>`;
   }
-  // Use photo pool — cycle by slot so each card gets different photo
-  return { type: 'photo', url: PHOTO_POOL[slotIndex % PHOTO_POOL.length] };
+  return `<div class="card-img-wrap">${phHTML(story.sourceId, 'card-img-ph')}</div>`;
 }
-
-// Build image HTML for a card
-function cardImgHTML(story, slotIndex) {
-  const src = SRCS[story.sourceId] || {name: story.sourceName, color:'#555'};
-  const img = resolveImg(story, slotIndex);
-  const fallback = PHOTO_POOL[slotIndex % PHOTO_POOL.length];
-  if (img.type === 'photo') {
-    return `<div class="card-img-wrap"><img class="card-img" src="${img.url}" alt="" loading="lazy" onerror="this.src='${fallback}'"/></div>`;
-  }
-  // Branded placeholder (source color gradient)
-  return `<div class="card-img-wrap"><div class="card-img-ph" style="background:linear-gradient(135deg,${src.color}dd,${src.color}88)"><span class="ph-src">${src.name.toUpperCase()}</span><div class="ph-line"></div></div></div>`;
-}
-
-// Build image HTML for featured story
 function featImgHTML(story) {
-  const src = SRCS[story.sourceId] || {name: story.sourceName, color:'#555'};
-  const img = resolveImg(story, 0);
-  const fallback = PHOTO_POOL[0];
-  if (img.type === 'photo') {
-    return `<img class="feat-img" src="${img.url}" alt="" onerror="this.src='${fallback}'"/>`;
+  if (isRealImage(story.image)) {
+    return `<img class="feat-img" src="${esc(story.image)}" alt="" referrerpolicy="no-referrer" onerror="imgFail(this,'${story.sourceId}','feat-img-ph')"/>`;
   }
-  return `<div class="feat-img-ph" style="background:linear-gradient(135deg,${src.color}dd,${src.color}88)"><span style="font-family:var(--disp);font-size:36px;letter-spacing:.08em;color:rgba(255,255,255,.9)">${src.name.toUpperCase()}</span></div>`;
-}
-
-// ═══════════════════════════════════
-// GOOGLE NEWS FEED SOURCES
-// ═══════════════════════════════════
-const GFEEDS = [
-  {id:'archdaily',  url:'https://news.google.com/rss/search?q=site:archdaily.com+architecture&hl=en-US&gl=US&ceid=US:en'},
-  {id:'dezeen',     url:'https://news.google.com/rss/search?q=site:dezeen.com+architecture&hl=en-US&gl=US&ceid=US:en'},
-  {id:'archinect',  url:'https://news.google.com/rss/search?q=site:archinect.com&hl=en-US&gl=US&ceid=US:en'},
-  {id:'metropolis', url:'https://news.google.com/rss/search?q=site:metropolismag.com+architecture&hl=en-US&gl=US&ceid=US:en'},
-  {id:'archrecord', url:'https://news.google.com/rss/search?q=site:architecturalrecord.com&hl=en-US&gl=US&ceid=US:en'},
-  {id:'designboom', url:'https://news.google.com/rss/search?q=site:designboom.com+architecture&hl=en-US&gl=US&ceid=US:en'},
-  {id:'archpaper',  url:'https://news.google.com/rss/search?q=site:archpaper.com&hl=en-US&gl=US&ceid=US:en'},
-  {id:'domus',      url:'https://news.google.com/rss/search?q=site:domusweb.it+architecture&hl=en-US&gl=US&ceid=US:en'},
-];
-
-// ═══════════════════════════════════
-// RSS PARSER — note: extractRSSImage (NOT getImg — different name!)
-// ═══════════════════════════════════
-function htmlDecode(s) {
-  return (s||'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&')
-    .replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
-    .replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(n));
-}
-function stripTags(s) {
-  return (s||'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<')
-    .replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').replace(/&#\d+;/g,'')
-    .replace(/\s+/g,' ').trim();
-}
-function getXMLTag(chunk, tag) {
-  const cd = chunk.match(new RegExp('<'+tag+'[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/'+tag+'>','i'));
-  if (cd) return cd[1].trim();
-  const pl = chunk.match(new RegExp('<'+tag+'[^>]*>([\\s\\S]*?)<\\/'+tag+'>','i'));
-  return pl ? pl[1].replace(/<[^>]+>/g,'').trim() : '';
-}
-
-// Extract image from RSS item — NAMED extractRSSImage (not getImg)
-function extractRSSImage(itemChunk, rawDesc) {
-  const patterns = [
-    /<media:(?:content|thumbnail)[^>]+url=["']([^"']+)["']/i,
-    /<enclosure[^>]+url=["']([^"']+\.(?:jpg|jpeg|png|webp))[^>]*/i,
-    /<img[^>]+src=["']([^"']+)["']/i,
-  ];
-  for (const rx of patterns) {
-    const m = itemChunk.match(rx);
-    if (m && m[1].startsWith('http')) return m[1];
-  }
-  // Decode HTML entities in description (Google News hides images there)
-  const decoded = htmlDecode(rawDesc || '');
-  const imgInDesc = decoded.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if (imgInDesc && imgInDesc[1].startsWith('http')) return imgInDesc[1];
-  const anyUrl = decoded.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^\s"'<>]*)?/i);
-  if (anyUrl) return anyUrl[0];
-  return null;
-}
-
-function parseRSSFeed(xmlText, sourceId) {
-  const src = SRCS[sourceId] || {name: sourceId, color:'#555', domain:''};
-  const items = [];
-  let m;
-  const itemRx = /<item[\s>]([\s\S]*?)<\/item>/gi;
-  while ((m = itemRx.exec(xmlText)) !== null) items.push(m[1]);
-
-  return items.slice(0, 12).map((item, i) => {
-    const title = stripTags(getXMLTag(item, 'title'));
-    let link = stripTags(getXMLTag(item, 'link')).replace(/&amp;/g, '&');
-    if (!link.startsWith('http')) {
-      const lm = item.match(/<link[^>]+href=["']([^"']+)["']/i);
-      if (lm) link = lm[1];
-    }
-    const pubStr = getXMLTag(item, 'pubDate') || '';
-    const ts = pubStr ? (new Date(pubStr).getTime() || Date.now() - i*3600000) : Date.now() - i*3600000;
-    const rawDesc = getXMLTag(item, 'description') || '';
-    const image = extractRSSImage(item, rawDesc); // ← uses extractRSSImage, not getImg
-    return {
-      id: sourceId + '-' + i + '-' + ts,
-      sourceId, sourceName: src.name, sourceColor: src.color,
-      title, link,
-      excerpt: stripTags(rawDesc).slice(0, 260),
-      image,
-      timestamp: ts,
-    };
-  }).filter(s => s.title && s.link.startsWith('http'));
-}
-
-// ═══════════════════════════════════
-// FETCH SINGLE FEED
-// ═══════════════════════════════════
-async function fetchFeed(src) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 8000);
-  try {
-    const r = await fetch(src.url, { signal: ctrl.signal });
-    clearTimeout(timer);
-    if (!r.ok) return [];
-    return parseRSSFeed(await r.text(), src.id);
-  } catch(e) {
-    clearTimeout(timer);
-    // Fallback: allorigins proxy
-    try {
-      const proxy = 'https://api.allorigins.win/get?url=' + encodeURIComponent(src.url);
-      const r2 = await fetch(proxy);
-      if (!r2.ok) return [];
-      const d = await r2.json();
-      return parseRSSFeed(d.contents || '', src.id);
-    } catch(e2) { return []; }
-  }
+  return phHTML(story.sourceId, 'feat-img-ph');
 }
 
 // ═══════════════════════════════════
@@ -554,13 +414,7 @@ const lf = document.getElementById('lf');
 const lm = document.getElementById('lm');
 let lPct = 0;
 const lInt = setInterval(() => { lPct = Math.min(lPct + 14, 80); lf.style.width = lPct + '%'; }, 600);
-const lKill = setTimeout(() => {
-  hideLoader();
-  if (!ALL_STORIES.length) {
-    showErr('Feed loading slowly — <a href="javascript:location.reload()">reload →</a>');
-    render();
-  }
-}, 9000);
+const lKill = setTimeout(() => { lm.textContent = 'Still fetching eight publications...'; }, 9000);
 function hideLoader() {
   clearInterval(lInt); clearTimeout(lKill);
   lf.style.width = '100%';
@@ -574,7 +428,7 @@ async function loadFeed() {
   // Try 1: Vercel API (server-side, fast when cached)
   try {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 7000);
+    const timer = setTimeout(() => ctrl.abort(), 25000);
     const r = await fetch('/api/feed', { signal: ctrl.signal });
     clearTimeout(timer);
     if (r.ok) {
@@ -590,36 +444,9 @@ async function loadFeed() {
     }
   } catch(e) {}
 
-  // Try 2: Google News client-side (works for all 8 sources, no CORS)
-  lm.textContent = 'Loading from sources...';
-  try {
-    const results = await Promise.allSettled(GFEEDS.map(fetchFeed));
-    let all = [];
-    results.forEach(res => {
-      if (res.status === 'fulfilled') all = all.concat(res.value);
-    });
-    all.sort((a, b) => b.timestamp - a.timestamp);
-    // Deduplicate
-    const seen = new Set();
-    all = all.filter(s => {
-      const key = s.title.slice(0, 50).toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-    if (all.length > 0) {
-      ALL_STORIES = all;
-      document.getElementById('upd').textContent =
-        new Date().toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
-      hideLoader();
-      render();
-      return;
-    }
-  } catch(e) {}
-
-  // Try 3: Give up
+  // No second pipeline. If the API fails, say so and keep whatever is already on screen.
   hideLoader();
-  showErr('Feed unavailable — <a href="javascript:location.reload()">tap to reload →</a>');
+  if (!ALL_STORIES.length) showErr('Feed unavailable — <a href="javascript:location.reload()">tap to reload →</a>');
   render();
 }
 
@@ -657,9 +484,9 @@ function render() {
             <span class="feat-src" style="color:${hs.color}">${hs.name}</span>
             <span class="feat-age">${timeAgo(h.timestamp)}</span>
           </div>
-          <div class="feat-ttl">${h.title}</div>
-          <p class="feat-exc">${h.excerpt || ''}</p>
-          <a class="feat-btn" href="${h.link}" target="_blank" rel="noopener"
+          <div class="feat-ttl">${esc(h.title)}</div>
+          <p class="feat-exc">${esc(h.short || h.excerpt || '')}</p>
+          <a class="feat-btn" href="${esc(h.link)}" target="_blank" rel="noopener"
             onclick="event.stopPropagation()">Read on ${hs.domain} ↗</a>
         </div>
       </div>`;
@@ -676,13 +503,13 @@ function render() {
     grid.innerHTML = cards.map((s, i) => {
       const sm = SRCS[s.sourceId] || {name: s.sourceName, color:'#555', domain:''};
       return `<div class="card" style="animation-delay:${i*.04}s" onclick="openStory('${s.id}')">
-        ${cardImgHTML(s, i + 1)}
+        ${cardImgHTML(s)}
         <div class="card-body">
           <div class="card-meta">
             <span class="pill" style="background:${sm.color}">${sm.name}</span>
             <span class="card-age">${timeAgo(s.timestamp)}</span>
           </div>
-          <div class="card-ttl">${s.title}</div>
+          <div class="card-ttl">${esc(s.title)}</div>
           <div class="card-foot">
             <span class="card-domain">${sm.domain}</span>
             <span class="card-read">Read →</span>
@@ -715,6 +542,7 @@ function openStory(id) {
   document.getElementById('m-tag').textContent = sm.name.toUpperCase() + ' · ' + timeAgo(s.timestamp);
   const img = document.getElementById('m-img');
   if (isRealImage(s.image)) {
+    img.referrerPolicy = 'no-referrer';
     img.src = s.image;
     img.style.display = 'block';
   } else {

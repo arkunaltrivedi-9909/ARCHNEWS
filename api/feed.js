@@ -16,7 +16,7 @@ const SOURCES = [
   { id:'dezeen',     name:'Dezeen',      color:'#0a4fb8', domain:'dezeen.com',
     plan:[['rss','https://www.dezeen.com/feed/'], ['rss','https://feeds.feedburner.com/dezeen'], ['bing','dezeen.com']] },
   { id:'archinect',  name:'Archinect',   color:'#0a8a35', domain:'archinect.com',
-    plan:[['rss','https://archinect.com/feed/news'], ['rss','https://archinect.com/feed/1/news'], ['bing','archinect.com']] },
+    plan:[['rss','https://archinect.com/feed/1/news'], ['rss','https://archinect.com/feed/news'], ['bing','archinect.com']] },
   { id:'metropolis', name:'Metropolis',  color:'#6b08a8', domain:'metropolismag.com',
     plan:[['wp','https://metropolismag.com/wp-json/wp/v2/', ['metro_project','metro_viewpoint','metro_profile','metro_product']], ['bing','metropolismag.com']] },
   { id:'archrecord', name:'Arch Record', color:'#b87008', domain:'architecturalrecord.com',
@@ -56,7 +56,7 @@ function unCDATA(s) { return (s || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$
 
 function toText(html) {
   return deepDecode(unCDATA(html || ''))
-    .replace(/<(script|style|figure|figcaption|iframe)[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<(script|style|figure|figcaption|iframe|h[1-6])\b[\s\S]*?<\/\1>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .replace(/\s+([,.;:!?…])/g, '$1')
