@@ -89,6 +89,11 @@ module.exports = async function handler(req, res) {
     if (req.query.full) {
       const r = await fetch(list[0], { headers: { 'User-Agent': ua, 'Accept': 'text/html,application/xml,*/*' } });
       const t = await r.text();
+      if (req.query.rx) {
+        const m = t.match(new RegExp(req.query.rx, 'gi')) || [];
+        res.status(200).json({ status: r.status, bytes: t.length, n: m.length, matches: m.slice(-parseInt(req.query.last || '40', 10)) });
+        return;
+      }
       const from = parseInt(req.query.from || '0', 10), len = parseInt(req.query.len || '400000', 10);
       res.status(200).json({ status: r.status, bytes: t.length, text: t.slice(from, from + len) });
       return;
