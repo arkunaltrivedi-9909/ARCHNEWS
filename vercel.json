@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/feed.js": { "memory": 512, "maxDuration": 10 },
+    "api/feed.js": { "memory": 512, "maxDuration": 30 },
     "api/subscribe.js": { "memory": 256, "maxDuration": 10 },
     "api/cron/weekly.js": { "memory": 512, "maxDuration": 10 }
   },
