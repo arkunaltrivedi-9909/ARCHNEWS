@@ -84,7 +84,17 @@ module.exports = async function handler(req, res) {
   const only = req.query && req.query.s;
   const ua = (req.query && req.query.ua) === 'feed' ? FEED_UA : UA;
   const custom = req.query && req.query.u;
-  if (custom) { res.status(200).json(await probe(custom, ua)); return; }
+  if (custom) {
+    const list = Array.isArray(custom) ? custom : [custom];
+    if (req.query.full) {
+      const r = await fetch(list[0], { headers: { 'User-Agent': ua, 'Accept': 'text/html,application/xml,*/*' } });
+      const t = await r.text();
+      const from = parseInt(req.query.from || '0', 10), len = parseInt(req.query.len || '400000', 10);
+      res.status(200).json({ status: r.status, bytes: t.length, text: t.slice(from, from + len) });
+      return;
+    }
+    res.status(200).json(await Promise.all(list.map(u => probe(u, ua)))); return;
+  }
   const out = {};
   const keys = only ? only.split(',') : Object.keys(TESTS);
   await Promise.all(keys.map(async k => {
