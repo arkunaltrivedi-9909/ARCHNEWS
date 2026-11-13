@@ -215,7 +215,7 @@ async function viaDomus(source, urls) {
       // Dated from the URL; position in the page keeps same-day stories in the publisher's order.
       const ts = Date.UTC(+href[2], +href[3] - 1, +href[4], 12, 0, 0) - out.length * 60000;
       out.push(story(source, { title, link: 'https://www.domusweb.it' + href[1], excerptHtml: desc,
-        image: absUrl(img, 'https://www.domusweb.it'), ts, order: out.length, via: 'page' }));
+        image: absUrl(img && img.replace('.foto.rsmall.', '.foto.rmedium.'), 'https://www.domusweb.it'), ts, order: out.length, via: 'page' }));
     });
   });
   return out;
